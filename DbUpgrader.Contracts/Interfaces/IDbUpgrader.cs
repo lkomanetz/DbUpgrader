@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbUpgrader
+namespace DbUpgrader.Contracts.Interfaces
 {
-    public class Class1
-    {
-    }
+	public interface IDbUpgrader
+	{
+		void Run();
+	}
+
 }
