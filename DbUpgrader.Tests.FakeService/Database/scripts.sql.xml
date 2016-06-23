@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<scripts>
+	<script Id="40b44acb-8bc5-4a8f-a318-2148052b37a5" Order="2016-06-22">
+		INSERT INTO Table (Value1, Value2)
+		VALUES ('Test1', 'Test2')
+	</script>
+</scripts>

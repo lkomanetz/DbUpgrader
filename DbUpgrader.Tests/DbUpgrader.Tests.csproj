@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DbUpgrader.Tests</RootNamespace>
     <AssemblyName>DbUpgrader.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -16,6 +16,7 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +53,20 @@
   <ItemGroup>
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DbUpgrader.Contracts\DbUpgrader.Contracts.csproj">
+      <Project>{6601d24e-648b-4abd-b87e-0c0f4e2a30c1}</Project>
+      <Name>DbUpgrader.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DbUpgrader.Tests.FakeService\DbUpgrader.Tests.FakeService.csproj">
+      <Project>{625f2c0e-f3cb-4ead-957f-4a9f1228ec69}</Project>
+      <Name>DbUpgrader.Tests.FakeService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DbUpgrader\DbUpgrader.csproj">
+      <Project>{badaf88e-a264-41ed-9963-cd9fe1f53925}</Project>
+      <Name>DbUpgrader</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
