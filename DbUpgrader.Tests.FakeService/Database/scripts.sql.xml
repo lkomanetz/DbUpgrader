@@ -4,4 +4,8 @@
 		INSERT INTO Table (Value1, Value2)
 		VALUES ('Test1', 'Test2')
 	</script>
+	<script Id="17a49779-1fec-4624-9da8-3bfde0cd4852" Order="2016-06-22:1">
+		INSERT INTO AnotherTable (ValueA, ValueB)
+		VALUES ('TestA', 'TestB')
+	</script>
 </scripts>

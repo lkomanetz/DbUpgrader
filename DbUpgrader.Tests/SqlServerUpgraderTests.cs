@@ -3,18 +3,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DbUpgrader;
 using DbUpgrader.Tests.FakeService;
 
-namespace DbUpgrader.Tests
-{
+namespace DbUpgrader.Tests {
+
 	[TestClass]
-	public class UnitTest1
-	{
+	public class SqlServerUpgraderTests {
+
 		private const string CONNECTION_STRING = "Test_Connection";
 
 		[TestMethod]
-		public void TestMethod1()
-		{
+		public void UpgraderCanFindSqlScriptFile() {
 			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
 			upgrader.Run(typeof(MyFakeService).Assembly);
 		}
+
 	}
+
 }

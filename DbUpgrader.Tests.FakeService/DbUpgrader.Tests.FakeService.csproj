@@ -45,6 +45,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Database\scripts.sql.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DbUpgrader\DbUpgrader.csproj">
+      <Project>{badaf88e-a264-41ed-9963-cd9fe1f53925}</Project>
+      <Name>DbUpgrader</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
