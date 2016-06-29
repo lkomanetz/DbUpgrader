@@ -41,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SqlServerUpgrader.cs" />
+    <Compile Include="SqlServer\SqlServerExecutor.cs" />
+    <Compile Include="SqlServer\SqlServerUpgrader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

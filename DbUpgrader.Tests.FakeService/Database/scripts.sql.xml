@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <scripts>
+	<script Id="17a49779-1fec-4624-9da8-3bfde0cd4852" Order="2016-06-22:1">
+		INSERT INTO AnotherTable (ValueA, ValueB)
+		VALUES ('TestA', 'TestB')
+	</script>
 	<script Id="40b44acb-8bc5-4a8f-a318-2148052b37a5" Order="2016-06-22">
 		INSERT INTO Table (Value1, Value2)
 		VALUES ('Test1', 'Test2')
 	</script>
-	<script Id="17a49779-1fec-4624-9da8-3bfde0cd4852" Order="2016-06-22:1">
-		INSERT INTO AnotherTable (ValueA, ValueB)
-		VALUES ('TestA', 'TestB')
+	<script Id="e511aaaa-f546-4e60-9146-7a9c30d1ef9e" Order="2016-06-23">
+		INSERT INTO ThirdTable (Value9, Value8)
+		VALUES ('Test9', 'Test8')
 	</script>
 </scripts>

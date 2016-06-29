@@ -4,15 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using DbUpgrader;
+using DbUpgrader.SqlServer;
 
 namespace DbUpgrader.Tests.FakeService {
 
 	public class MyFakeService {
 
 		public void Run() {
-			SqlServerUpgrader upgrader = new SqlServerUpgrader("connectionString");
-			upgrader.Run(Assembly.GetExecutingAssembly());
 		}
 
 	}
