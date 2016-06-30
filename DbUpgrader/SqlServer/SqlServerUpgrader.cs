@@ -9,16 +9,19 @@ using System.Reflection;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
 namespace DbUpgrader.SqlServer {
 
 	public class SqlServerUpgrader : IDbUpgrader {
-		private Dictionary<Guid, Script> _scripts; // Dictionary<ScriptId, Script>
-		private SqlServerExecutor _scriptExecutor;
+
+		private Dictionary<Guid, Script> _scriptDictionary; // Dictionary<ScriptId, Script>
+		private IScriptExecutor _scriptExecutor;
+		private IList<Assembly> _successfullyRanAssemblies;
 
 		public SqlServerUpgrader(string connectionString) {
 			this.ConnectionString = connectionString;
-			_scripts = new Dictionary<Guid, Script>();
+			_scriptDictionary = new Dictionary<Guid, Script>();
 			_scriptExecutor = new SqlServerExecutor(connectionString);
 		}
 
@@ -26,14 +29,37 @@ namespace DbUpgrader.SqlServer {
 
 		public void Run(Assembly assembly) {
 			this.InitializeUpgraderTables();
+			if (HasAssemblyRanBefore(assembly)) {
+				throw new Exception($"An assembly cannot be run multiple times.\n Assembly: ${assembly.FullName}");
+			}
+
 			string[] resources = assembly.GetManifestResourceNames()
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
 
 			Script[] scripts = this.GetScriptsFromXml(assembly);
 			for (short i = 0; i < scripts.Length; i++) {
-				_scripts.Add(scripts[i].Id, scripts[i]);
+				_scriptDictionary.Add(scripts[i].Id, scripts[i]);
 			}
+
+			_scriptExecutor.Execute(
+				_scriptDictionary.Select(x => x.Value).ToArray<Script>()
+			);
+
+			_successfullyRanAssemblies.Add(assembly);
+		}
+
+		public void Run(IList<Assembly> assemblies) {
+			for (short i = 0; i < assemblies.Count; i++) {
+				this.Run(assemblies[i]);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private bool HasAssemblyRanBefore(Assembly assembly) {
+			return _successfullyRanAssemblies.Any(
+				x => x.FullName == assembly.FullName
+			);
 		}
 
 		internal void InitializeUpgraderTables() {
