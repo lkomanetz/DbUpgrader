@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<scripts>
+	<script Id="b8cd1b94-06d9-4af2-a1b7-55b1cf7c0718" Order="2016-06-30">
+		IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Upgrader')
+		BEGIN
+			EXEC('CREATE SCHEMA Upgrader');
+		END
+		
+		IF NOT EXISTS (
+			SELECT * FROM INFORMATION_SCHEMA.TABLES
+			WHERE TABLE_SCHEMA = 'Upgrader'
+				AND TABLE_NAME = 'ExecutedScripts'
+		)
+		BEGIN
+			CREATE TABLE Upgrader.ExecutedScripts (
+				SysId UNIQUEIDENTIFIER NOT NULL
+				, ScriptId UNIQUEIDENTIFIER NOT NULL
+				, DateExecuted DATETIME NOT NULL
+				, CONSTRAINT PK_SysId PRIMARY KEY NONCLUSTERED (SysId)	
+			)
+		END
+	</script>
+</scripts>

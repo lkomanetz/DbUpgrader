@@ -20,7 +20,7 @@ namespace DbUpgrader.Tests {
 		[TestMethod]
 		public void ScriptsStayInOrder() {
 			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
-			Script[] scripts = upgrader.LoadScriptsFromXml(typeof(MyFakeService).Assembly);
+			Script[] scripts = upgrader.GetScriptsFromXml(typeof(MyFakeService).Assembly);
 			AssertOrder(
 				scripts,
 				"Date: 6/22/2016 Order: 0Date: 6/22/2016 Order: 1Date: 6/23/2016 Order: 0"

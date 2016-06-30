@@ -13,29 +13,36 @@ using System.Text.RegularExpressions;
 namespace DbUpgrader.SqlServer {
 
 	public class SqlServerUpgrader : IDbUpgrader {
-		private const string SCRIPT_LOCATION = "/Database/";
 		private Dictionary<Guid, Script> _scripts; // Dictionary<ScriptId, Script>
+		private SqlServerExecutor _scriptExecutor;
 
 		public SqlServerUpgrader(string connectionString) {
 			this.ConnectionString = connectionString;
 			_scripts = new Dictionary<Guid, Script>();
+			_scriptExecutor = new SqlServerExecutor(connectionString);
 		}
 
 		public string ConnectionString { get; private set; }
 
 		public void Run(Assembly assembly) {
+			this.InitializeUpgraderTables();
 			string[] resources = assembly.GetManifestResourceNames()
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
 
-			Script[] scripts = this.LoadScriptsFromXml(assembly);
-
+			Script[] scripts = this.GetScriptsFromXml(assembly);
 			for (short i = 0; i < scripts.Length; i++) {
 				_scripts.Add(scripts[i].Id, scripts[i]);
 			}
 		}
 
-		internal Script[] LoadScriptsFromXml(Assembly assembly) {
+		internal void InitializeUpgraderTables() {
+			Assembly upgraderAssembly = Assembly.GetExecutingAssembly();
+			Script[] upgraderScripts = this.GetScriptsFromXml(upgraderAssembly);
+			_scriptExecutor.Execute(upgraderScripts);
+		}
+
+		internal Script[] GetScriptsFromXml(Assembly assembly) {
 			string[] resources = assembly.GetManifestResourceNames()
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
@@ -60,7 +67,6 @@ namespace DbUpgrader.SqlServer {
 					scripts[i].Order = orderValues.Item2;
 				}
 			}
-
 			return scripts.OrderBy(x => x.DateCreated)
 				.ThenBy(x => x.Order)
 				.ToArray<Script>();
