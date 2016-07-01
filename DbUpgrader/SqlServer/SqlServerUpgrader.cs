@@ -27,9 +27,11 @@ namespace DbUpgrader.SqlServer {
 
 		public string ConnectionString { get; private set; }
 
-		public void Run(Assembly assembly) {
+		public void Run(Assembly assembly)
+		{
 			this.InitializeUpgraderTables();
-			if (HasAssemblyRanBefore(assembly)) {
+			if (HasAssemblyRanBefore(assembly))
+			{
 				throw new Exception($"An assembly cannot be run multiple times.\n Assembly: ${assembly.FullName}");
 			}
 
@@ -37,16 +39,18 @@ namespace DbUpgrader.SqlServer {
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
 
-			Script[] scripts = this.GetScriptsFromXml(assembly);
-			for (short i = 0; i < scripts.Length; i++) {
-				_scriptDictionary.Add(scripts[i].Id, scripts[i]);
-			}
-
-			_scriptExecutor.Execute(
-				_scriptDictionary.Select(x => x.Value).ToArray<Script>()
-			);
+			LoadScripts(assembly);
+			IList<Script> scriptsToRun = GetScriptsToRun(assembly);
+			_scriptExecutor.Execute(scriptsToRun);
 
 			_successfullyRanAssemblies.Add(assembly);
+		}
+
+		private void LoadScripts(Assembly assembly) {
+			Script[] scripts = this.GetScriptsFromXml(assembly);
+			for (short i = 0; i < scripts.Length; i++) {
+				_scriptDictionary.Add(scripts[i].SysId, scripts[i]);
+			}
 		}
 
 		public void Run(IList<Assembly> assemblies) {
@@ -60,6 +64,14 @@ namespace DbUpgrader.SqlServer {
 			return _successfullyRanAssemblies.Any(
 				x => x.FullName == assembly.FullName
 			);
+		}
+
+		private IList<Script> GetScriptsToRun(Assembly assembly) {
+			IList<Guid> scriptsAlreadyRan = _scriptExecutor.GetScriptsAlreadyRanFor(assembly.FullName);
+
+			return _scriptDictionary.Select(x => x.Value)
+				.Where(script => !scriptsAlreadyRan.Contains(script.SysId))
+				.ToList<Script>();
 		}
 
 		internal void InitializeUpgraderTables() {
@@ -87,10 +99,11 @@ namespace DbUpgrader.SqlServer {
 						scriptNodes[i].Attributes["Order"].Value
 					);
 					scripts[i] = new Script();
-					scripts[i].Id = Guid.Parse(scriptNodes[i].Attributes["Id"].Value);
+					scripts[i].SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value);
 					scripts[i].SqlScript = scriptNodes[i].InnerText;
 					scripts[i].DateCreated = orderValues.Item1;
 					scripts[i].Order = orderValues.Item2;
+					scripts[i].AssemblyName = assembly.FullName;
 				}
 			}
 			return scripts.OrderBy(x => x.DateCreated)
