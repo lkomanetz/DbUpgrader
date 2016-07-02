@@ -17,13 +17,14 @@ namespace DbUpgrader.SqlServer {
 		}
 
 		public void Execute(Script script) {
-			using (SqlConnection conn = new SqlConnection(_connectionString))
-			using (SqlTransaction transaction = conn.BeginTransaction())  {
-				SqlCommand cmd = new SqlCommand(script.SqlScript, conn, transaction);
+			using (SqlConnection conn = new SqlConnection(_connectionString)) {
 				conn.Open();
-				cmd.ExecuteNonQuery();
-				transaction.Commit();
-				LogScriptAsRan(script.SysId, script.AssemblyName);
+				using (SqlTransaction transaction = conn.BeginTransaction()) {
+					SqlCommand cmd = new SqlCommand(script.SqlScript, conn, transaction);
+					cmd.ExecuteNonQuery();
+					transaction.Commit();
+					LogScriptAsRan(script.SysId, script.AssemblyName);
+				}
 			}
 		}
 
@@ -40,6 +41,7 @@ namespace DbUpgrader.SqlServer {
 				SqlCommand cmd = new SqlCommand(cmdString, conn);
 				cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
 
+				conn.Open();
 				SqlDataReader reader = cmd.ExecuteReader();
 				while (reader.Read()) {
 					scriptIds.Add(reader.GetGuid(0));
@@ -65,19 +67,20 @@ namespace DbUpgrader.SqlServer {
 					, @assemblyName
 				)";
 
-			using (SqlConnection conn = new SqlConnection(_connectionString))
-			using (SqlTransaction transaction = conn.BeginTransaction())
-			{
-				SqlCommand cmd = new SqlCommand(cmdString, conn, transaction);
-				cmd.Parameters.AddWithValue("@sysId", Guid.NewGuid());
-				cmd.Parameters.AddWithValue("@scriptId", scriptId);
-				cmd.Parameters.AddWithValue("@dateExecuted", DateTime.UtcNow);
-				cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
-
+			using (SqlConnection conn = new SqlConnection(_connectionString)) {
 				conn.Open();
-				cmd.ExecuteNonQuery();
-				transaction.Commit();
+				using (SqlTransaction transaction = conn.BeginTransaction()) {
+					SqlCommand cmd = new SqlCommand(cmdString, conn, transaction);
+					cmd.Parameters.AddWithValue("@sysId", Guid.NewGuid());
+					cmd.Parameters.AddWithValue("@scriptId", scriptId);
+					cmd.Parameters.AddWithValue("@dateExecuted", DateTime.UtcNow);
+					cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
+
+					cmd.ExecuteNonQuery();
+					transaction.Commit();
+				}
 			}
+
 		}
 
 	}

@@ -15,13 +15,11 @@ namespace DbUpgrader.SqlServer {
 
 	public class SqlServerUpgrader : IDbUpgrader {
 
-		private Dictionary<Guid, Script> _scriptDictionary; // Dictionary<ScriptId, Script>
 		private IScriptExecutor _scriptExecutor;
 		private IList<Assembly> _successfullyRanAssemblies;
 
 		public SqlServerUpgrader(string connectionString) {
 			this.ConnectionString = connectionString;
-			_scriptDictionary = new Dictionary<Guid, Script>();
 			_scriptExecutor = new SqlServerExecutor(connectionString);
 			_successfullyRanAssemblies = new List<Assembly>();
 		}
@@ -40,18 +38,10 @@ namespace DbUpgrader.SqlServer {
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
 
-			LoadScripts(assembly);
-			IList<Script> scriptsToRun = GetScriptsToRun(assembly.FullName);
+			IList<Script> scriptsToRun = GetScriptsToRun(assembly);
 			_scriptExecutor.Execute(scriptsToRun);
 
 			_successfullyRanAssemblies.Add(assembly);
-		}
-
-		internal void LoadScripts(Assembly assembly) {
-			Script[] scripts = this.GetScriptsFromXml(assembly);
-			for (short i = 0; i < scripts.Length; i++) {
-				_scriptDictionary.Add(scripts[i].SysId, scripts[i]);
-			}
 		}
 
 		public void Run(IList<Assembly> assemblies) {
@@ -67,18 +57,19 @@ namespace DbUpgrader.SqlServer {
 			);
 		}
 
-		private IList<Script> GetScriptsToRun(string assemblyName) {
-			IList<Guid> scriptsAlreadyRan = _scriptExecutor.GetScriptsAlreadyRanFor(assemblyName);
+		internal IList<Script> GetScriptsToRun(Assembly assembly) {
+			Script[] scripts = this.GetScriptsFromXml(assembly);
+			IList<Guid> scriptsAlreadyRan = _scriptExecutor.GetScriptsAlreadyRanFor(assembly.FullName);
 
-			return _scriptDictionary.Select(x => x.Value)
-				.Where(script => !scriptsAlreadyRan.Contains(script.SysId))
+			return scripts.Where(script => !scriptsAlreadyRan.Contains(script.SysId))
 				.ToList<Script>();
 		}
 
 		internal void InitializeUpgraderTables() {
 			Assembly upgraderAssembly = Assembly.GetExecutingAssembly();
-			Script[] upgraderScripts = this.GetScriptsFromXml(upgraderAssembly);
-			_scriptExecutor.Execute(upgraderScripts);
+			IList<Script> scriptsToRun = GetScriptsToRun(upgraderAssembly);
+			_scriptExecutor.Execute(scriptsToRun);
+			_successfullyRanAssemblies.Add(upgraderAssembly);
 		}
 
 		internal Script[] GetScriptsFromXml(Assembly assembly) {
@@ -112,7 +103,7 @@ namespace DbUpgrader.SqlServer {
 				.ToArray<Script>();
 		}
 
-		internal Tuple<DateTime, int> ParseOrderAttribute(string value) {
+		private Tuple<DateTime, int> ParseOrderAttribute(string value) {
 			string pattern = @"(\d{2,4}-\d{1,2}-\d{1,2}):*(\d{1,3})*";
 			Match match = Regex.Match(value, pattern);
 
