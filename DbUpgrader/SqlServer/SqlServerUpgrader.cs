@@ -26,11 +26,20 @@ namespace DbUpgrader.SqlServer {
 
 		public string ConnectionString { get; private set; }
 
-		public void Run(Assembly assembly)
-		{
+		public event EventHandler OnBeforeRunStarted;
+		public event EventHandler OnRunCompleted;
+
+		public void Run(IList<Assembly> assemblies) {
+			BeforeRunStarted(EventArgs.Empty);
+			for (short i = 0; i < assemblies.Count; i++) {
+				this.Run(assemblies[i]);
+			}
+			RunCompleted(EventArgs.Empty);
+		}
+
+		private void Run(Assembly assembly) {
 			this.InitializeUpgraderTables();
-			if (HasAssemblyRanBefore(assembly.FullName))
-			{
+			if (HasAssemblyRanBefore(assembly.FullName)) {
 				throw new Exception($"An assembly cannot be run multiple times.\n Assembly: ${assembly.FullName}");
 			}
 
@@ -42,12 +51,6 @@ namespace DbUpgrader.SqlServer {
 			_scriptExecutor.Execute(scriptsToRun);
 
 			_successfullyRanAssemblies.Add(assembly);
-		}
-
-		public void Run(IList<Assembly> assemblies) {
-			for (short i = 0; i < assemblies.Count; i++) {
-				this.Run(assemblies[i]);
-			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -118,6 +121,8 @@ namespace DbUpgrader.SqlServer {
 			return Tuple.Create<DateTime, int>(date, order);
 		}
 
+		private void BeforeRunStarted(EventArgs e) { OnBeforeRunStarted(this, e); }
+		private void RunCompleted(EventArgs e) { OnRunCompleted(this, e); }
 	}
 
 }
