@@ -8,6 +8,7 @@ namespace DbUpgrader.Contracts.Interfaces {
 
 	public interface IScriptExecutor {
 
+		void Execute(string rawSql);
 		void Execute(Script script);
 		void Execute(IList<Script> scripts);
 		IList<Guid> GetScriptsAlreadyRanFor(string assemblyName);

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DbUpgrader.Contracts;
 using DbUpgrader.Contracts.Interfaces;
-using DbUpgrader.Contracts;
-using System.Reflection;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using System.Text.RegularExpressions;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace DbUpgrader.SqlServer {
 
@@ -26,8 +24,8 @@ namespace DbUpgrader.SqlServer {
 
 		public string ConnectionString { get; private set; }
 
-		public event EventHandler OnBeforeRunStarted;
-		public event EventHandler OnRunCompleted;
+		public event EventHandler OnBeforeRunStarted = delegate { };
+		public event EventHandler OnRunCompleted = delegate { };
 
 		public void Run(IList<Assembly> assemblies) {
 			BeforeRunStarted(EventArgs.Empty);
@@ -79,6 +77,10 @@ namespace DbUpgrader.SqlServer {
 			string[] resources = assembly.GetManifestResourceNames()
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
+
+			if (resources.Length > 1) {
+				throw new Exception($"Only one /Database/<script> file allowed. Found: {resources.Length}");
+			}
 			Script[] scripts = null;
 
 			using (Stream stream = assembly.GetManifestResourceStream(resources[0]))
@@ -96,12 +98,12 @@ namespace DbUpgrader.SqlServer {
 					scripts[i] = new Script();
 					scripts[i].SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value);
 					scripts[i].SqlScript = scriptNodes[i].InnerText;
-					scripts[i].DateCreated = orderValues.Item1;
+					scripts[i].DateCreatedUtc = orderValues.Item1;
 					scripts[i].Order = orderValues.Item2;
 					scripts[i].AssemblyName = assembly.FullName;
 				}
 			}
-			return scripts.OrderBy(x => x.DateCreated)
+			return scripts.OrderBy(x => x.DateCreatedUtc)
 				.ThenBy(x => x.Order)
 				.ToArray<Script>();
 		}

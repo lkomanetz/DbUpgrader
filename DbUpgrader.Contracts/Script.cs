@@ -8,7 +8,7 @@ namespace DbUpgrader.Contracts {
 
 	public class Script {
 		public Guid SysId { get; set; }
-		public DateTime DateCreated { get; set; }
+		public DateTime DateCreatedUtc { get; set; }
 		public int Order { get; set; }
 		public string SqlScript { get; set; }
 		public string AssemblyName { get; set; }

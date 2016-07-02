@@ -21,4 +21,7 @@
 			)
 		END
 	</script>
+	<script Id="f3bb0cbc-227f-40d4-99d4-1b85f476e135" Order="2016-07-01">
+		EXEC sp_rename 'Upgrader.ExecutedScripts.DateExecuted', 'DateExecutedUtc', 'COLUMN';
+	</script>
 </scripts>

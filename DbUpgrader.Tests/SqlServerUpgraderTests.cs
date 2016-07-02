@@ -5,6 +5,7 @@ using DbUpgrader.Tests.FakeService;
 using DbUpgrader.Contracts;
 using System.Collections.Generic;
 using System.Reflection;
+using DbUpgrader.Tests.AnotherFakeService;
 
 namespace DbUpgrader.Tests {
 
@@ -17,7 +18,7 @@ namespace DbUpgrader.Tests {
 		public void UpgraderCanFindSqlScriptFile() {
 			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
 			IList<Script> scriptsToRun = upgrader.GetScriptsToRun(typeof(MyFakeService).Assembly);
-			Assert.IsTrue(scriptsToRun.Count > 0);
+			Assert.IsTrue(scriptsToRun.Count >= 0);
 		}
 
 		[TestMethod]
@@ -26,7 +27,7 @@ namespace DbUpgrader.Tests {
 			Script[] scripts = upgrader.GetScriptsFromXml(typeof(MyFakeService).Assembly);
 			AssertOrder(
 				scripts,
-				"Date: 6/22/2016 Order: 0Date: 6/22/2016 Order: 1Date: 6/23/2016 Order: 0"
+				"Date: 6/21/2016 Order: 0Date: 6/22/2016 Order: 0Date: 6/22/2016 Order: 1Date: 6/23/2016 Order: 0"
 			);
 		}
 
@@ -36,10 +37,27 @@ namespace DbUpgrader.Tests {
 			upgrader.InitializeUpgraderTables();
 		}
 
+		[TestMethod]
+		public void EndToEndTest() {
+			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
+			IList<Assembly> assemblies = new List<Assembly>() {
+				typeof(MyFakeService).Assembly,
+				typeof(AnotherTestService).Assembly
+			};
+			upgrader.OnBeforeRunStarted += (sender, args) => {
+				Assert.IsTrue(true);
+			};
+			upgrader.OnRunCompleted += (sender, args) => {
+				Assert.IsTrue(true);
+			};
+
+			upgrader.Run(assemblies);
+		}
+
 		private void AssertOrder(Script[] scripts, string expectedOrder) {
 			string actualOrder = String.Empty;
 			foreach (Script script in scripts) {
-				actualOrder += $"Date: {script.DateCreated.ToShortDateString()} Order: {script.Order}";
+				actualOrder += $"Date: {script.DateCreatedUtc.ToShortDateString()} Order: {script.Order}";
 			}
 
 			Assert.AreEqual(expectedOrder, actualOrder);

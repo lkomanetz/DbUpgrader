@@ -17,14 +17,29 @@ namespace DbUpgrader.SqlServer {
 		}
 
 		public void Execute(Script script) {
-			using (SqlConnection conn = new SqlConnection(_connectionString)) {
+			SqlConnection conn = new SqlConnection(_connectionString);
+			SqlTransaction transaction = null;
+
+			try {
 				conn.Open();
-				using (SqlTransaction transaction = conn.BeginTransaction()) {
-					SqlCommand cmd = new SqlCommand(script.SqlScript, conn, transaction);
-					cmd.ExecuteNonQuery();
-					transaction.Commit();
-					LogScriptAsRan(script.SysId, script.AssemblyName);
-				}
+				transaction = conn.BeginTransaction();
+				SqlCommand cmd = new SqlCommand(script.SqlScript, conn, transaction);
+				cmd.ExecuteNonQuery();
+				transaction.Commit();
+				LogScriptAsRan(script.SysId, script.AssemblyName);
+			}
+			catch (SqlException ex) {
+				string msg = $"Script execution failed.\nScript Id: {script.SysId}\n";
+				msg += $"Assembly: {script.AssemblyName}\n";
+				msg += $"Sql: {script.SqlScript}\n";
+				msg += $"SqlException Trace: {ex.StackTrace}";
+				transaction.Rollback();
+				throw new Exception(msg);
+			}
+			finally {
+				transaction.Dispose();
+				conn.Close();
+				conn.Dispose();
 			}
 		}
 
@@ -34,36 +49,64 @@ namespace DbUpgrader.SqlServer {
 			}
 		}
 
+		public void Execute(string rawSql) {
+			SqlConnection conn = new SqlConnection(_connectionString);
+			SqlTransaction transaction = null;
+
+			try {
+				transaction = conn.BeginTransaction();
+				SqlCommand cmd = new SqlCommand(rawSql, conn, transaction);
+				cmd.ExecuteNonQuery();
+			}
+			catch (SqlException) {
+				transaction.Rollback();
+			}
+			finally {
+				transaction.Dispose();
+				conn.Close();
+				conn.Dispose();
+			}
+		}
+
 		public IList<Guid> GetScriptsAlreadyRanFor(string assemblyName) {
 			List<Guid> scriptIds = new List<Guid>();
-			using (SqlConnection conn = new SqlConnection(_connectionString)) {
+			SqlConnection conn = new SqlConnection(_connectionString);
+
+			try {
 				string cmdString = "SELECT ScriptId FROM [Upgrader].[ExecutedScripts] WHERE [AssemblyName] = @assemblyName";
 				SqlCommand cmd = new SqlCommand(cmdString, conn);
 				cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
 
 				conn.Open();
 				SqlDataReader reader = cmd.ExecuteReader();
+
 				while (reader.Read()) {
 					scriptIds.Add(reader.GetGuid(0));
 				}
+			}
+			catch {
+				return scriptIds;
+			}
+			finally {
+				conn.Close();
+				conn.Dispose();
 			}
 
 			return scriptIds;
 		}
 
-		private void LogScriptAsRan(Guid scriptId, string assemblyName)
-		{
+		private void LogScriptAsRan(Guid scriptId, string assemblyName) {
 			string cmdString = $@"
 				INSERT INTO [Upgrader].[ExecutedScripts] (
 					SysId
 					, ScriptId
-					, DateExecuted
+					, DateExecutedUtc
 					, AssemblyName
 				)
 				VALUES (
 					@sysId
 					, @scriptId
-					, @dateExecuted
+					, @dateExecutedUtc
 					, @assemblyName
 				)";
 
@@ -73,14 +116,13 @@ namespace DbUpgrader.SqlServer {
 					SqlCommand cmd = new SqlCommand(cmdString, conn, transaction);
 					cmd.Parameters.AddWithValue("@sysId", Guid.NewGuid());
 					cmd.Parameters.AddWithValue("@scriptId", scriptId);
-					cmd.Parameters.AddWithValue("@dateExecuted", DateTime.UtcNow);
+					cmd.Parameters.AddWithValue("@dateExecutedUtc", DateTime.UtcNow);
 					cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
 
 					cmd.ExecuteNonQuery();
 					transaction.Commit();
 				}
 			}
-
 		}
 
 	}

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<scripts>
+	<script Id="e37f6dab-0a79-4967-91b4-98a88ef1c40c" Order="2016-07-01">
+		CREATE TABLE [TableA] (
+			SysId UNIQUEIDENTIFIER NOT NULL
+			, ColumnA NVARCHAR(25)
+			, ColumnB NVARCHAR(25)
+		)
+	</script>
+	<script Id="8f153e3d-4efb-4622-be56-0a76048b7c07" Order="2016-07-01:1">
+		CREATE TABLE [TableB] (
+			SysId UNIQUEIDENTIFIER NOT NULL
+			, ColumnC NVARCHAR(25)
+			, ColumnD NVARCHAR(25)
+		)
+	</script>
+	<script Id="05f4626c-4eb7-4a2c-81a4-94e154b767b5" Order="2016-07-01:2">
+		INSERT INTO [TableB] (
+			SysId
+			, ColumnC
+			, ColumnD
+		)
+		VALUES (NEWID(), 'Hello', 'World')
+	</script>
+</scripts>

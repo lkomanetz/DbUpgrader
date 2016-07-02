@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUpgrader", "DbUpgrader\DbUpgrader.csproj", "{BADAF88E-A264-41ED-9963-CD9FE1F53925}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUpgrader.Tests", "DbUpgrader.Tests\DbUpgrader.Tests.csproj", "{7D98F45A-9FEE-417C-BE0A-0C5F9BE8DAFD}"
@@ -8,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUpgrader.Contracts", "DbUpgrader.Contracts\DbUpgrader.Contracts.csproj", "{6601D24E-648B-4ABD-B87E-0C0F4E2A30C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUpgrader.Tests.FakeService", "DbUpgrader.Tests.FakeService\DbUpgrader.Tests.FakeService.csproj", "{625F2C0E-F3CB-4EAD-957F-4A9F1228EC69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUpgrader.Tests.AnotherFakeService", "DbUpgrader.Tests.AnotherFakeService\DbUpgrader.Tests.AnotherFakeService.csproj", "{5969B0B2-4F30-4FF7-A29D-F5B7AE1BB797}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,10 @@ Global
 		{625F2C0E-F3CB-4EAD-957F-4A9F1228EC69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{625F2C0E-F3CB-4EAD-957F-4A9F1228EC69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{625F2C0E-F3CB-4EAD-957F-4A9F1228EC69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5969B0B2-4F30-4FF7-A29D-F5B7AE1BB797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5969B0B2-4F30-4FF7-A29D-F5B7AE1BB797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5969B0B2-4F30-4FF7-A29D-F5B7AE1BB797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5969B0B2-4F30-4FF7-A29D-F5B7AE1BB797}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

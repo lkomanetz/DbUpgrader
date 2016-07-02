@@ -1,11 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <scripts>
+	<script Id="278b7ef3-09da-4d1b-a101-390f4e6a5407" Order="2016-06-21">
+		CREATE TABLE [FirstTable] (
+			Value1 NVARCHAR(25)
+			, Value2 NVARCHAR(25)
+		)
+		CREATE TABLE [AnotherTable] (
+			ValueA NVARCHAR(25)
+			, ValueB NVARCHAR(25)
+		)
+		CREATE TABLE [ThirdTable] (
+			Value9 NVARCHAR(25)
+			, Value8 NVARCHAR(25)
+		)
+	</script>
 	<script Id="17a49779-1fec-4624-9da8-3bfde0cd4852" Order="2016-06-22:1">
 		INSERT INTO AnotherTable (ValueA, ValueB)
 		VALUES ('TestA', 'TestB')
 	</script>
 	<script Id="40b44acb-8bc5-4a8f-a318-2148052b37a5" Order="2016-06-22">
-		INSERT INTO Table (Value1, Value2)
+		INSERT INTO FirstTable (Value1, Value2)
 		VALUES ('Test1', 'Test2')
 	</script>
 	<script Id="e511aaaa-f546-4e60-9146-7a9c30d1ef9e" Order="2016-06-23">
