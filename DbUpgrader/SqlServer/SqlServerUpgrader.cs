@@ -23,6 +23,7 @@ namespace DbUpgrader.SqlServer {
 			this.ConnectionString = connectionString;
 			_scriptDictionary = new Dictionary<Guid, Script>();
 			_scriptExecutor = new SqlServerExecutor(connectionString);
+			_successfullyRanAssemblies = new List<Assembly>();
 		}
 
 		public string ConnectionString { get; private set; }
@@ -30,7 +31,7 @@ namespace DbUpgrader.SqlServer {
 		public void Run(Assembly assembly)
 		{
 			this.InitializeUpgraderTables();
-			if (HasAssemblyRanBefore(assembly))
+			if (HasAssemblyRanBefore(assembly.FullName))
 			{
 				throw new Exception($"An assembly cannot be run multiple times.\n Assembly: ${assembly.FullName}");
 			}
@@ -40,13 +41,13 @@ namespace DbUpgrader.SqlServer {
 				.ToArray<String>();
 
 			LoadScripts(assembly);
-			IList<Script> scriptsToRun = GetScriptsToRun(assembly);
+			IList<Script> scriptsToRun = GetScriptsToRun(assembly.FullName);
 			_scriptExecutor.Execute(scriptsToRun);
 
 			_successfullyRanAssemblies.Add(assembly);
 		}
 
-		private void LoadScripts(Assembly assembly) {
+		internal void LoadScripts(Assembly assembly) {
 			Script[] scripts = this.GetScriptsFromXml(assembly);
 			for (short i = 0; i < scripts.Length; i++) {
 				_scriptDictionary.Add(scripts[i].SysId, scripts[i]);
@@ -60,14 +61,14 @@ namespace DbUpgrader.SqlServer {
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool HasAssemblyRanBefore(Assembly assembly) {
+		private bool HasAssemblyRanBefore(string assemblyName) {
 			return _successfullyRanAssemblies.Any(
-				x => x.FullName == assembly.FullName
+				x => x.FullName == assemblyName
 			);
 		}
 
-		private IList<Script> GetScriptsToRun(Assembly assembly) {
-			IList<Guid> scriptsAlreadyRan = _scriptExecutor.GetScriptsAlreadyRanFor(assembly.FullName);
+		private IList<Script> GetScriptsToRun(string assemblyName) {
+			IList<Guid> scriptsAlreadyRan = _scriptExecutor.GetScriptsAlreadyRanFor(assemblyName);
 
 			return _scriptDictionary.Select(x => x.Value)
 				.Where(script => !scriptsAlreadyRan.Contains(script.SysId))

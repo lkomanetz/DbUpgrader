@@ -14,7 +14,7 @@ namespace DbUpgrader.Tests {
 		[TestMethod]
 		public void UpgraderCanFindSqlScriptFile() {
 			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
-			upgrader.Run(typeof(MyFakeService).Assembly);
+			upgrader.LoadScripts(typeof(MyFakeService).Assembly);
 		}
 
 		[TestMethod]
