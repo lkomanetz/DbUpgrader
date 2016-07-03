@@ -95,12 +95,13 @@ namespace DbUpgrader.SqlServer {
 					Tuple<DateTime, int> orderValues = ParseOrderAttribute(
 						scriptNodes[i].Attributes["Order"].Value
 					);
-					scripts[i] = new Script();
-					scripts[i].SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value);
-					scripts[i].SqlScript = scriptNodes[i].InnerText;
-					scripts[i].DateCreatedUtc = orderValues.Item1;
-					scripts[i].Order = orderValues.Item2;
-					scripts[i].AssemblyName = assembly.FullName;
+					scripts[i] = new Script() {
+						SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value),
+						SqlScript = scriptNodes[i].InnerText,
+						DateCreatedUtc = orderValues.Item1,
+						Order = orderValues.Item2,
+						AssemblyName = assembly.FullName
+					};
 				}
 			}
 			return scripts.OrderBy(x => x.DateCreatedUtc)
