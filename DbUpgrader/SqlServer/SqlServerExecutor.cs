@@ -49,25 +49,6 @@ namespace DbUpgrader.SqlServer {
 			}
 		}
 
-		public void Execute(string rawSql) {
-			SqlConnection conn = new SqlConnection(_connectionString);
-			SqlTransaction transaction = null;
-
-			try {
-				transaction = conn.BeginTransaction();
-				SqlCommand cmd = new SqlCommand(rawSql, conn, transaction);
-				cmd.ExecuteNonQuery();
-			}
-			catch (SqlException) {
-				transaction.Rollback();
-			}
-			finally {
-				transaction.Dispose();
-				conn.Close();
-				conn.Dispose();
-			}
-		}
-
 		public IList<Guid> GetScriptsAlreadyRanFor(string assemblyName) {
 			List<Guid> scriptIds = new List<Guid>();
 			SqlConnection conn = new SqlConnection(_connectionString);
@@ -97,12 +78,7 @@ namespace DbUpgrader.SqlServer {
 
 		private void LogScriptAsRan(Guid scriptId, string assemblyName) {
 			string cmdString = $@"
-				INSERT INTO [Upgrader].[ExecutedScripts] (
-					SysId
-					, ScriptId
-					, DateExecutedUtc
-					, AssemblyName
-				)
+				INSERT INTO [Upgrader].[ExecutedScripts]
 				VALUES (
 					@sysId
 					, @scriptId

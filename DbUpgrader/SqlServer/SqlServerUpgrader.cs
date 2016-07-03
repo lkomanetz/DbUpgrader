@@ -17,26 +17,25 @@ namespace DbUpgrader.SqlServer {
 		private IList<Assembly> _successfullyRanAssemblies;
 
 		public SqlServerUpgrader(string connectionString) {
-			this.ConnectionString = connectionString;
 			_scriptExecutor = new SqlServerExecutor(connectionString);
 			_successfullyRanAssemblies = new List<Assembly>();
 		}
-
-		public string ConnectionString { get; private set; }
 
 		public event EventHandler OnBeforeRunStarted = delegate { };
 		public event EventHandler OnRunCompleted = delegate { };
 
 		public void Run(IList<Assembly> assemblies) {
 			BeforeRunStarted(EventArgs.Empty);
+			this.InitializeUpgraderTables();
+
 			for (short i = 0; i < assemblies.Count; i++) {
 				this.Run(assemblies[i]);
 			}
+
 			RunCompleted(EventArgs.Empty);
 		}
 
 		private void Run(Assembly assembly) {
-			this.InitializeUpgraderTables();
 			if (HasAssemblyRanBefore(assembly.FullName)) {
 				throw new Exception($"An assembly cannot be run multiple times.\n Assembly: ${assembly.FullName}");
 			}
@@ -81,8 +80,8 @@ namespace DbUpgrader.SqlServer {
 			if (resources.Length > 1) {
 				throw new Exception($"Only one /Database/<script> file allowed. Found: {resources.Length}");
 			}
-			Script[] scripts = null;
 
+			Script[] scripts = null;
 			using (Stream stream = assembly.GetManifestResourceStream(resources[0]))
 			using (StreamReader reader = new StreamReader(stream)) {
 				string xml = reader.ReadToEnd();

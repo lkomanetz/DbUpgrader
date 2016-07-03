@@ -54,6 +54,23 @@ namespace DbUpgrader.Tests {
 			upgrader.Run(assemblies);
 		}
 
+		[TestMethod]
+		public void RunFailsWithSameAssembly() {
+			IList<Assembly> assemblies = new List<Assembly>() {
+				typeof(MyFakeService).Assembly,
+				typeof(MyFakeService).Assembly
+			};
+
+			try {
+				SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
+				upgrader.Run(assemblies);
+				Assert.Fail("Upgrader ran with multiples of the same assembly");
+			}
+			catch {
+				Assert.IsTrue(true);
+			}
+		}
+
 		private void AssertOrder(Script[] scripts, string expectedOrder) {
 			string actualOrder = String.Empty;
 			foreach (Script script in scripts) {
