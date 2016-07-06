@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DbUpgrader.SqlServer;
 using DbUpgrader.Tests.FakeService;
 using DbUpgrader.Contracts;
+using DbUpgrader.Contracts.Interfaces;
 using System.Collections.Generic;
 using System.Reflection;
 using DbUpgrader.Tests.AnotherFakeService;
@@ -13,18 +14,25 @@ namespace DbUpgrader.Tests {
 	public class SqlServerUpgraderTests {
 
 		private const string CONNECTION_STRING = @"Server=localhost\SQLEXPRESS;Database=DbUpgrader.UnitTest; Integrated Security=true";
+		private static SqlServerUpgrader _upgrader;
+		private static IDbCleaner _cleaner;
+
+		[ClassInitialize]
+		public static void Initialize(TestContext context) {
+			_cleaner = new TestSqlServerCleaner(CONNECTION_STRING);
+			_upgrader = new SqlServerUpgrader(CONNECTION_STRING);
+			_cleaner.Clean();
+		}
 
 		[TestMethod]
 		public void UpgraderCanFindSqlScriptFile() {
-			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
-			IList<Script> scriptsToRun = upgrader.GetScriptsToRun(typeof(MyFakeService).Assembly);
+			IList<Script> scriptsToRun = _upgrader.GetScriptsToRun(typeof(MyFakeService).Assembly);
 			Assert.IsTrue(scriptsToRun.Count >= 0);
 		}
 
 		[TestMethod]
 		public void ScriptsStayInOrder() {
-			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
-			Script[] scripts = upgrader.GetScriptsFromXml(typeof(MyFakeService).Assembly);
+			Script[] scripts = _upgrader.GetScriptsFromXml(typeof(MyFakeService).Assembly);
 			AssertOrder(
 				scripts,
 				"Date: 6/21/2016 Order: 0Date: 6/22/2016 Order: 0Date: 6/22/2016 Order: 1Date: 6/23/2016 Order: 0"
@@ -33,25 +41,23 @@ namespace DbUpgrader.Tests {
 
 		[TestMethod]
 		public void UpgraderCreatesItsOwnTables() {
-			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
-			upgrader.InitializeUpgraderTables();
+			_upgrader.InitializeUpgraderTables();
 		}
 
 		[TestMethod]
 		public void EndToEndTest() {
-			SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
 			IList<Assembly> assemblies = new List<Assembly>() {
 				typeof(MyFakeService).Assembly,
 				typeof(AnotherTestService).Assembly
 			};
-			upgrader.OnBeforeRunStarted += (sender, args) => {
+			_upgrader.OnBeforeRunStarted += (sender, args) => {
 				Assert.IsTrue(true);
 			};
-			upgrader.OnRunCompleted += (sender, args) => {
+			_upgrader.OnRunCompleted += (sender, args) => {
 				Assert.IsTrue(true);
 			};
 
-			upgrader.Run(assemblies);
+			_upgrader.Run(assemblies);
 		}
 
 		[TestMethod]
@@ -62,8 +68,7 @@ namespace DbUpgrader.Tests {
 			};
 
 			try {
-				SqlServerUpgrader upgrader = new SqlServerUpgrader(CONNECTION_STRING);
-				upgrader.Run(assemblies);
+				_upgrader.Run(assemblies);
 				Assert.Fail("Upgrader ran with multiples of the same assembly");
 			}
 			catch {
@@ -78,6 +83,25 @@ namespace DbUpgrader.Tests {
 			}
 
 			Assert.AreEqual(expectedOrder, actualOrder);
+			/*
+			 * DbUpgrader upgrader = new DbUpgrader(connectionString, DbEngine.SqlServer);
+			 * DbUpgrader mySqlUpgrader = new DbUpgrader(connectionString, DbEngine.MySql);
+			 *
+			 * public DbUpgrader(string connectionString, DbEngine engine) {
+			 *	switch (engine) {
+			 *		case DbEngine.SqlServer:
+			 *			_upgrader = new SqlServerUpgrader(connectionString);
+			 *			break;
+			 *		case DbEngine.MySql:
+			 *			_upgrader = new MySqlUpgrader(connectionString);
+			 *			break;	
+			 *	}
+			 * }
+			 *
+			 * public void Run(IList<Assembly> assemblies) {
+			 *		_upgrader.Run(assemblies);
+			 * }
+			 */
 		}
 
 	}

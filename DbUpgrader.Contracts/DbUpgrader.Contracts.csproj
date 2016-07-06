@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IDbCleaner.cs" />
     <Compile Include="Interfaces\IDbUpgrader.cs" />
     <Compile Include="Interfaces\IScriptExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
