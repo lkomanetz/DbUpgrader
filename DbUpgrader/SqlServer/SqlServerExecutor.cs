@@ -77,6 +77,10 @@ namespace DbUpgrader.SqlServer {
 		}
 
 		private void LogScriptAsRan(Guid scriptId, string assemblyName) {
+			/*
+			 * I'm not providing the names of the columns because when this first runs DateExecutedUtc
+			 * starts out as being named DateExecuted.  This will cause the insert to fail.
+			 */
 			string cmdString = $@"
 				INSERT INTO [Upgrader].[ExecutedScripts]
 				VALUES (
