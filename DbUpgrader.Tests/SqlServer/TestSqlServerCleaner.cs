@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbUpgrader.Tests {
+namespace DbUpgrader.Tests.SqlServer {
 
 	public class TestSqlServerCleaner : IDbCleaner {
 		private string _connectionString;
@@ -28,13 +28,14 @@ namespace DbUpgrader.Tests {
 				cmd.ExecuteNonQuery();
 				transaction.Commit();
 			}
-			catch {
-				transaction.Rollback();
+			catch (Exception err) {
+				transaction?.Rollback();
+				throw err;
 			}
 			finally {
-				transaction.Dispose();
-				conn.Close();
-				conn.Dispose();
+				transaction?.Dispose();
+				conn?.Close();
+				conn?.Dispose();
 			}
 		}
 

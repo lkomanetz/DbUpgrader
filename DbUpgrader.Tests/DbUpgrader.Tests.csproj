@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
   </ItemGroup>
   <Choose>
@@ -52,8 +53,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="TestSqlServerCleaner.cs" />
-    <Compile Include="SqlServerUpgraderTests.cs" />
+    <Compile Include="SqlServer\ScriptFileTests.cs" />
+    <Compile Include="SqlServer\TestSqlServerCleaner.cs" />
+    <Compile Include="SqlServer\SqlServerUpgraderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +75,9 @@
       <Project>{badaf88e-a264-41ed-9963-cd9fe1f53925}</Project>
       <Name>DbUpgrader</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
