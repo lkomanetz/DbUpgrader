@@ -30,17 +30,30 @@ namespace DbUpgrader.Tests.SqlServer {
 
 		[TestMethod]
 		public void ScriptsStayInOrder() {
-			Script[] scripts = _upgrader.GetScriptsFromXml(_fakeServiceAssembly);
-			AssertOrder(
-				scripts,
-				"Date: 6/21/2016 Order: 0Date: 6/22/2016 Order: 0Date: 6/22/2016 Order: 1Date: 6/23/2016 Order: 0"
-			);
+			IList<ScriptDocument> documents = _upgrader.GetDocumentsToRun(_fakeServiceAssembly);
+
+			for (int i = 0; i < documents.Count; ++i) {
+				Script[] scripts = _upgrader.GetScriptsFromResource(_fakeServiceAssembly, documents[i].ResourceName);
+				AssertOrder(
+					scripts,
+					"Date: 6/21/2016 Order: 0Date: 6/22/2016 Order: 0Date: 6/22/2016 Order: 1Date: 6/23/2016 Order: 0"
+				);
+			}
 		}
 
 		[TestMethod]
 		public void UpgraderCanFindSqlScriptFile() {
-			IList<Script> scriptsToRun = _upgrader.GetScriptsToRun(_fakeServiceAssembly);
-			Assert.IsTrue(scriptsToRun.Count >= 0);
+			IList<ScriptDocument> documents = _upgrader.GetDocumentsToRun(_fakeServiceAssembly);
+			for (int i = 0; i < documents.Count; ++i) {
+				IList<Script> scriptsToRun = _upgrader.GetScriptsToRun(_fakeServiceAssembly, documents[i]);
+				Assert.IsTrue(scriptsToRun.Count >= 0);
+			}
+		}
+
+		[TestMethod]
+		public void UpgraderCanFindSqlDocuments() {
+			IList<ScriptDocument> documents = _upgrader.GetDocumentsToRun(_fakeServiceAssembly);
+			Assert.IsTrue(documents.Count >= 0, "Unable to find any SQL documents for upgrader.");
 		}
 
 		private void AssertOrder(Script[] scripts, string expectedOrder) {

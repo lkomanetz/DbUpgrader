@@ -36,6 +36,12 @@ namespace DbUpgrader.Tests.SqlServer {
 				typeof(MyFakeService).Assembly,
 				typeof(AnotherTestService).Assembly
 			};
+			/*
+			 * I'm only doing the Assert.IsTrue(true) because I want to make sure that both
+			 * OnBeforeRunStarted and OnRunCompleted events are executed and nothing more.  This might
+			 * change later on where I want to assert something with the event arguments that gets 
+			 * passed into the event invocation.
+			 */
 			_upgrader.OnBeforeRunStarted += (sender, args) => {
 				Assert.IsTrue(true);
 			};

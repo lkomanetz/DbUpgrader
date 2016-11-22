@@ -9,12 +9,16 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 
+//TODO(Logan) -> Refactor the code that gets the ScriptDocuments and their scripts.
 namespace DbUpgrader.SqlServer {
 
 	public class SqlServerUpgrader : IDbUpgrader {
 
 		private IScriptExecutor _scriptExecutor;
 		private IList<Assembly> _successfullyRanAssemblies;
+
+		private const string ROOT_NODE = "ScriptDocument";
+		private const string SCRIPT_NODE = "Script";
 
 		public SqlServerUpgrader(string connectionString) {
 			_scriptExecutor = new SqlServerExecutor(connectionString);
@@ -44,8 +48,12 @@ namespace DbUpgrader.SqlServer {
 				.Where(x => x.Contains(".sql.xml"))
 				.ToArray<String>();
 
-			IList<Script> scriptsToRun = GetScriptsToRun(assembly);
-			_scriptExecutor.Execute(scriptsToRun);
+
+			IList<ScriptDocument> documentsToRun = GetDocumentsToRun(assembly);
+			for (short i = 0; i < documentsToRun.Count; ++i) {
+				IList<Script> scriptsToRun = GetScriptsToRun(assembly, documentsToRun[i]);
+				_scriptExecutor.Execute(scriptsToRun);
+			}
 
 			_successfullyRanAssemblies.Add(assembly);
 		}
@@ -57,8 +65,8 @@ namespace DbUpgrader.SqlServer {
 			);
 		}
 
-		internal IList<Script> GetScriptsToRun(Assembly assembly) {
-			Script[] scripts = this.GetScriptsFromXml(assembly);
+		internal IList<Script> GetScriptsToRun(Assembly assembly, ScriptDocument document) {
+			Script[] scripts = this.GetScriptsFromResource(assembly, document.ResourceName);
 			IList<Guid> scriptsAlreadyRan = _scriptExecutor.GetScriptsAlreadyRanFor(assembly.FullName);
 
 			return scripts.Where(script => !scriptsAlreadyRan.Contains(script.SysId))
@@ -67,27 +75,23 @@ namespace DbUpgrader.SqlServer {
 
 		internal void InitializeUpgraderTables() {
 			Assembly upgraderAssembly = Assembly.GetExecutingAssembly();
-			IList<Script> scriptsToRun = GetScriptsToRun(upgraderAssembly);
-			_scriptExecutor.Execute(scriptsToRun);
+			IList<ScriptDocument> documents = GetDocumentsToRun(upgraderAssembly);
+
+			for (short i = 0; i < documents.Count; ++i) {
+				IList<Script> scriptsToRun = GetScriptsFromResource(upgraderAssembly, documents[i].ResourceName);
+				_scriptExecutor.Execute(scriptsToRun);
+			}
 			_successfullyRanAssemblies.Add(upgraderAssembly);
 		}
 
-		internal Script[] GetScriptsFromXml(Assembly assembly) {
-			string[] resources = assembly.GetManifestResourceNames()
-				.Where(x => x.Contains(".sql.xml"))
-				.ToArray<String>();
-
-			if (resources.Length > 1) {
-				throw new Exception($"Only one /Database/<script> file allowed. Found: {resources.Length}");
-			}
-
+		internal Script[] GetScriptsFromResource(Assembly assembly, string resourceName) {
 			Script[] scripts = null;
-			using (Stream stream = assembly.GetManifestResourceStream(resources[0]))
+			using (Stream stream = assembly.GetManifestResourceStream(resourceName))
 			using (StreamReader reader = new StreamReader(stream)) {
 				string xml = reader.ReadToEnd();
 				XmlDocument xmlDoc = new XmlDocument();
 				xmlDoc.LoadXml(xml);
-				XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName("script");
+				XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(SCRIPT_NODE);
 				scripts = new Script[scriptNodes.Count];
 
 				for (short i = 0; i < scriptNodes.Count; i++) {
@@ -106,6 +110,34 @@ namespace DbUpgrader.SqlServer {
 			return scripts.OrderBy(x => x.DateCreatedUtc)
 				.ThenBy(x => x.Order)
 				.ToArray<Script>();
+		}
+
+		internal IList<ScriptDocument> GetDocumentsToRun(Assembly assembly) {
+			string[] resources = assembly.GetManifestResourceNames()
+				.Where(x => x.Contains(".sql.xml"))
+				.ToArray<String>();
+
+			ScriptDocument[] documents = new ScriptDocument[resources.Length];
+			for (short i = 0; i < resources.Length; ++i) {
+				using (Stream stream = assembly.GetManifestResourceStream(resources[i]))
+				using (StreamReader reader = new StreamReader(stream)) {
+					string xmlStr = reader.ReadToEnd();
+
+					XmlDocument xmlDoc = new XmlDocument();
+					xmlDoc.LoadXml(xmlStr);
+
+					Tuple<DateTime, int> orderValues = ParseOrderAttribute(xmlDoc.SelectSingleNode($"{ROOT_NODE}/Order").InnerText);
+
+					documents[i] = new ScriptDocument() {
+						SysId = Guid.Parse(xmlDoc.SelectSingleNode($"{ROOT_NODE}/SysId").InnerText),
+						DateCreatedUtc = orderValues.Item1,
+						Order = orderValues.Item2,
+						ResourceName = resources[i]
+					};
+				}
+			}
+
+			return documents;
 		}
 
 		private Tuple<DateTime, int> ParseOrderAttribute(string value) {
