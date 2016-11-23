@@ -16,7 +16,7 @@ namespace DbUpgrader.SqlServer {
 			_connectionString = connectionString;
 		}
 
-		public void Execute(Script script) {
+		private void Execute(Script script) {
 			SqlConnection conn = new SqlConnection(_connectionString);
 			SqlTransaction transaction = null;
 

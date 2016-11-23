@@ -44,6 +44,7 @@
     <Compile Include="Interfaces\IDbCleaner.cs" />
     <Compile Include="Interfaces\IDbUpgrader.cs" />
     <Compile Include="Interfaces\IScriptExecutor.cs" />
+    <Compile Include="Interfaces\IScriptLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="ScriptDocument.cs" />
