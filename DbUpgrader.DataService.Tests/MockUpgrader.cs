@@ -18,6 +18,7 @@ namespace DbUpgrader.DataService.Tests {
 		public MockUpgrader(IDataService dataService, IScriptLoader scriptLoader) {
 			_dataService = dataService;
 			_scriptLoader = scriptLoader;
+			_successfullyRanAssemblies = new List<Assembly>();
 		}
 
 		public void Run(IList<Assembly> assemblies) {
