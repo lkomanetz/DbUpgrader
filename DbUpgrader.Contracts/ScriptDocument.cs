@@ -12,6 +12,7 @@ namespace DbUpgrader.Contracts {
 		public int Order { get; set; }
 		public IList<Script> Scripts { get; set; }
 		public string ResourceName { get; set; }
+		public bool IsComplete { get; set; }
 
 	}
 }

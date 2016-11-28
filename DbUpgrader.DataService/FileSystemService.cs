@@ -37,6 +37,10 @@ namespace DbUpgrader.DataService {
 			}
 		}
 
+		public void SetComplete(ScriptDocument document) {
+			throw new NotImplementedException();
+		}
+
 		public IList<Guid> GetCompletedDocumentIds() {
 			IList<Guid> completedDocumentIds = new List<Guid>();
 			string path = $@"{Directory.GetCurrentDirectory()}\{ROOT_DIRECTORY}";

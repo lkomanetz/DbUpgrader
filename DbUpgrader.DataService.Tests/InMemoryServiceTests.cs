@@ -4,16 +4,22 @@ using DbUpgrader.DataService.Contracts;
 using DbUpgrader.Contracts;
 using System.Collections;
 using System.Collections.Generic;
+using DbUpgrader.Contracts.Interfaces;
 
 namespace DbUpgrader.DataService.Tests {
 
 	[TestClass]
 	public class InMemoryServiceTests {
 		private static IDataService _memoryService;
+		private static IDbUpgrader _upgrader;
+		private static IScriptLoader _scriptLoader;
+
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
 			_memoryService = new InMemoryService();
+			_scriptLoader = new MockScriptLoader();
+			_upgrader = new MockUpgrader(_memoryService, _scriptLoader);
 		}
 
 		[ClassCleanup]
@@ -34,6 +40,7 @@ namespace DbUpgrader.DataService.Tests {
 		public void InMemory_AddScriptSucceeds() {
 			ScriptDocument doc = CreateNewDocument();
 			Script script = CreateNewScript(doc.SysId);
+			script.IsComplete = true;
 
 			_memoryService.Add(doc);
 			_memoryService.Add(script);
@@ -41,12 +48,22 @@ namespace DbUpgrader.DataService.Tests {
 			Assert.IsTrue(completedScripts.Contains(script.SysId), $"Created script not found for doc id '{doc.SysId}'.");
 		}
 
+		//TODO(Logan) -> Complete the DocumentMarkedAsComplete unit test.
+		[TestMethod]
+		public void InMemory_DocumentMarkedAsCompleteSucceeds() {
+			ScriptDocument doc = CreateNewDocument();
+			Script script = CreateNewScript(doc.SysId);
+
+			doc.Scripts = new List<Script>() { script };
+		}
+
 		private ScriptDocument CreateNewDocument()
 		{
 			return new ScriptDocument() {
 				SysId = Guid.NewGuid(),
 				DateCreatedUtc = DateTime.UtcNow,
-				Order = 0
+				Order = 0,
+				Scripts = new List<Script>()
 			};
 		}
 

@@ -65,6 +65,10 @@
       <Project>{6601d24e-648b-4abd-b87e-0c0f4e2a30c1}</Project>
       <Name>DbUpgrader.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DbUpgrader.DataService.Contracts\DbUpgrader.DataService.Contracts.csproj">
+      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
+      <Name>DbUpgrader.DataService.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DbUpgrader.DataService\DbUpgrader.DataService.csproj">
       <Project>{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}</Project>
       <Name>DbUpgrader.DataService</Name>

@@ -10,36 +10,50 @@ namespace DbUpgrader.DataService {
 
 	public class InMemoryService : IDataService
 	{
-		private IDictionary<Guid, IList<Guid>> _completedItems;
+		private IDictionary<Guid, ScriptDocument> _completedDocuments;
 
 		public InMemoryService()
 		{
-			_completedItems = new Dictionary<Guid, IList<Guid>>();
+			_completedDocuments = new Dictionary<Guid, ScriptDocument>();
 		}
 
 		public void Add(Script script) {
-			IList<Guid> scripts = null;
-			if (!_completedItems.TryGetValue(script.DocumentId, out scripts)) {
-				throw new Exception($"No document found for script id '{script.SysId}'");
+			ScriptDocument doc = null;
+			if (!_completedDocuments.TryGetValue(script.DocumentId, out doc)) {
+				throw new Exception($"No document found for doc id '{script.DocumentId}'");
 			}
 
-			scripts.Add(script.SysId);
+			if (!script.IsComplete)
+			{
+				throw new Exception($"Script id '{script.SysId}' is not complete.");
+			}
+
+			doc.Scripts.Add(script);
 		}
 
 		public void Add(ScriptDocument document) {
-			if (!_completedItems.ContainsKey(document.SysId)) {
-				_completedItems.Add(document.SysId, new List<Guid>());
+			if (!_completedDocuments.ContainsKey(document.SysId)) {
+				_completedDocuments.Add(document.SysId, document);
 			}
 		}
 
+		public void SetComplete(ScriptDocument document) {
+			ScriptDocument doc = null;
+			if (!_completedDocuments.TryGetValue(document.SysId, out doc)) {
+				throw new Exception($"No document found for doc id '{document.SysId}'.");
+			}
+
+			doc.IsComplete = true;
+		}
+
 		public void Clean() {
-			_completedItems.Clear();
+			_completedDocuments.Clear();
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
 			IList<Guid> completedDocumentIds = new List<Guid>();
 
-			foreach (Guid key in _completedItems.Keys) {
+			foreach (Guid key in _completedDocuments.Keys) {
 				completedDocumentIds.Add(key);
 			}
 
@@ -47,9 +61,11 @@ namespace DbUpgrader.DataService {
 		}
 
 		public IList<Guid> GetCompletedScriptsFor(Guid documentId) {
-			IList<Guid> completedScripts = null;
-			_completedItems.TryGetValue(documentId, out completedScripts);
-			return completedScripts;
+			ScriptDocument doc = null;
+			_completedDocuments.TryGetValue(documentId, out doc);
+			return doc.Scripts
+				.Select(x => x.SysId)
+				.ToList();
 		}
 
 	}

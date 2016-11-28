@@ -13,6 +13,7 @@ namespace DbUpgrader.Contracts {
 		public int Order { get; set; }
 		public string SqlScript { get; set; }
 		public string AssemblyName { get; set; }
+		public bool IsComplete { get; set; }
 	}
 
 }

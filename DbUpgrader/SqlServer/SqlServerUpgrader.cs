@@ -1,5 +1,6 @@
 ﻿using DbUpgrader.Contracts;
 using DbUpgrader.Contracts.Interfaces;
+using DbUpgrader.DataService.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ namespace DbUpgrader.SqlServer {
 
 	public class SqlServerUpgrader : IDbUpgrader {
 
+		private IDataService _dataService;
 		private IScriptLoader _scriptLoader;
 		private IScriptExecutor _scriptExecutor;
 		private IList<Assembly> _successfullyRanAssemblies;
@@ -20,9 +22,10 @@ namespace DbUpgrader.SqlServer {
 		private const string ROOT_NODE = "ScriptDocument";
 		private const string SCRIPT_NODE = "Script";
 
-		public SqlServerUpgrader(string connectionString) {
+		public SqlServerUpgrader(string connectionString, IDataService dataService) {
+			_dataService = dataService;
 			_scriptLoader = new ScriptLoader();
-			_scriptExecutor = new SqlServerExecutor(connectionString);
+			_scriptExecutor = new SqlServerExecutor(connectionString, dataService);
 			_successfullyRanAssemblies = new List<Assembly>();
 		}
 

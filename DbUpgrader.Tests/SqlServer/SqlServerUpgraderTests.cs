@@ -8,20 +8,24 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 using DbUpgrader.Tests.AnotherFakeService;
+using DbUpgrader.DataService.Contracts;
+using DbUpgrader.DataService;
 
 namespace DbUpgrader.Tests.SqlServer {
 
 	[TestClass]
 	public class SqlServerUpgraderTests {
 
+		private static IDataService _dataService;
 		private static SqlServerUpgrader _upgrader;
 		private static IDbCleaner _cleaner;
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
 			string connectionString = ConfigurationManager.ConnectionStrings["UnitTestConnectionString"].ConnectionString;
+			_dataService = new InMemoryService();
 			_cleaner = new TestSqlServerCleaner(connectionString);
-			_upgrader = new SqlServerUpgrader(connectionString);
+			_upgrader = new SqlServerUpgrader(connectionString, _dataService);
 			_cleaner.Clean();
 		}
 

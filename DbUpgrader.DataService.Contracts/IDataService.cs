@@ -14,6 +14,7 @@ namespace DbUpgrader.DataService.Contracts {
 		void Add(ScriptDocument document);
 		void Add(Script script);
 		void Clean();
+		void SetComplete(ScriptDocument document);
 
 	}
 

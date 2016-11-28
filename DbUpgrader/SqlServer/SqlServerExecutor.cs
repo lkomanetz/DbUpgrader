@@ -1,5 +1,6 @@
 ﻿using DbUpgrader.Contracts;
 using DbUpgrader.Contracts.Interfaces;
+using DbUpgrader.DataService.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -11,8 +12,10 @@ namespace DbUpgrader.SqlServer {
 
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
+		private IDataService _dataService;
 
-		public SqlServerExecutor(string connectionString) {
+		public SqlServerExecutor(string connectionString, IDataService dataService) {
+			_dataService = dataService;
 			_connectionString = connectionString;
 		}
 
@@ -26,7 +29,7 @@ namespace DbUpgrader.SqlServer {
 				SqlCommand cmd = new SqlCommand(script.SqlScript, conn, transaction);
 				cmd.ExecuteNonQuery();
 				transaction.Commit();
-				LogScriptAsRan(script.SysId, script.AssemblyName);
+				LogScriptAsRan(script, script.AssemblyName);
 			}
 			catch (SqlException ex) {
 				string msg = $"Script execution failed.\nScript Id: {script.SysId}\n";
@@ -76,33 +79,35 @@ namespace DbUpgrader.SqlServer {
 			return scriptIds;
 		}
 
-		private void LogScriptAsRan(Guid scriptId, string assemblyName) {
+		private void LogScriptAsRan(Script script, string assemblyName) {
 			/*
 			 * I'm not providing the names of the columns because when this first runs DateExecutedUtc
 			 * starts out as being named DateExecuted.  This will cause the insert to fail.
 			 */
-			string cmdString = $@"
-				INSERT INTO [Upgrader].[ExecutedScripts]
-				VALUES (
-					@sysId
-					, @scriptId
-					, @dateExecutedUtc
-					, @assemblyName
-				)";
+			//string cmdString = $@"
+			//	INSERT INTO [Upgrader].[ExecutedScripts]
+			//	VALUES (
+			//		@sysId
+			//		, @scriptId
+			//		, @dateExecutedUtc
+			//		, @assemblyName
+			//	)";
 
-			using (SqlConnection conn = new SqlConnection(_connectionString)) {
-				conn.Open();
-				using (SqlTransaction transaction = conn.BeginTransaction()) {
-					SqlCommand cmd = new SqlCommand(cmdString, conn, transaction);
-					cmd.Parameters.AddWithValue("@sysId", Guid.NewGuid());
-					cmd.Parameters.AddWithValue("@scriptId", scriptId);
-					cmd.Parameters.AddWithValue("@dateExecutedUtc", DateTime.UtcNow);
-					cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
+			//using (SqlConnection conn = new SqlConnection(_connectionString)) {
+			//	conn.Open();
+			//	using (SqlTransaction transaction = conn.BeginTransaction()) {
+			//		SqlCommand cmd = new SqlCommand(cmdString, conn, transaction);
+			//		cmd.Parameters.AddWithValue("@sysId", Guid.NewGuid());
+			//		cmd.Parameters.AddWithValue("@scriptId", scriptId);
+			//		cmd.Parameters.AddWithValue("@dateExecutedUtc", DateTime.UtcNow);
+			//		cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
 
-					cmd.ExecuteNonQuery();
-					transaction.Commit();
-				}
-			}
+			//		cmd.ExecuteNonQuery();
+			//		transaction.Commit();
+			//	}
+			//}
+
+			_dataService.Add(script);
 		}
 
 	}
