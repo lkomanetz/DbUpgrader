@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7D98F45A-9FEE-417C-BE0A-0C5F9BE8DAFD}</ProjectGuid>
+    <ProjectGuid>{B013562D-F25C-4EB0-B99D-D5E5F952F655}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DbUpgrader.Tests</RootNamespace>
-    <AssemblyName>DbUpgrader.Tests</AssemblyName>
+    <RootNamespace>DbUpgrader.DataService.Tests</RootNamespace>
+    <AssemblyName>DbUpgrader.DataService.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -16,7 +16,6 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,8 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -55,35 +52,23 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ScriptFileTests.cs" />
-    <Compile Include="SqlServer\TestSqlServerCleaner.cs" />
-    <Compile Include="SqlServer\SqlServerUpgraderTests.cs" />
+    <Compile Include="FileSystemServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="InMemoryServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DbUpgrader.Contracts\DbUpgrader.Contracts.csproj">
       <Project>{6601d24e-648b-4abd-b87e-0c0f4e2a30c1}</Project>
       <Name>DbUpgrader.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DbUpgrader.DataService.Contracts\DbUpgrader.DataService.Contracts.csproj">
+      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
+      <Name>DbUpgrader.DataService.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DbUpgrader.DataService\DbUpgrader.DataService.csproj">
-      <Project>{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}</Project>
+      <Project>{f9de2ed1-1f7a-4215-bd0d-a3b140915626}</Project>
       <Name>DbUpgrader.DataService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DbUpgrader.Tests.AnotherFakeService\DbUpgrader.Tests.AnotherFakeService.csproj">
-      <Project>{5969b0b2-4f30-4ff7-a29d-f5b7ae1bb797}</Project>
-      <Name>DbUpgrader.Tests.AnotherFakeService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DbUpgrader.Tests.FakeService\DbUpgrader.Tests.FakeService.csproj">
-      <Project>{625f2c0e-f3cb-4ead-957f-4a9f1228ec69}</Project>
-      <Name>DbUpgrader.Tests.FakeService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DbUpgrader\DbUpgrader.csproj">
-      <Project>{badaf88e-a264-41ed-9963-cd9fe1f53925}</Project>
-      <Name>DbUpgrader</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

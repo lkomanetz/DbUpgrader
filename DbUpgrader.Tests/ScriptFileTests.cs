@@ -11,7 +11,7 @@ using DbUpgrader.Contracts;
 using DbUpgrader.Tests.FakeService;
 using System.Reflection;
 
-namespace DbUpgrader.Tests.SqlServer {
+namespace DbUpgrader.Tests {
 
 	[TestClass]
 	public class ScriptFileTests {
