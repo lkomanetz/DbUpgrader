@@ -38,7 +38,7 @@ namespace DbUpgrader.DataService.Tests {
 
 		public void Run(ScriptDocument document) {
 			document.IsComplete = true;
-			_dataService.SetComplete(document);
+			_dataService.Update(document);
 		}
 
 		private IList<Script> FindScriptsThatNeedToRun(IList<Script> scriptsToRun, IList<Guid> scriptsAlreadyRan) {

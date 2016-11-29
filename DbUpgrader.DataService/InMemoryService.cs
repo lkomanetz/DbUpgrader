@@ -17,14 +17,27 @@ namespace DbUpgrader.DataService {
 			_completedDocuments = new Dictionary<Guid, ScriptDocument>();
 		}
 
+		public IList<ScriptDocument> GetDocuments() {
+			if (_completedDocuments.Count == 0) {
+				return null;
+			}
+
+			List<ScriptDocument> documents = new List<ScriptDocument>();
+
+			foreach (var kvp in _completedDocuments) {
+				documents.Add(kvp.Value);
+			}
+
+			return documents;
+		}
+
 		public void Add(Script script) {
 			ScriptDocument doc = null;
 			if (!_completedDocuments.TryGetValue(script.DocumentId, out doc)) {
 				throw new Exception($"No document found for doc id '{script.DocumentId}'");
 			}
 
-			if (!script.IsComplete)
-			{
+			if (!script.IsComplete) {
 				throw new Exception($"Script id '{script.SysId}' is not complete.");
 			}
 
@@ -37,13 +50,12 @@ namespace DbUpgrader.DataService {
 			}
 		}
 
-		public void SetComplete(ScriptDocument document) {
-			ScriptDocument doc = null;
-			if (!_completedDocuments.TryGetValue(document.SysId, out doc)) {
-				throw new Exception($"No document found for doc id '{document.SysId}'.");
+		public void Update(ScriptDocument document) {
+			if (!_completedDocuments.ContainsKey(document.SysId)) {
+				throw new Exception($"Document id '{document.SysId}' not found to update.");
 			}
 
-			doc.IsComplete = true;
+			_completedDocuments[document.SysId] = document;
 		}
 
 		public void Clean() {
