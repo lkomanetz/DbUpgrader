@@ -12,9 +12,11 @@ namespace DataService.Contracts {
 		IList<ScriptDocument> GetDocuments();
 		IList<Guid> GetCompletedDocumentIds();
 		IList<Script> GetScriptsFor(Guid documentId);
-		IList<Guid> GetCompletedScriptsFor(Guid documentId);
+		IList<Guid> GetCompletedScriptIdsFor(Guid documentId);
 		void Add(ScriptDocument document);
 		void Update(ScriptDocument document);
+		bool Delete(ScriptDocument document);
+		bool Delete(Script script);
 		void Clean();
 
 	}

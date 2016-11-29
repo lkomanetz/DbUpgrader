@@ -61,13 +61,27 @@ namespace DataService {
 				.ToList();
 		}
 
-		public IList<Guid> GetCompletedScriptsFor(Guid documentId) {
+		public IList<Guid> GetCompletedScriptIdsFor(Guid documentId) {
 			ScriptDocument doc = null;
 			_documents.TryGetValue(documentId, out doc);
 			return doc.Scripts
 				.Where(x => x.IsComplete)
 				.Select(x => x.SysId)
 				.ToList();
+		}
+
+		public bool Delete(ScriptDocument document) {
+			return _documents.Remove(
+				_documents.Where(x => x.Key == document.SysId).SingleOrDefault()
+			);
+		}
+
+		public bool Delete(Script script) {
+			ScriptDocument doc = GetDocument(script.DocumentId);
+
+			return doc.Scripts.Remove(
+				doc.Scripts.Where(x => x.SysId == script.SysId).SingleOrDefault()
+			);
 		}
 
 		private ScriptDocument GetDocument(Guid docId) {

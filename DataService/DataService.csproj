@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DbUpgrader.DataService.Contracts\DataService.Contracts.csproj">
+    <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj">
       <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
       <Name>DataService.Contracts</Name>
     </ProjectReference>

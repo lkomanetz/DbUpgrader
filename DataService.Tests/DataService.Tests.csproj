@@ -53,15 +53,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InMemoryServiceTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DbUpgrader.DataService.Contracts\DataService.Contracts.csproj">
+    <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj">
       <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
       <Name>DataService.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DbUpgrader.DataService\DataService.csproj">
+    <ProjectReference Include="..\DataService\DataService.csproj">
       <Project>{f9de2ed1-1f7a-4215-bd0d-a3b140915626}</Project>
       <Name>DataService</Name>
     </ProjectReference>
