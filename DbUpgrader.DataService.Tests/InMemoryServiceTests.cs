@@ -4,7 +4,6 @@ using DataService.Contracts;
 using ScriptLoader.Contracts;
 using System.Collections;
 using System.Collections.Generic;
-using DbUpgrader.Contracts.Interfaces;
 using System.Linq;
 
 namespace DataService.Tests {
@@ -12,15 +11,10 @@ namespace DataService.Tests {
 	[TestClass]
 	public class InMemoryServiceTests {
 		private static IDataService _memoryService;
-		private static IDbUpgrader _upgrader;
-		private static IScriptLoader _scriptLoader;
-
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
 			_memoryService = new InMemoryService();
-			_scriptLoader = new MockScriptLoader();
-			_upgrader = new MockUpgrader(_memoryService, _scriptLoader);
 		}
 
 		[ClassCleanup]
