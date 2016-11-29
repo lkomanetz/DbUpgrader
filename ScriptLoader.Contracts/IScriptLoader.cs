@@ -5,8 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbUpgrader.Contracts.Interfaces
-{
+namespace ScriptLoader.Contracts {
 	public interface IScriptLoader
 	{
 		IList<ScriptDocument> Documents { get; }

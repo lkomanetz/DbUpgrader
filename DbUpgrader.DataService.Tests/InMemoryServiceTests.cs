@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DbUpgrader.DataService.Contracts;
-using DbUpgrader.Contracts;
+using DataService.Contracts;
+using ScriptLoader.Contracts;
 using System.Collections;
 using System.Collections.Generic;
 using DbUpgrader.Contracts.Interfaces;
 using System.Linq;
 
-namespace DbUpgrader.DataService.Tests {
+namespace DataService.Tests {
 
 	[TestClass]
 	public class InMemoryServiceTests {
@@ -76,9 +76,23 @@ namespace DbUpgrader.DataService.Tests {
 			ScriptDocument doc = CreateNewDocument();
 
 			_memoryService.Add(doc);
-			IList<Guid> completedDocs = _memoryService.GetCompletedDocumentIds();
+			IList<ScriptDocument> completedDocs = _memoryService.GetDocuments();
 			Assert.IsTrue(completedDocs.Count == 1, "AddDocument added more than one document.");
-			Assert.IsTrue(completedDocs.Contains(doc.SysId), "Created document not found.");
+			Assert.IsTrue(completedDocs.Contains(doc), "Created document not found.");
+		}
+
+		[TestMethod]
+		public void InMemory_ReturnOnlyCompleteDocumentsSucceeds() {
+			ScriptDocument docOne = CreateNewDocument();
+			ScriptDocument docTwo = CreateNewDocument();
+
+			docOne.IsComplete = true;
+			_memoryService.Add(docOne);
+			_memoryService.Add(docTwo);
+
+			IList<Guid> completedDocIds = _memoryService.GetCompletedDocumentIds();
+			Assert.IsTrue(completedDocIds.Count == 1, "Incorrect number of completed documents returned.");
+			Assert.IsTrue(docOne.SysId == completedDocIds[0], "Incorrect document id returned.");
 		}
 
 		[TestMethod]

@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using DbUpgrader.Contracts;
 using System.Reflection;
+using ScriptLoader.Contracts;
 
-namespace DbUpgrader.DataService.Tests {
+namespace DataService.Tests {
 	//TODO(Logan) -> Implement the mock loader for data service tests.
 	public class MockScriptLoader : IScriptLoader {
 		private IList<ScriptDocument> _scriptDocuments;

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ScriptLoader.Contracts;
 
-namespace DbUpgrader.Contracts.Interfaces {
+namespace ScriptExecutor.Contracts {
 
 	public interface IScriptExecutor {
 

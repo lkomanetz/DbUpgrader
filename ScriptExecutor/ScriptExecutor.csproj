@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5969B0B2-4F30-4FF7-A29D-F5B7AE1BB797}</ProjectGuid>
+    <ProjectGuid>{63B127AC-B1DE-4317-AD48-9617561D6BF2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DbUpgrader.Tests.AnotherFakeService</RootNamespace>
-    <AssemblyName>DbUpgrader.Tests.AnotherFakeService</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>ScriptExecutor</RootNamespace>
+    <AssemblyName>ScriptExecutor</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,11 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnotherTestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServerExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Database\scripts.sql.xml" />
+    <ProjectReference Include="..\DbUpgrader.DataService.Contracts\DataService.Contracts.csproj">
+      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
+      <Name>DataService.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
+      <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
+      <Name>ScriptExecutor.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
+      <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
+      <Name>ScriptLoader.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

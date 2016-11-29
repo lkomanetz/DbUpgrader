@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DbUpgrader.Contracts.Interfaces;
-using DbUpgrader.Contracts;
+using ScriptLoader.Contracts;
 using System.Reflection;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
 
-namespace DbUpgrader {
+namespace ScriptLoader {
 
 	public class ScriptLoader : IScriptLoader {
 		private string _currentAssemblyName;

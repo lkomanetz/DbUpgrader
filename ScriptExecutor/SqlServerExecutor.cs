@@ -1,5 +1,5 @@
-﻿using ScriptLoader.Contracts;
-using ScriptExecutor.Contracts;
+﻿using ScriptExecutor.Contracts;
+using ScriptLoader.Contracts;
 using DataService.Contracts;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbUpgrader.SqlServer {
+namespace ScriptExecutor {
 
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;

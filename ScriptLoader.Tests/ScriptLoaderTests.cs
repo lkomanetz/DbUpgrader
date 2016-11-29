@@ -1,20 +1,19 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DbUpgrader.SqlServer;
 using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DbUpgrader.Contracts.Interfaces;
-using DbUpgrader.Contracts;
-using DbUpgrader.Tests.FakeService;
 using System.Reflection;
+using ScriptLoader.Contracts;
+using ScriptLoader.Tests.FakeService;
+using ScriptLoader.Tests.AnotherFakeService;
 
-namespace DbUpgrader.Tests {
+namespace ScriptLoader.Tests {
 
 	[TestClass]
-	public class ScriptFileTests {
+	public class ScriptLoaderTests {
 
 		private static ScriptLoader _loader;
 		private static Assembly _fakeServiceAssembly;

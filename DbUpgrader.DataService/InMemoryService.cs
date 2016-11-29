@@ -1,41 +1,43 @@
-﻿using DbUpgrader.DataService.Contracts;
+﻿using DataService.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DbUpgrader.Contracts;
+using ScriptLoader.Contracts;
 
-namespace DbUpgrader.DataService {
+namespace DataService {
 
 	public class InMemoryService : IDataService
 	{
-		private IDictionary<Guid, ScriptDocument> _completedDocuments;
+		private IDictionary<Guid, ScriptDocument> _documents;
 
 		public InMemoryService()
 		{
-			_completedDocuments = new Dictionary<Guid, ScriptDocument>();
+			_documents = new Dictionary<Guid, ScriptDocument>();
 		}
 
 		public IList<ScriptDocument> GetDocuments() {
-			if (_completedDocuments.Count == 0) {
+			if (_documents.Count == 0) {
 				return null;
 			}
 
 			List<ScriptDocument> documents = new List<ScriptDocument>();
 
-			foreach (var kvp in _completedDocuments) {
+			foreach (var kvp in _documents) {
 				documents.Add(kvp.Value);
 			}
 
 			return documents;
 		}
 
+		public IList<Script> GetScriptsFor(Guid documentId) {
+			ScriptDocument doc = this.GetDocument(documentId);
+			return doc.Scripts;
+		}
+
 		public void Add(Script script) {
-			ScriptDocument doc = null;
-			if (!_completedDocuments.TryGetValue(script.DocumentId, out doc)) {
-				throw new Exception($"No document found for doc id '{script.DocumentId}'");
-			}
+			ScriptDocument doc = this.GetDocument(script.DocumentId);
 
 			if (!script.IsComplete) {
 				throw new Exception($"Script id '{script.SysId}' is not complete.");
@@ -45,39 +47,46 @@ namespace DbUpgrader.DataService {
 		}
 
 		public void Add(ScriptDocument document) {
-			if (!_completedDocuments.ContainsKey(document.SysId)) {
-				_completedDocuments.Add(document.SysId, document);
+			if (!_documents.ContainsKey(document.SysId)) {
+				_documents.Add(document.SysId, document);
 			}
 		}
 
 		public void Update(ScriptDocument document) {
-			if (!_completedDocuments.ContainsKey(document.SysId)) {
+			if (!_documents.ContainsKey(document.SysId)) {
 				throw new Exception($"Document id '{document.SysId}' not found to update.");
 			}
 
-			_completedDocuments[document.SysId] = document;
+			_documents[document.SysId] = document;
 		}
 
 		public void Clean() {
-			_completedDocuments.Clear();
+			_documents.Clear();
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
-			IList<Guid> completedDocumentIds = new List<Guid>();
-
-			foreach (Guid key in _completedDocuments.Keys) {
-				completedDocumentIds.Add(key);
-			}
-
-			return completedDocumentIds;
+			return _documents
+				.Where(x => x.Value.IsComplete)
+				.Select(x => x.Key)
+				.ToList();
 		}
 
 		public IList<Guid> GetCompletedScriptsFor(Guid documentId) {
 			ScriptDocument doc = null;
-			_completedDocuments.TryGetValue(documentId, out doc);
+			_documents.TryGetValue(documentId, out doc);
 			return doc.Scripts
+				.Where(x => x.IsComplete)
 				.Select(x => x.SysId)
 				.ToList();
+		}
+
+		private ScriptDocument GetDocument(Guid docId) {
+			ScriptDocument doc = null;
+			if (!_documents.TryGetValue(docId, out doc)) {
+				throw new Exception($"Document id '{doc.SysId}' not found to update.");
+			}
+
+			return doc;
 		}
 
 	}

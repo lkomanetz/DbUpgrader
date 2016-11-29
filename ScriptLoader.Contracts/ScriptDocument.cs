@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbUpgrader.Contracts {
+namespace ScriptLoader.Contracts {
 	public class ScriptDocument {
 
 		public Guid SysId { get; set; }

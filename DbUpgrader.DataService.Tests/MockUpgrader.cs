@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using DbUpgrader.DataService.Contracts;
-using DbUpgrader.Contracts;
+using DataService.Contracts;
+using ScriptLoader.Contracts;
 
-namespace DbUpgrader.DataService.Tests {
+namespace DataService.Tests {
 
 	public class MockUpgrader : IDbUpgrader {
 		private IScriptLoader _scriptLoader;

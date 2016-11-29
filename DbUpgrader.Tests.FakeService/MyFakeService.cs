@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DbUpgrader.SqlServer;
 
-namespace DbUpgrader.Tests.FakeService {
+namespace ScriptLoader.Tests.FakeService {
 
 	public class MyFakeService {
 
