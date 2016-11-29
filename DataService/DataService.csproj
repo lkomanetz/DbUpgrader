@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6601D24E-648B-4ABD-B87E-0C0F4E2A30C1}</ProjectGuid>
+    <ProjectGuid>{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DbUpgrader.Contracts</RootNamespace>
-    <AssemblyName>DbUpgrader.Contracts</AssemblyName>
+    <RootNamespace>DataService</RootNamespace>
+    <AssemblyName>DataService</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -41,9 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IDbCleaner.cs" />
-    <Compile Include="Interfaces\IDbUpgrader.cs" />
+    <Compile Include="InMemoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DbUpgrader.DataService.Contracts\DataService.Contracts.csproj">
+      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
+      <Name>DataService.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
+      <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
+      <Name>ScriptLoader.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,24 +8,23 @@ using System.Threading.Tasks;
 using System.Reflection;
 using ScriptLoader.Contracts;
 using ScriptLoader.Tests.FakeService;
-using ScriptLoader.Tests.AnotherFakeService;
 
 namespace ScriptLoader.Tests {
 
 	[TestClass]
-	public class ScriptLoaderTests {
+	public class AssemblyLoaderTests {
 
-		private static ScriptLoader _loader;
+		private static AssemblyLoader _loader;
 		private static Assembly _fakeServiceAssembly;
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
 			_fakeServiceAssembly = typeof(MyFakeService).Assembly;
-			_loader = new ScriptLoader();
+			_loader = new AssemblyLoader();
 		}
 
 		[TestMethod]
-		public void ScriptsStayInOrder() {
+		public void AssemblyLoader_ScriptsStayInOrder() {
 			IList<ScriptDocument> documents = _loader.GetDocumentsToRun(_fakeServiceAssembly);
 
 			for (int i = 0; i < documents.Count; ++i) {
@@ -37,7 +36,7 @@ namespace ScriptLoader.Tests {
 		}
 
 		[TestMethod]
-		public void UpgraderCanFindSqlScriptFile() {
+		public void AssemblyLoader_UpgraderCanFindSqlScriptFile() {
 			IList<ScriptDocument> documents = _loader.GetDocumentsToRun(_fakeServiceAssembly);
 			for (int i = 0; i < documents.Count; ++i) {
 				Assert.IsTrue(documents[i].Scripts.Count >= 0);
@@ -45,7 +44,7 @@ namespace ScriptLoader.Tests {
 		}
 
 		[TestMethod]
-		public void UpgraderCanFindSqlDocuments() {
+		public void AssemblyLoader_UpgraderCanFindSqlDocuments() {
 			IList<ScriptDocument> documents = _loader.GetDocumentsToRun(_fakeServiceAssembly);
 			Assert.IsTrue(documents.Count >= 0, "Unable to find any SQL documents for upgrader.");
 		}

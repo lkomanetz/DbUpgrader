@@ -11,13 +11,13 @@ using System.Text.RegularExpressions;
 
 namespace ScriptLoader {
 
-	public class ScriptLoader : IScriptLoader {
+	public class AssemblyLoader : IScriptLoader {
 		private string _currentAssemblyName;
 
 		private const string ROOT_NODE = "ScriptDocument";
 		private const string SCRIPT_NODE = "Script";
 
-		public ScriptLoader() { }
+		public AssemblyLoader() { }
 
 		public IList<ScriptDocument> Documents { get; private set; }
 
@@ -67,7 +67,7 @@ namespace ScriptLoader {
 
 				scripts[i] = new Script() {
 					SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value),
-					SqlScript = scriptNodes[i].InnerText,
+					ScriptText = scriptNodes[i].InnerText,
 					DateCreatedUtc = orderValues.Item1,
 					Order = orderValues.Item2,
 					AssemblyName = _currentAssemblyName

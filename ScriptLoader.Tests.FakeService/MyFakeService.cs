@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbUpgrader.Tests.FakeServices
-{
-    public class Class1
-    {
-    }
+namespace ScriptLoader.Tests.FakeService {
+
+	public class MyFakeService {
+		public void Run() { }
+
+	}
+
 }

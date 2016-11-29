@@ -26,7 +26,7 @@ namespace ScriptExecutor {
 			try {
 				conn.Open();
 				transaction = conn.BeginTransaction();
-				SqlCommand cmd = new SqlCommand(script.SqlScript, conn, transaction);
+				SqlCommand cmd = new SqlCommand(script.ScriptText, conn, transaction);
 				cmd.ExecuteNonQuery();
 				transaction.Commit();
 				LogScriptAsRan(script, script.AssemblyName);
@@ -34,7 +34,7 @@ namespace ScriptExecutor {
 			catch (SqlException ex) {
 				string msg = $"Script execution failed.\nScript Id: {script.SysId}\n";
 				msg += $"Assembly: {script.AssemblyName}\n";
-				msg += $"Sql: {script.SqlScript}\n";
+				msg += $"Sql: {script.ScriptText}\n";
 				msg += $"SqlException Trace: {ex.StackTrace}";
 				transaction.Rollback();
 				throw new Exception(msg);
@@ -107,7 +107,7 @@ namespace ScriptExecutor {
 			//	}
 			//}
 
-			_dataService.Add(script);
+			//_dataService.Add(script);
 		}
 
 	}

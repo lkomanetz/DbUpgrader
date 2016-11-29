@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DbUpgrader.Tests")]
+[assembly: AssemblyTitle("DataService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DbUpgrader.Tests")]
+[assembly: AssemblyProduct("DataService")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7d98f45a-9fee-417c-be0a-0c5f9be8dafd")]
+[assembly: Guid("f9de2ed1-1f7a-4215-bd0d-a3b140915626")]
 
 // Version information for an assembly consists of the following four values:
 //

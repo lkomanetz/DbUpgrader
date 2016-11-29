@@ -40,16 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MyFakeService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\ScriptLoader.Tests.AnotherFakeService\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Database\scripts.sql.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DbUpgrader\DbUpgrader.csproj">
-      <Project>{badaf88e-a264-41ed-9963-cd9fe1f53925}</Project>
-      <Name>DbUpgrader</Name>
-    </ProjectReference>
+    <Folder Include="Database\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
