@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Executioner.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,20 +13,20 @@ using BackingStore.Contracts;
 
 namespace ScriptLoader {
 
-	//TODO(Logan) -> Remove the IBackingStore "has-a" relationship.
 	public class AssemblyLoader : IScriptLoader {
 		private Assembly _assembly;
-		private IBackingStore _backingStore;
 
-		public AssemblyLoader(Assembly assembly, IBackingStore backingStore) {
+		public AssemblyLoader(Assembly assembly) {
 			_assembly = assembly;
-			_backingStore = backingStore;
 		}
 
 		public IList<ScriptDocument> Documents { get; private set; }
 
-		public void LoadDocuments() {
+		public void LoadDocuments(IBackingStore backingStore) {
 			Documents = GetDocumentsToRun(_assembly);
+			foreach (ScriptDocument doc in this.Documents) {
+				backingStore.Add(doc);
+			}
 		}
 
 		internal ScriptDocument[] GetDocumentsToRun(Assembly assembly) {
@@ -53,8 +54,6 @@ namespace ScriptLoader {
 						ResourceName = resources[i],
 						Scripts = GetScriptsFrom(xmlDoc)
 					};
-
-					_backingStore.Add(documents[i]);
 				}
 			}
 

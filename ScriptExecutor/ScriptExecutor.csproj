@@ -49,13 +49,13 @@
       <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
       <Name>BackingStore.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
+      <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
+      <Name>Executioner.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
       <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
       <Name>ScriptExecutor.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
-      <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
-      <Name>ScriptLoader.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

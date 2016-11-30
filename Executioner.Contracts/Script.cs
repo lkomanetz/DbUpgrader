@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScriptLoader.Contracts {
-	public class ScriptDocument {
+namespace Executioner.Contracts {
 
+	public class Script {
 		public Guid SysId { get; set; }
+		public Guid DocumentId { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 		public int Order { get; set; }
-		public IList<Script> Scripts { get; set; }
-		public string ResourceName { get; set; }
+		public string ScriptText { get; set; }
+		public string AssemblyName { get; set; }
 		public bool IsComplete { get; set; }
-
 	}
+
 }

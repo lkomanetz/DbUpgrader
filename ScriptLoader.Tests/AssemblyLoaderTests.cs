@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using ScriptLoader.Contracts;
+using Executioner.Contracts;
 using ScriptLoader.Tests.FakeService;
+using BackingStore.Contracts;
 
 namespace ScriptLoader.Tests {
 
@@ -16,11 +17,18 @@ namespace ScriptLoader.Tests {
 
 		private static AssemblyLoader _loader;
 		private static Assembly _fakeServiceAssembly;
+		private static IBackingStore _backingStore;
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
+			_backingStore = new MockBackingStore();
 			_fakeServiceAssembly = typeof(MyFakeService).Assembly;
-			_loader = new AssemblyLoader(_fakeServiceAssembly, new MockBackingStore());
+			_loader = new AssemblyLoader(_fakeServiceAssembly);
+		}
+
+		[ClassCleanup]
+		public static void Cleanup() {
+			_backingStore.Dispose();
 		}
 
 		[TestMethod]
@@ -51,7 +59,7 @@ namespace ScriptLoader.Tests {
 
 		[TestMethod]
 		public void AssemblyLoader_LoadDocumentsSucceeds() {
-			_loader.LoadDocuments();
+			_loader.LoadDocuments(_backingStore);
 			Assert.IsTrue(
 				_loader.Documents.Count == 1,
 				$"Expected 1 document -> Actual {_loader.Documents.Count}."

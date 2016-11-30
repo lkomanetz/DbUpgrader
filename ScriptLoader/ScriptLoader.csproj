@@ -49,6 +49,10 @@
       <Project>{A7B9BCAA-A266-485C-9ACD-F47CDB10B109}</Project>
       <Name>BackingStore.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
+      <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
+      <Name>Executioner.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
       <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
       <Name>ScriptLoader.Contracts</Name>
