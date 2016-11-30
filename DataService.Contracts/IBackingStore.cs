@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ScriptLoader.Contracts;
 
-namespace DataService.Contracts {
+namespace BackingStore.Contracts {
 
-	public interface IBackingStore {
+	public interface IBackingStore : IDisposable {
 
 		IList<ScriptDocument> GetDocuments();
 		IList<Guid> GetCompletedDocumentIds();

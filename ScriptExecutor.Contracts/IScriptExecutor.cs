@@ -9,7 +9,7 @@ namespace ScriptExecutor.Contracts {
 
 	public interface IScriptExecutor {
 
-		void Execute(IList<Script> scripts);
+		void Execute();
 		IList<Guid> GetScriptsAlreadyRanFor(string assemblyName);
 
 	}

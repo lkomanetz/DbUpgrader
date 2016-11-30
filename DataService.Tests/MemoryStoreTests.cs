@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DataService.Contracts;
+using BackingStore.Contracts;
 using ScriptLoader.Contracts;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace DataService.Tests {
+namespace BackingStore.Tests {
 
 	[TestClass]
 	public class MemoryStoreTests {

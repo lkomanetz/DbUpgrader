@@ -8,27 +8,29 @@ using System.Reflection;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
+using BackingStore.Contracts;
 
 namespace ScriptLoader {
 
+	//TODO(Logan) -> Remove the IBackingStore "has-a" relationship.
 	public class AssemblyLoader : IScriptLoader {
-		private string _currentAssemblyName;
+		private Assembly _assembly;
+		private IBackingStore _backingStore;
 
-		private const string ROOT_NODE = "ScriptDocument";
-		private const string SCRIPT_NODE = "Script";
-
-		public AssemblyLoader() { }
+		public AssemblyLoader(Assembly assembly, IBackingStore backingStore) {
+			_assembly = assembly;
+			_backingStore = backingStore;
+		}
 
 		public IList<ScriptDocument> Documents { get; private set; }
 
-		public void LoadDocuments(Assembly assembly) {
-			_currentAssemblyName = assembly.FullName;
-			Documents = GetDocumentsToRun(assembly);
+		public void LoadDocuments() {
+			Documents = GetDocumentsToRun(_assembly);
 		}
 
 		internal ScriptDocument[] GetDocumentsToRun(Assembly assembly) {
 			string[] resources = assembly.GetManifestResourceNames()
-				.Where(x => x.Contains(".sql.xml"))
+				.Where(x => x.Contains(ScriptLoaderConstants.FILE_EXTENSION))
 				.ToArray<String>();
 
 			ScriptDocument[] documents = new ScriptDocument[resources.Length];
@@ -40,15 +42,19 @@ namespace ScriptLoader {
 					XmlDocument xmlDoc = new XmlDocument();
 					xmlDoc.LoadXml(xmlStr);
 
-					Tuple<DateTime, int> orderValues = ParseOrderAttribute(xmlDoc.SelectSingleNode($"{ROOT_NODE}/Order").InnerText);
+					Tuple<DateTime, int> orderValues = ParseOrderAttribute(
+						xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/Order").InnerText
+					);
 
 					documents[i] = new ScriptDocument() {
-						SysId = Guid.Parse(xmlDoc.SelectSingleNode($"{ROOT_NODE}/SysId").InnerText),
+						SysId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText),
 						DateCreatedUtc = orderValues.Item1,
 						Order = orderValues.Item2,
 						ResourceName = resources[i],
 						Scripts = GetScriptsFrom(xmlDoc)
 					};
+
+					_backingStore.Add(documents[i]);
 				}
 			}
 
@@ -57,7 +63,7 @@ namespace ScriptLoader {
 
 		internal Script[] GetScriptsFrom(XmlDocument xmlDoc)
 		{
-			XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(SCRIPT_NODE);
+			XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(ScriptLoaderConstants.SCRIPT_NODE);
 			Script[] scripts = new Script[scriptNodes.Count];
 
 			for (short i = 0; i < scriptNodes.Count; ++i) {
@@ -70,7 +76,7 @@ namespace ScriptLoader {
 					ScriptText = scriptNodes[i].InnerText,
 					DateCreatedUtc = orderValues.Item1,
 					Order = orderValues.Item2,
-					AssemblyName = _currentAssemblyName
+					AssemblyName = _assembly.FullName
 				};
 			}
 

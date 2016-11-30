@@ -20,7 +20,7 @@ namespace ScriptLoader.Tests {
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
 			_fakeServiceAssembly = typeof(MyFakeService).Assembly;
-			_loader = new AssemblyLoader();
+			_loader = new AssemblyLoader(_fakeServiceAssembly, new MockBackingStore());
 		}
 
 		[TestMethod]
@@ -36,7 +36,7 @@ namespace ScriptLoader.Tests {
 		}
 
 		[TestMethod]
-		public void AssemblyLoader_UpgraderCanFindSqlScriptFile() {
+		public void AssemblyLoader_LoaderCanFindScripts() {
 			IList<ScriptDocument> documents = _loader.GetDocumentsToRun(_fakeServiceAssembly);
 			for (int i = 0; i < documents.Count; ++i) {
 				Assert.IsTrue(documents[i].Scripts.Count >= 0);
@@ -44,9 +44,18 @@ namespace ScriptLoader.Tests {
 		}
 
 		[TestMethod]
-		public void AssemblyLoader_UpgraderCanFindSqlDocuments() {
+		public void AssemblyLoader_LoaderCanFindDocuments() {
 			IList<ScriptDocument> documents = _loader.GetDocumentsToRun(_fakeServiceAssembly);
 			Assert.IsTrue(documents.Count >= 0, "Unable to find any SQL documents for upgrader.");
+		}
+
+		[TestMethod]
+		public void AssemblyLoader_LoadDocumentsSucceeds() {
+			_loader.LoadDocuments();
+			Assert.IsTrue(
+				_loader.Documents.Count == 1,
+				$"Expected 1 document -> Actual {_loader.Documents.Count}."
+			);
 		}
 
 		private void AssertOrder(IList<Script> scripts, string expectedOrder) {

@@ -6,9 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ScriptLoader.Contracts {
-	public interface IScriptLoader
-	{
+
+	public interface IScriptLoader {
+		
 		IList<ScriptDocument> Documents { get; }
-		void LoadDocuments(Assembly assembly);
+		//TODO(Logan) -> Figure out how to add IBackingStore dependency to LoadDocuments()
+		void LoadDocuments();
+
 	}
+
 }

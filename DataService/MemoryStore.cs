@@ -1,4 +1,4 @@
-﻿using DataService.Contracts;
+﻿using BackingStore.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ScriptLoader.Contracts;
 
-namespace DataService {
+namespace BackingStore {
 
 	public class MemoryStore : IBackingStore {
 		private IDictionary<Guid, ScriptDocument> _documents;
@@ -80,6 +80,16 @@ namespace DataService {
 			return doc.Scripts.Remove(
 				doc.Scripts.Where(x => x.SysId == script.SysId).SingleOrDefault()
 			);
+		}
+
+		public void Dispose() {
+			Dispose(true);
+		}
+
+		protected void Dispose(bool disposing) {
+			if (disposing) {
+				this.Clean();
+			}
 		}
 
 		private ScriptDocument GetDocument(Guid docId) {
