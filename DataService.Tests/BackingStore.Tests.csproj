@@ -53,17 +53,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="InMemoryServiceTests.cs" />
+    <Compile Include="MemoryStoreTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj">
+    <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
       <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
-      <Name>DataService.Contracts</Name>
+      <Name>BackingStore.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataService\DataService.csproj">
+    <ProjectReference Include="..\DataService\BackingStore.csproj">
       <Project>{f9de2ed1-1f7a-4215-bd0d-a3b140915626}</Project>
-      <Name>DataService</Name>
+      <Name>BackingStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
       <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>

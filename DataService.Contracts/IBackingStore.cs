@@ -7,7 +7,7 @@ using ScriptLoader.Contracts;
 
 namespace DataService.Contracts {
 
-	public interface IDataService {
+	public interface IBackingStore {
 
 		IList<ScriptDocument> GetDocuments();
 		IList<Guid> GetCompletedDocumentIds();

@@ -45,9 +45,9 @@
     <Compile Include="SqlServerExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj">
+    <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
       <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
-      <Name>DataService.Contracts</Name>
+      <Name>BackingStore.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
       <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>

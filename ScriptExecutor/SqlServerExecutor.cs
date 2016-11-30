@@ -12,9 +12,9 @@ namespace ScriptExecutor {
 
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
-		private IDataService _dataService;
+		private IBackingStore _dataService;
 
-		public SqlServerExecutor(string connectionString, IDataService dataService) {
+		public SqlServerExecutor(string connectionString, IBackingStore dataService) {
 			_dataService = dataService;
 			_connectionString = connectionString;
 		}

@@ -10,12 +10,12 @@ using System.Reflection;
 namespace DataService.Tests {
 
 	[TestClass]
-	public class InMemoryServiceTests {
-		private static IDataService _memoryService;
+	public class MemoryStoreTests {
+		private static IBackingStore _memoryService;
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
-			_memoryService = new InMemoryService();
+			_memoryService = new MemoryStore();
 		}
 
 		[ClassCleanup]

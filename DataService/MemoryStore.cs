@@ -8,12 +8,10 @@ using ScriptLoader.Contracts;
 
 namespace DataService {
 
-	public class InMemoryService : IDataService
-	{
+	public class MemoryStore : IBackingStore {
 		private IDictionary<Guid, ScriptDocument> _documents;
 
-		public InMemoryService()
-		{
+		public MemoryStore() {
 			_documents = new Dictionary<Guid, ScriptDocument>();
 		}
 

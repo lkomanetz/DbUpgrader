@@ -15,11 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptLoader.Tests", "Scrip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptLoader.Tests.FakeService", "ScriptLoader.Tests.FakeService\ScriptLoader.Tests.FakeService.csproj", "{870CF754-895C-4BDB-BE02-A8F7C290D94C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService", "DataService\DataService.csproj", "{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackingStore", "DataService\BackingStore.csproj", "{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Contracts", "DataService.Contracts\DataService.Contracts.csproj", "{A7B9BCAA-A266-485C-9ACD-F47CDB10B109}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackingStore.Contracts", "DataService.Contracts\BackingStore.Contracts.csproj", "{A7B9BCAA-A266-485C-9ACD-F47CDB10B109}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Tests", "DataService.Tests\DataService.Tests.csproj", "{B013562D-F25C-4EB0-B99D-D5E5F952F655}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackingStore.Tests", "DataService.Tests\BackingStore.Tests.csproj", "{B013562D-F25C-4EB0-B99D-D5E5F952F655}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
