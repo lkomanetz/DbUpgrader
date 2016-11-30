@@ -9,6 +9,7 @@ using System.Reflection;
 
 namespace BackingStore.Tests {
 
+	//TODO(Logan) -> Add tests to make sure backing store will sort documents and scripts correctly.
 	[TestClass]
 	public class MemoryStoreTests {
 		private static IBackingStore _memoryService;

@@ -26,12 +26,12 @@ namespace BackingStore {
 				documents.Add(kvp.Value);
 			}
 
-			return documents;
+			return Sort(documents);
 		}
 
 		public IList<Script> GetScriptsFor(Guid documentId) {
 			ScriptDocument doc = this.GetDocument(documentId);
-			return doc.Scripts;
+			return Sort(doc.Scripts);
 		}
 
 		public void Add(ScriptDocument document) {
@@ -101,6 +101,22 @@ namespace BackingStore {
 			return doc;
 		}
 
+		private IList<ScriptDocument> Sort(IList<ScriptDocument> docs) {
+			docs = docs.OrderBy(doc => doc.DateCreatedUtc)
+				.ThenBy(doc => doc.Order)
+				.ToList();
+
+			return docs;
+		}
+
+		private IList<Script> Sort(IList<Script> scripts) {
+			scripts = scripts
+				.OrderBy(script => script.DateCreatedUtc)
+				.ThenBy(script => script.Order)
+				.ToList();
+
+			return scripts;
+		}
 	}
 
 }
