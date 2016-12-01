@@ -7,6 +7,7 @@ using BackingStore;
 using System.Collections.Generic;
 using Executioner.Contracts;
 using System.Linq;
+using ScriptExecutor.Tests.Classes;
 
 namespace ScriptExecutor.Tests {
 
