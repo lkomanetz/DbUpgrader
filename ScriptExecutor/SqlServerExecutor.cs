@@ -7,18 +7,25 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ScriptLoader.Contracts;
 
 namespace ScriptExecutor {
 
 	//TODO(Logan) -> Start working on the script executor for SQL Server
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
-		private IBackingStore _dataService;
+		private IBackingStore _backingStore;
+		private IScriptLoader _scriptLoader;
+		private IList<Guid> _completedDocs;
 
-		public SqlServerExecutor(string connectionString, IBackingStore dataService) {
-			_dataService = dataService;
+		public SqlServerExecutor(string connectionString, IScriptLoader scriptLoader, IBackingStore backingStore) {
+			_backingStore = backingStore;
 			_connectionString = connectionString;
+			_scriptLoader = scriptLoader;
+			_completedDocs = new List<Guid>();
 		}
+
+		public IList<Guid> CompletedDocuments { get { return _backingStore.GetCompletedDocumentIds(); } }
 
 		private void Execute(Script script) {
 			SqlConnection conn = new SqlConnection(_connectionString);
@@ -50,11 +57,20 @@ namespace ScriptExecutor {
 		public void Execute(IList<Script> scripts) {
 			for (short i = 0; i < scripts.Count; i++) {
 				Execute(scripts[i]);
+				scripts[i].IsComplete = true;
+				_backingStore.Update(scripts[i]);
 			}
 		}
 
 		public void Execute() {
+			IList<ScriptDocument> docsToExecute = _backingStore.GetDocuments();
+			for (short i = 0; i < docsToExecute.Count; ++i) {
+				Execute(docsToExecute[i].Scripts);
 
+				docsToExecute[i].IsComplete = true;
+				_completedDocs.Add(docsToExecute[i].SysId);
+				_backingStore.Update(docsToExecute[i]);
+			}
 		}
 
 		public IList<Guid> GetScriptsAlreadyRanFor(string assemblyName) {

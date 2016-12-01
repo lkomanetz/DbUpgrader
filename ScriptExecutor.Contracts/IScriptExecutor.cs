@@ -9,6 +9,8 @@ namespace ScriptExecutor.Contracts {
 
 	public interface IScriptExecutor {
 
+		IList<Guid> CompletedDocuments { get; }
+
 		void Execute();
 		IList<Guid> GetScriptsAlreadyRanFor(string assemblyName);
 

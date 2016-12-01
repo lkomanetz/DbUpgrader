@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Executioner.Contracts;
+using Executioner.ExtensionMethods;
 
 namespace BackingStore {
 
@@ -46,6 +47,12 @@ namespace BackingStore {
 			}
 
 			_documents[document.SysId] = document;
+		}
+
+		public void Update(Script script) {
+			ScriptDocument doc = GetDocument(script.DocumentId);
+			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
+			doc.Scripts[index] = script;
 		}
 
 		public void Clean() {

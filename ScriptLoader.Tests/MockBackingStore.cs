@@ -23,6 +23,7 @@ namespace ScriptLoader.Tests {
 		public IList<ScriptDocument> GetDocuments() { return null; }
 		public IList<Script> GetScriptsFor(Guid documentId) { return null; }
 		public void Update(ScriptDocument document) { }
+		public void Update(Script script) { }
 		public void Dispose() { }
 
 	}

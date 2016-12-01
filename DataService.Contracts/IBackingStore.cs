@@ -15,6 +15,7 @@ namespace BackingStore.Contracts {
 		IList<Guid> GetCompletedScriptIdsFor(Guid documentId);
 		void Add(ScriptDocument document);
 		void Update(ScriptDocument document);
+		void Update(Script script);
 		bool Delete(ScriptDocument document);
 		bool Delete(Script script);
 		void Clean();

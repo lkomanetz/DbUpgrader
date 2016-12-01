@@ -254,6 +254,32 @@ namespace BackingStore.Tests {
 			);
 		}
 
+		[TestMethod]
+		public void InMemory_UpdateScriptSucceeds() {
+			ScriptDocument doc = CreateNewDocument(numOfScripts: 3);
+			_memoryService.Add(doc);
+
+			Script newScript = new Script() {
+				SysId = doc.Scripts[1].SysId,
+				AssemblyName = doc.Scripts[1].AssemblyName,
+				DocumentId = doc.Scripts[1].DocumentId,
+				ScriptText = doc.Scripts[1].ScriptText,
+				IsComplete = doc.Scripts[1].IsComplete,
+				DateCreatedUtc = doc.Scripts[1].DateCreatedUtc,
+				Order = doc.Scripts[1].Order
+			};
+
+			newScript.IsComplete = true;
+			_memoryService.Update(newScript);
+
+			ScriptDocument docAfterUpdate = _memoryService.GetDocuments()
+				.Where(x => x.SysId == doc.SysId)
+				.Single();
+
+			Script updatedScript = docAfterUpdate.Scripts.Where(x => x.SysId == newScript.SysId).Single();
+			Assert.IsTrue(updatedScript == newScript);
+		}
+
 		private void AssertOrder(IList<IOrderedItem> items, string expectedOrder) {
 			string actualOrder = String.Empty;
 			foreach (IOrderedItem item in items) {
