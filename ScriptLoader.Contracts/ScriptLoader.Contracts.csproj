@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
-      <Project>{A7B9BCAA-A266-485C-9ACD-F47CDB10B109}</Project>
+      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
       <Name>BackingStore.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">

@@ -7,8 +7,8 @@
     <ProjectGuid>{A7B9BCAA-A266-485C-9ACD-F47CDB10B109}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataService.Contracts</RootNamespace>
-    <AssemblyName>DataService.Contracts</AssemblyName>
+    <RootNamespace>BackingStore.Contracts</RootNamespace>
+    <AssemblyName>BackingStore.Contracts</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

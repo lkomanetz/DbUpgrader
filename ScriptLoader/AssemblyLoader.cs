@@ -79,9 +79,7 @@ namespace ScriptLoader {
 				};
 			}
 
-			return scripts.OrderBy(x => x.DateCreatedUtc)
-				.ThenBy(x => x.Order)
-				.ToArray<Script>();
+			return scripts;
 		}
 
 		private Tuple<DateTime, int> ParseOrderAttribute(string value) {

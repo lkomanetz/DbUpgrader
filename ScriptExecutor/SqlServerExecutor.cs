@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace ScriptExecutor {
 
+	//TODO(Logan) -> Start working on the script executor for SQL Server
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
 		private IBackingStore _dataService;
