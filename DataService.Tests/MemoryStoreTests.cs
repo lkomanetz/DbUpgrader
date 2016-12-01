@@ -9,7 +9,6 @@ using System.Reflection;
 
 namespace BackingStore.Tests {
 
-	//TODO(Logan) -> Add tests to make sure backing store will sort documents and scripts correctly.
 	[TestClass]
 	public class MemoryStoreTests {
 		private static IBackingStore _memoryService;
@@ -184,7 +183,13 @@ namespace BackingStore.Tests {
 			
 			foreach (ScriptDocument doc in docs) {
 				_memoryService.Add(doc);
-			}	
+			}
+
+			IList<ScriptDocument> docsReturned = _memoryService.GetDocuments();
+			AssertOrder(
+				docsReturned.Select(x => (IOrderedItem)x).ToList(),
+				$"Date: {currentTime.ToShortDateString()} Order: 1Date: {currentTime.ToShortDateString()} Order: 2Date: {currentTime.ToShortDateString()} Order: 3"
+			);
 		}
 
 		[TestMethod]
@@ -208,7 +213,7 @@ namespace BackingStore.Tests {
 		}
 
 		[TestMethod]
-		public void InMemory_ScriptsAreInCorrectOrder() {
+		public void InMemory_ScriptsAreInCorrectOrder_BasedOnDate() {
 			DateTime currentTime = DateTime.UtcNow;
 			ScriptDocument doc = CreateNewDocument(numOfScripts: 0);
 
@@ -225,6 +230,27 @@ namespace BackingStore.Tests {
 			AssertOrder(
 				scriptsReturned.Select(x => (IOrderedItem)x).ToList(),
 				$"Date: {currentTime.ToShortDateString()} Order: 0Date: {currentTime.AddDays(1).ToShortDateString()} Order: 0Date: {currentTime.AddDays(2).ToShortDateString()} Order: 0"
+			);
+		}
+
+		[TestMethod]
+		public void InMemory_ScriptsAreInCorrectOrder_BasedOnOrder() {
+			DateTime currentTime = DateTime.UtcNow;
+			ScriptDocument doc = CreateNewDocument(numOfScripts: 0);
+
+			IList<Script> scripts = new List<Script>() {
+				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 2),
+				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 1),
+				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 0)
+			};
+
+			doc.Scripts = scripts;
+			_memoryService.Add(doc);
+
+			IList<Script> scriptsReturned = _memoryService.GetScriptsFor(doc.SysId);
+			AssertOrder(
+				scriptsReturned.Select(x => (IOrderedItem)x).ToList(),
+				$"Date: {currentTime.ToShortDateString()} Order: 0Date: {currentTime.ToShortDateString()} Order: 1Date: {currentTime.ToShortDateString()} Order: 2"
 			);
 		}
 
