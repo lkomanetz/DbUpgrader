@@ -11,7 +11,6 @@ using ScriptLoader.Contracts;
 
 namespace ScriptExecutor {
 
-	//TODO(Logan) -> Start working on the script executor for SQL Server
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
 		private IBackingStore _backingStore;
@@ -37,7 +36,6 @@ namespace ScriptExecutor {
 				SqlCommand cmd = new SqlCommand(script.ScriptText, conn, transaction);
 				cmd.ExecuteNonQuery();
 				transaction.Commit();
-				LogScriptAsRan(script, script.AssemblyName);
 			}
 			catch (SqlException ex) {
 				string msg = $"Script execution failed.\nScript Id: {script.SysId}\n";
@@ -54,7 +52,7 @@ namespace ScriptExecutor {
 			}
 		}
 
-		public void Execute(IList<Script> scripts) {
+		private void Execute(IList<Script> scripts) {
 			for (short i = 0; i < scripts.Count; i++) {
 				Execute(scripts[i]);
 				scripts[i].IsComplete = true;
@@ -98,37 +96,6 @@ namespace ScriptExecutor {
 			}
 
 			return scriptIds;
-		}
-
-		private void LogScriptAsRan(Script script, string assemblyName) {
-			/*
-			 * I'm not providing the names of the columns because when this first runs DateExecutedUtc
-			 * starts out as being named DateExecuted.  This will cause the insert to fail.
-			 */
-			//string cmdString = $@"
-			//	INSERT INTO [Upgrader].[ExecutedScripts]
-			//	VALUES (
-			//		@sysId
-			//		, @scriptId
-			//		, @dateExecutedUtc
-			//		, @assemblyName
-			//	)";
-
-			//using (SqlConnection conn = new SqlConnection(_connectionString)) {
-			//	conn.Open();
-			//	using (SqlTransaction transaction = conn.BeginTransaction()) {
-			//		SqlCommand cmd = new SqlCommand(cmdString, conn, transaction);
-			//		cmd.Parameters.AddWithValue("@sysId", Guid.NewGuid());
-			//		cmd.Parameters.AddWithValue("@scriptId", scriptId);
-			//		cmd.Parameters.AddWithValue("@dateExecutedUtc", DateTime.UtcNow);
-			//		cmd.Parameters.AddWithValue("@assemblyName", assemblyName);
-
-			//		cmd.ExecuteNonQuery();
-			//		transaction.Commit();
-			//	}
-			//}
-
-			//_dataService.Add(script);
 		}
 
 	}

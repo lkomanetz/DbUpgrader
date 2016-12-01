@@ -12,7 +12,6 @@ namespace ScriptExecutor.Contracts {
 		IList<Guid> CompletedDocuments { get; }
 
 		void Execute();
-		IList<Guid> GetScriptsAlreadyRanFor(string assemblyName);
 
 	}
 

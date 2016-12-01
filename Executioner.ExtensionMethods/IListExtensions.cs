@@ -18,5 +18,11 @@ namespace Executioner.ExtensionMethods
 			return -1;
 		}
 
+		public static void ForEach<T>(this IList<T> source, Action<T> action) {
+			for (int i = 0; i < source.Count; ++i) {
+				action(source[i]);
+			}
+		}
+
 	}
 }

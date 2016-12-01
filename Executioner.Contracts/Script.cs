@@ -20,14 +20,14 @@ namespace Executioner.Contracts {
 			return this.SysId.GetHashCode();
 		}
 
-		//public override bool Equals(object obj) {
-		//	var otherScript = obj as Script;
-		//	if (otherScript == null) {
-		//		return false;
-		//	}
+		public override bool Equals(object obj) {
+			var otherScript = obj as Script;
+			if (otherScript == null) {
+				return false;
+			}
 
-		//	return IsEqual(this, otherScript);
-		//}
+			return IsEqual(this, otherScript);
+		}
 
 		public static bool operator ==(Script scriptA, Script scriptB) {
 			if (Object.ReferenceEquals(scriptA, scriptB)) {

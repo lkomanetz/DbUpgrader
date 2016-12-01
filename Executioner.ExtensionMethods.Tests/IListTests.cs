@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Executioner.ExtensionMethods.Tests {
 
@@ -10,18 +11,9 @@ namespace Executioner.ExtensionMethods.Tests {
 
 		[TestMethod]
 		public void IList_FindIndexSucceeds() {
-			IList<TestClass> testList = new List<TestClass>();
-			Guid testGuid = Guid.NewGuid();
+			IList<TestClass> testList = CreateList();
 
-			for (int i = 0; i <= 10; ++i) {
-				var item = new TestClass() {
-					Number = i,
-					FloatNumber = (float)i,
-					Text = $"Text{i}",
-					Id = Guid.NewGuid()
-				};
-				testList.Add(item);
-			}
+			Guid testGuid = Guid.NewGuid();
 			testList[5].Id = testGuid;
 
 			int itemIndex = testList.FindIndex(x => x.Number == 5);
@@ -37,6 +29,34 @@ namespace Executioner.ExtensionMethods.Tests {
 			Assert.IsTrue(itemIndex == 5, $"Expected {5}\nActual {itemIndex}");
 		}
 
+		[TestMethod]
+		public void IList_ForEachMethodSucceeds() {
+			IList<TestClass> testList = CreateList();
+			testList.ForEach(x => {
+				x.Boolean = true;
+			});
+
+			Assert.IsFalse(testList.Any(x => !x.Boolean), "ForEach did not change all false booleans to true.");
+
+			testList.ForEach(x => x.Boolean = false);
+			Assert.IsFalse(testList.Any(x => x.Boolean), "ForEach did not change all true booleans to false.");
+		}
+
+		private IList<TestClass> CreateList() {
+			IList<TestClass> testList = new List<TestClass>();
+
+			for (int i = 0; i <= 10; ++i) {
+				var item = new TestClass() {
+					Number = i,
+					FloatNumber = (float)i,
+					Text = $"Text{i}",
+					Id = Guid.NewGuid()
+				};
+				testList.Add(item);
+			}
+
+			return testList;
+		}
 	}
 
 }

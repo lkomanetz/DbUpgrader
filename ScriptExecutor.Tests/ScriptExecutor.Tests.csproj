@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -53,13 +54,23 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="MockScriptExecutor.cs" />
+    <Compile Include="MockScriptLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlServerExecutorTests.cs" />
+    <Compile Include="ScriptExecutorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
       <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
       <Name>BackingStore.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataService\BackingStore.csproj">
+      <Project>{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}</Project>
+      <Name>BackingStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
+      <Project>{D208EE23-BFF8-40F5-9A81-AFDC6089EE5F}</Project>
+      <Name>Executioner.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
       <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
