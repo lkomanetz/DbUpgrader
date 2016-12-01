@@ -173,12 +173,79 @@ namespace BackingStore.Tests {
 			Assert.IsTrue(isDeleted && docsAfterDelete == null, "ScriptDocument not deleted.");
 		}
 
-		private ScriptDocument CreateNewDocument(int numOfScripts)
-		{
+		[TestMethod]
+		public void InMemory_DocumentsAreInCorrectOrder_BasedOnOrder() {
+			DateTime currentTime = DateTime.UtcNow;
+			IList<ScriptDocument> docs = new List<ScriptDocument>() {
+				CreateNewDocument(numOfScripts: 3, dateCreated: currentTime, order: 2),
+				CreateNewDocument(numOfScripts: 3, dateCreated: currentTime, order: 1),
+				CreateNewDocument(numOfScripts: 3, dateCreated: currentTime, order: 3)
+			};
+			
+			foreach (ScriptDocument doc in docs) {
+				_memoryService.Add(doc);
+			}	
+		}
+
+		[TestMethod]
+		public void InMemory_DocumentsAreInCorrectOrder_BasedOnDate() {
+			DateTime currentTime = DateTime.UtcNow;
+			IList<ScriptDocument> docs = new List<ScriptDocument>() {
+				CreateNewDocument(numOfScripts: 3, dateCreated: currentTime.AddDays(1), order: 0),
+				CreateNewDocument(numOfScripts: 3, dateCreated: currentTime.AddDays(2), order: 0),
+				CreateNewDocument(numOfScripts: 3, dateCreated: currentTime, order: 0)
+			};
+
+			foreach (ScriptDocument doc in docs) {
+				_memoryService.Add(doc);
+			}
+
+			IList<ScriptDocument> docsReturned = _memoryService.GetDocuments();
+			AssertOrder(
+				docsReturned.Select(x => (IOrderedItem)x).ToList(),
+				$"Date: {currentTime.ToShortDateString()} Order: 0Date: {currentTime.AddDays(1).ToShortDateString()} Order: 0Date: {currentTime.AddDays(2).ToShortDateString()} Order: 0"
+			);
+		}
+
+		[TestMethod]
+		public void InMemory_ScriptsAreInCorrectOrder() {
+			DateTime currentTime = DateTime.UtcNow;
+			ScriptDocument doc = CreateNewDocument(numOfScripts: 0);
+
+			IList<Script> scripts = new List<Script>() {
+				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime.AddDays(2), order: 0),
+				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime.AddDays(1), order: 0),
+				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 0)
+			};
+
+			doc.Scripts = scripts;
+			_memoryService.Add(doc);
+
+			IList<Script> scriptsReturned = _memoryService.GetScriptsFor(doc.SysId);
+			AssertOrder(
+				scriptsReturned.Select(x => (IOrderedItem)x).ToList(),
+				$"Date: {currentTime.ToShortDateString()} Order: 0Date: {currentTime.AddDays(1).ToShortDateString()} Order: 0Date: {currentTime.AddDays(2).ToShortDateString()} Order: 0"
+			);
+		}
+
+		private void AssertOrder(IList<IOrderedItem> items, string expectedOrder) {
+			string actualOrder = String.Empty;
+			foreach (IOrderedItem item in items) {
+				actualOrder += $"Date: {item.DateCreatedUtc.ToShortDateString()} Order: {item.Order}";
+			}
+
+			Assert.AreEqual(expectedOrder, actualOrder);
+		}
+
+		private ScriptDocument CreateNewDocument(
+			int numOfScripts,
+			DateTime dateCreated = default(DateTime),
+			int order = 0
+		) {
 			ScriptDocument doc = new ScriptDocument() {
 				SysId = Guid.NewGuid(),
-				DateCreatedUtc = DateTime.UtcNow,
-				Order = 0,
+				DateCreatedUtc = dateCreated,
+				Order = order,
 				Scripts = new List<Script>(),
 				ResourceName = "TestResourceName",
 				IsComplete = false
@@ -192,14 +259,26 @@ namespace BackingStore.Tests {
 				doc.Scripts.Add(new Script() {
 					SysId = Guid.NewGuid(),
 					DocumentId = doc.SysId,
-					DateCreatedUtc = DateTime.UtcNow,
-					Order = i
+					DateCreatedUtc = dateCreated,
+					Order = order
 				});	
 			}
 
 			return doc;
 		}
 
+		private Script CreateScriptFor(
+			Guid docId,
+			DateTime dateCreated = default(DateTime),
+			int order = 0
+		) {
+			return new Script() {
+				SysId = Guid.NewGuid(),
+				DocumentId = docId,
+				DateCreatedUtc = dateCreated,
+				Order = order
+			};
+		}
 	}
 
 }

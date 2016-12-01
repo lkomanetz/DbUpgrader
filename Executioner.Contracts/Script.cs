@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Executioner.Contracts {
 
-	public class Script {
+	public class Script : IOrderedItem {
+
 		public Guid SysId { get; set; }
 		public Guid DocumentId { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
@@ -14,6 +15,7 @@ namespace Executioner.Contracts {
 		public string ScriptText { get; set; }
 		public string AssemblyName { get; set; }
 		public bool IsComplete { get; set; }
+
 	}
 
 }

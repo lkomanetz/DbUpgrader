@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Executioner.Contracts {
-	public class ScriptDocument {
+
+	public class ScriptDocument : IOrderedItem {
 
 		public Guid SysId { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
@@ -15,4 +16,5 @@ namespace Executioner.Contracts {
 		public bool IsComplete { get; set; }
 
 	}
+
 }
