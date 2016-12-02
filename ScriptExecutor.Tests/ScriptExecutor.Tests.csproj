@@ -72,6 +72,10 @@
       <Project>{D208EE23-BFF8-40F5-9A81-AFDC6089EE5F}</Project>
       <Name>Executioner.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj">
+      <Project>{2dd7fea5-78cd-4244-8ff8-c07adc6e4d4c}</Project>
+      <Name>Executioner.ExtensionMethods</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
       <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
       <Name>ScriptExecutor.Contracts</Name>

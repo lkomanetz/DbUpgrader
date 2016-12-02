@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
 using BackingStore.Contracts;
+using Executioner.ExtensionMethods;
 
 namespace ScriptLoader {
 
@@ -43,58 +44,20 @@ namespace ScriptLoader {
 					XmlDocument xmlDoc = new XmlDocument();
 					xmlDoc.LoadXml(xmlStr);
 
-					Tuple<DateTime, int> orderValues = ParseOrderAttribute(
-						xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/Order").InnerText
-					);
+					Tuple<DateTime, int> orderValues = xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/Order").InnerText.ParseOrderXmlAttribute();
 
+					Guid docId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText);
 					documents[i] = new ScriptDocument() {
-						SysId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText),
+						SysId = docId,
 						DateCreatedUtc = orderValues.Item1,
 						Order = orderValues.Item2,
 						ResourceName = resources[i],
-						Scripts = GetScriptsFrom(xmlDoc)
+						Scripts = xmlDoc.GetScripts(docId)
 					};
 				}
 			}
 
 			return documents;
-		}
-
-		internal Script[] GetScriptsFrom(XmlDocument xmlDoc)
-		{
-			XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(ScriptLoaderConstants.SCRIPT_NODE);
-			Script[] scripts = new Script[scriptNodes.Count];
-
-			for (short i = 0; i < scriptNodes.Count; ++i) {
-				Tuple<DateTime, int> orderValues = ParseOrderAttribute(
-					scriptNodes[i].Attributes["Order"].Value
-				);
-
-				scripts[i] = new Script() {
-					SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value),
-					ScriptText = scriptNodes[i].InnerText,
-					DateCreatedUtc = orderValues.Item1,
-					Order = orderValues.Item2,
-					AssemblyName = _assembly.FullName
-				};
-			}
-
-			return scripts;
-		}
-
-		private Tuple<DateTime, int> ParseOrderAttribute(string value) {
-			string pattern = @"(\d{2,4}-\d{1,2}-\d{1,2}):*(\d{1,3})*";
-			Match match = Regex.Match(value, pattern);
-
-			if (!match.Success) {
-				return null;
-			}
-
-			DateTime date = DateTime.Parse(match.Groups[1].Value);
-			string orderStr = match.Groups[2].Value;
-			int order = String.IsNullOrEmpty(orderStr) ? Int32.Parse("0") : Int32.Parse(orderStr);
-
-			return Tuple.Create<DateTime, int>(date, order);
 		}
 
 	}
