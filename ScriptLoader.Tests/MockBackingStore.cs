@@ -15,6 +15,7 @@ namespace ScriptLoader.Tests {
 	public class MockBackingStore : IBackingStore {
 
 		public void Add(ScriptDocument document) { }
+		public void Add(Script script) { }
 		public void Clean() { }
 		public bool Delete(Script script) { return true; }
 		public bool Delete(ScriptDocument document) { return true; }

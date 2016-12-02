@@ -47,7 +47,12 @@ namespace ScriptLoader.Tests {
 
 			for (int i = 0; i < _loader.Documents.Count; ++i) {
 				Assert.IsTrue(_loader.Documents[i].Scripts.Count >= 0, "Scripts not loaded.");
+				Assert.IsTrue(
+					_loader.Documents[i].Scripts.GetType() != typeof(Script[]),
+					"ScriptLoader loaded scripts as an array."
+				);
 			}
+
 		}
 
 	}

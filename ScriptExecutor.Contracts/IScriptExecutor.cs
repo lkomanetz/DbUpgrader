@@ -11,7 +11,7 @@ namespace ScriptExecutor.Contracts {
 
 		IList<Guid> CompletedDocumentIds { get; }
 
-		ExecutionResult Execute();
+		ExecutionResult Execute(ExecutionRequest request = null);
 
 	}
 

@@ -24,7 +24,7 @@ namespace ScriptExecutor {
 		public IList<Guid> CompletedDocumentIds { get { return _backingStore.GetCompletedDocumentIds(); } }
 		public IList<ScriptDocument> ScriptDocuments { get { return _backingStore.GetDocuments(); } }
 
-		public abstract ExecutionResult Execute();
+		public abstract ExecutionResult Execute(ExecutionRequest request = null);
 
 		protected virtual void Dispose(bool disposing) {
 			if (disposing) {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Executioner.Contracts;
 using Executioner.ExtensionMethods;
+using System.Runtime.CompilerServices;
 
 namespace BackingStore {
 
@@ -46,6 +47,23 @@ namespace BackingStore {
 			}
 		}
 
+		public void Add(Script script) {
+			if (script == null) {
+				throw new ArgumentNullException("script");
+			}
+			if (script.DocumentId == Guid.Empty) {
+				throw new ArgumentNullException("script.DocumentId");
+			}
+
+			ScriptDocument doc = GetDocument(script.DocumentId);
+			if (doc.Scripts.Any(x => x.SysId == script.SysId)) {
+				throw new Exception($"Script id '{script.SysId}' already exists in document id '{doc.SysId}'.");
+			}
+
+			doc.Scripts.Add(script);
+			doc.IsComplete = AreComplete(doc.Scripts);
+		}
+
 		public void Update(ScriptDocument document) {
 			if (!_documents.ContainsKey(document.SysId)) {
 				throw new Exception($"Document id '{document.SysId}' not found to update.");
@@ -58,6 +76,7 @@ namespace BackingStore {
 			ScriptDocument doc = GetDocument(script.DocumentId);
 			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
 			doc.Scripts[index] = script;
+			doc.IsComplete = AreComplete(doc.Scripts);
 		}
 
 		public void Clean() {
@@ -129,6 +148,12 @@ namespace BackingStore {
 
 			return scripts;
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private bool AreComplete(IList<Script> scripts) {
+			return scripts.All(x => x.IsComplete);
+		}
+
 	}
 
 }

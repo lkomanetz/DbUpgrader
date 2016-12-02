@@ -17,7 +17,8 @@ namespace ScriptExecutor.Tests.Classes {
 			base(scriptLoader, backingStore) {
 		}
 
-		public override ExecutionResult Execute() {
+		public override ExecutionResult Execute(ExecutionRequest request = null) {
+			request = request ?? new ExecutionRequest();
 			int docsCompleted = 0;
 			int scriptsCompleted = 0;
 
@@ -28,7 +29,8 @@ namespace ScriptExecutor.Tests.Classes {
 			);
 
 			for (short i = 0; i < docsToExecute.Count; ++i) {
-				for (short j = 0; j < docsToExecute[i].Scripts.Count; ++j) {
+				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
+				for (short j = 0; j < scriptsToRun.Count; ++j) {
 					Execute(docsToExecute[i].Scripts[j]);
 					++scriptsCompleted;
 				}
@@ -46,6 +48,16 @@ namespace ScriptExecutor.Tests.Classes {
 		private void Execute(Script script) {
 			script.IsComplete = true;
 			_backingStore.Update(script);
+		}
+
+		//TODO(Logan) -> Refactor this.  Possibly in the BaseScriptExecutor class.  I don't like where it is right now.
+		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
+			if (request.ExecuteAllScripts) {
+				return new List<Script>(doc.Scripts);
+			}
+			else {
+				return doc.Scripts.Where(x => !x.IsComplete).ToList();
+			}			
 		}
 
 	}

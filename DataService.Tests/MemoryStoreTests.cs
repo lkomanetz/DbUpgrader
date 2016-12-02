@@ -316,6 +316,82 @@ namespace BackingStore.Tests {
 			}
 		}
 
+		[TestMethod]
+		public void InMemory_AddScriptSucceeds() {
+			ScriptDocument doc = CreateNewDocument(numOfScripts: 3);
+			_memoryService.Add(doc);
+
+			IList<Script> previousScriptList = new List<Script>(doc.Scripts);
+
+			Script newScript = new Script() {
+				SysId = Guid.NewGuid(),
+				DocumentId = doc.SysId
+			};
+
+			_memoryService.Add(newScript);
+			IList<Script> scriptsAfterAdd = _memoryService.GetDocuments()
+				.Where(x => x.SysId == doc.SysId)
+				.SingleOrDefault()
+				.Scripts;
+
+			Assert.IsTrue(scriptsAfterAdd.Count > previousScriptList.Count, "Script list is not greater than previous list.");
+
+			int deltaCount = Math.Abs(previousScriptList.Count - scriptsAfterAdd.Count);
+			Assert.IsTrue(deltaCount == 1, $"Count expected {1}\nCount actual {deltaCount}");
+		}
+
+		[TestMethod]
+		public void InMemory_AddScriptIncorrectArgumentsFails() {
+			IList<Exception> exceptionsThrown = new List<Exception>();
+			ScriptDocument doc = CreateNewDocument(numOfScripts: 3);
+			_memoryService.Add(doc);
+
+			try {
+				_memoryService.Add(new Script());
+			}
+			catch (Exception err) {
+				exceptionsThrown.Add(err);
+			}
+
+			try {
+				_memoryService.Add(
+					new Script() { SysId = doc.Scripts[0].SysId }
+				);
+			}
+			catch (Exception err) {
+				exceptionsThrown.Add(err);
+			}
+
+			foreach (Exception err in exceptionsThrown) {
+				Assert.IsTrue(
+					err.GetType() == typeof(ArgumentNullException) || err.GetType() == typeof(Exception),
+					"Invalid exception type thrown."
+				);
+			}
+		}
+
+		[TestMethod]
+		public void InMemory_AddScriptCausesDocumentToBeIncomplete() {
+			ScriptDocument doc = CreateNewDocument(numOfScripts: 1);
+			doc.IsComplete = true;
+			foreach (Script script in doc.Scripts) {
+				script.IsComplete = true;
+			}
+
+			_memoryService.Add(doc);
+			_memoryService.Add(new Script() {
+				SysId = Guid.NewGuid(),
+				DocumentId = doc.SysId
+			});
+
+			IList<ScriptDocument> docs = _memoryService.GetDocuments(
+				new GetDocumentsRequest() { IsComplete = false }
+			);
+
+			Assert.IsTrue(docs.Count > 0, "No incomplete documents found.");
+			Assert.IsTrue(docs.Any(x => x.SysId == doc.SysId), "Updated document is still complete.");
+		}
+
 		private void AssertOrder(IList<IOrderedItem> items, string expectedOrder) {
 			string actualOrder = String.Empty;
 			foreach (IOrderedItem item in items) {

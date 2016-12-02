@@ -60,7 +60,8 @@ namespace ScriptExecutor {
 			}
 		}
 
-		public ExecutionResult Execute() {
+		public ExecutionResult Execute(ExecutionRequest request) {
+			request = request ?? new ExecutionRequest();
 			int scriptsCompleted = 0;
 			int docsCompleted = 0;
 

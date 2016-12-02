@@ -10,9 +10,9 @@ namespace ScriptLoader.Contracts {
 
 	public class ScriptLoaderUtilities {
 
-		public static Script[] GetScriptsFrom(XmlDocument xmlDoc) {
+		public static IList<Script> GetScriptsFrom(XmlDocument xmlDoc) {
 			XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(ScriptLoaderConstants.SCRIPT_NODE);
-			Script[] scripts = new Script[scriptNodes.Count];
+			IList<Script> scripts = new List<Script>();
 
 			Guid docId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText);
 			for (short i = 0; i < scriptNodes.Count; ++i) {
@@ -20,14 +20,14 @@ namespace ScriptLoader.Contracts {
 					scriptNodes[i].Attributes["Order"].Value
 				);
 
-				scripts[i] = new Script() {
+				scripts.Add(new Script() {
 					SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value),
 					ScriptText = scriptNodes[i].InnerText,
 					DateCreatedUtc = orderValues.Item1,
 					Order = orderValues.Item2,
 					AssemblyName = "System.String",
 					DocumentId = docId
-				};
+				});
 			}
 
 			return scripts;

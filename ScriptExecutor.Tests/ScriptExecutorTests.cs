@@ -47,6 +47,40 @@ namespace ScriptExecutor.Tests {
 			Assert.IsTrue(result != secondResult, "Multiple executes should not produce same result.");
 		}
 
+		[TestMethod]
+		public void ExecuteOnlyRunsNewScripts() {
+			IBackingStore memoryStore = new MemoryStore();
+			MockScriptExecutor executor = new MockScriptExecutor(new MockScriptLoader(), memoryStore);
+
+			var firstResult = executor.Execute();
+
+			IList<ScriptDocument> docs = memoryStore.GetDocuments();
+			Assert.IsTrue(docs.Count == 1, "Unit test expecting only one script document.");
+
+			short scriptsToAdd = 1;
+			for (short i = 0; i < scriptsToAdd; ++i) {
+				Script newScript = new Script() {
+					SysId = Guid.NewGuid(),
+					DateCreatedUtc = DateTime.UtcNow,
+					Order = 0,
+					AssemblyName = "TestAssembly",
+					IsComplete = false,
+					DocumentId = docs[0].SysId
+				};
+				memoryStore.Add(newScript);
+			}
+
+			var secondResult = executor.Execute();
+			Assert.IsTrue(
+				secondResult.ScriptsCompleted != firstResult.ScriptsCompleted,
+				"Incorrect number of scripts executed on second run."
+			);
+			Assert.IsTrue(
+				secondResult.ScriptsCompleted == scriptsToAdd,
+				$"Expected {scriptsToAdd} scripts to run.\nActual scripts ran = {secondResult.ScriptsCompleted}."
+			);
+		}
+
 	}
 
 }
