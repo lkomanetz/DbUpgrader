@@ -17,14 +17,16 @@ namespace ScriptExecutor.Tests.Classes {
 
 		public void LoadDocuments(IBackingStore backingStore) {
 			XmlDocument doc = GetXmlDoc();
-			Tuple<DateTime, int> orderValues = doc.SelectSingleNode("ScriptDocument/Order").InnerText.ParseOrderXmlAttribute();
+			Tuple<DateTime, int> orderValues = ScriptLoaderUtilities.ParseOrderXmlAttribute(
+				doc.SelectSingleNode("ScriptDocument/Order").InnerText
+			);
 			Guid docId = Guid.Parse(doc.SelectSingleNode("ScriptDocument/SysId").InnerText);
 			ScriptDocument sDoc = new ScriptDocument() {
 				SysId = docId,
 				DateCreatedUtc = orderValues.Item1,
 				Order = orderValues.Item2,
 				ResourceName = "System.String",
-				Scripts = doc.GetScripts(docId)
+				Scripts = ScriptLoaderUtilities.GetScriptsFrom(doc)
 			};
 
 			this.Documents = new List<ScriptDocument>() { sDoc };

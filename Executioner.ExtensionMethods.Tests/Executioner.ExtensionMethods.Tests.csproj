@@ -55,9 +55,7 @@
   <ItemGroup>
     <Compile Include="IListTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringExtensionTests.cs" />
     <Compile Include="TestClass.cs" />
-    <Compile Include="XmlDocumentExtensionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj">

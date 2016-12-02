@@ -44,7 +44,9 @@ namespace ScriptLoader {
 					XmlDocument xmlDoc = new XmlDocument();
 					xmlDoc.LoadXml(xmlStr);
 
-					Tuple<DateTime, int> orderValues = xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/Order").InnerText.ParseOrderXmlAttribute();
+					Tuple<DateTime, int> orderValues = ScriptLoaderUtilities.ParseOrderXmlAttribute(
+						xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/Order").InnerText
+					);
 
 					Guid docId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText);
 					documents[i] = new ScriptDocument() {
@@ -52,7 +54,7 @@ namespace ScriptLoader {
 						DateCreatedUtc = orderValues.Item1,
 						Order = orderValues.Item2,
 						ResourceName = resources[i],
-						Scripts = xmlDoc.GetScripts(docId)
+						Scripts = ScriptLoaderUtilities.GetScriptsFrom(xmlDoc)
 					};
 				}
 			}
