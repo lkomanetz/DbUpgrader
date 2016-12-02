@@ -11,19 +11,13 @@ using System.Threading.Tasks;
 
 namespace ScriptExecutor.Tests.Classes {
 
-	public class MockScriptExecutor : IScriptExecutor {
-		private IBackingStore _backingStore;
-		private IScriptLoader _scriptLoader;
+	public class MockScriptExecutor : BaseScriptExecutor {
 
-		public MockScriptExecutor(IScriptLoader scriptLoader, IBackingStore backingStore) {
-			_scriptLoader = scriptLoader;
-			_backingStore = backingStore;
-			_scriptLoader.LoadDocuments(_backingStore);
+		public MockScriptExecutor(IScriptLoader scriptLoader, IBackingStore backingStore) :
+			base(scriptLoader, backingStore) {
 		}
 
-		public IList<Guid> CompletedDocuments { get { return _backingStore.GetCompletedDocumentIds(); } }
-
-		public void Execute() {
+		public override void Execute() {
 			IList<ScriptDocument> docsToExecute = _backingStore.GetDocuments();
 			for (short i = 0; i < docsToExecute.Count; ++i) {
 				for (short j = 0; j < docsToExecute[i].Scripts.Count; ++j) {

@@ -24,7 +24,7 @@ namespace ScriptExecutor {
 			_completedDocs = new List<Guid>();
 		}
 
-		public IList<Guid> CompletedDocuments { get { return _backingStore.GetCompletedDocumentIds(); } }
+		public IList<Guid> CompletedDocumentIds { get { return _backingStore.GetCompletedDocumentIds(); } }
 
 		private void Execute(Script script) {
 			SqlConnection conn = new SqlConnection(_connectionString);

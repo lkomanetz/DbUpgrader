@@ -9,7 +9,7 @@ namespace ScriptExecutor.Contracts {
 
 	public interface IScriptExecutor {
 
-		IList<Guid> CompletedDocuments { get; }
+		IList<Guid> CompletedDocumentIds { get; }
 
 		void Execute();
 
