@@ -22,7 +22,6 @@ namespace ScriptExecutor.Tests {
 			//TOOD(Logan) -> I don't like how each part is interacting and it feels clunky to me.  I'll need to clean this up.
 			_backingStore = new MemoryStore();
 			_loader = new MockScriptLoader();
-			_loader.LoadDocuments(_backingStore);
 
 			_executor = new MockScriptExecutor(_loader, _backingStore);
 		}
