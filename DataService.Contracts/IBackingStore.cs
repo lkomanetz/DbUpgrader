@@ -9,7 +9,7 @@ namespace BackingStore.Contracts {
 
 	public interface IBackingStore : IDisposable {
 
-		IList<ScriptDocument> GetDocuments();
+		IList<ScriptDocument> GetDocuments(GetDocumentsRequest request = null);
 		IList<Guid> GetCompletedDocumentIds();
 		IList<Script> GetScriptsFor(Guid documentId);
 		IList<Guid> GetCompletedScriptIdsFor(Guid documentId);

@@ -17,15 +17,30 @@ namespace ScriptExecutor.Tests.Classes {
 			base(scriptLoader, backingStore) {
 		}
 
-		public override void Execute() {
-			IList<ScriptDocument> docsToExecute = _backingStore.GetDocuments();
+		public override ExecutionResult Execute() {
+			int docsCompleted = 0;
+			int scriptsCompleted = 0;
+
+			IList<ScriptDocument> docsToExecute = _backingStore.GetDocuments(
+				new GetDocumentsRequest() {
+					IsComplete = false
+				}
+			);
+
 			for (short i = 0; i < docsToExecute.Count; ++i) {
 				for (short j = 0; j < docsToExecute[i].Scripts.Count; ++j) {
 					Execute(docsToExecute[i].Scripts[j]);
+					++scriptsCompleted;
 				}
 				docsToExecute[i].IsComplete = true;
 				_backingStore.Update(docsToExecute[i]);
+				++docsCompleted;
 			}
+
+			return new ExecutionResult() {
+				ScriptDocumentsCompleted = docsCompleted,
+				ScriptsCompleted = scriptsCompleted
+			};
 		}
 
 		private void Execute(Script script) {

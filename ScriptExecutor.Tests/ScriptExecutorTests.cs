@@ -21,11 +21,10 @@ namespace ScriptExecutor.Tests {
 		}
 
 		[TestMethod]
-		public void SqlServer_ExecuteUpdatesCompletionProperty() {
-			_executor.Execute();
-			IList<Guid> completedDocIds = _executor.CompletedDocumentIds;
+		public void ExecuteUpdatesCompletionProperty() {
+			var result = _executor.Execute();
 			Assert.IsTrue(
-				completedDocIds.Count == 1,
+				result.ScriptDocumentsCompleted == 1,
 				"Script executor did not complete the document loaded by script loader."
 			);
 
@@ -37,6 +36,15 @@ namespace ScriptExecutor.Tests {
 					"Executor failed to complete a script."
 				);
 			}
+		}
+
+		[TestMethod]
+		public void ExecuteOnlyRunsNonCompletedTests() {
+			MockScriptExecutor executor = new MockScriptExecutor(new MockScriptLoader(), new MemoryStore());
+			var result = executor.Execute();
+			var secondResult = executor.Execute();
+
+			Assert.IsTrue(result != secondResult, "Multiple executes should not produce same result.");
 		}
 
 	}

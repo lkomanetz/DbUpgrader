@@ -10,7 +10,7 @@ using Executioner.Contracts;
 
 namespace ScriptExecutor {
 
-	public abstract class BaseScriptExecutor : IScriptExecutor {
+	public abstract class BaseScriptExecutor : IScriptExecutor, IDisposable {
 		protected IBackingStore _backingStore;
 		protected IScriptLoader _scriptLoader;
 
@@ -24,7 +24,17 @@ namespace ScriptExecutor {
 		public IList<Guid> CompletedDocumentIds { get { return _backingStore.GetCompletedDocumentIds(); } }
 		public IList<ScriptDocument> ScriptDocuments { get { return _backingStore.GetDocuments(); } }
 
-		public abstract void Execute();
+		public abstract ExecutionResult Execute();
+
+		protected virtual void Dispose(bool disposing) {
+			if (disposing) {
+				_backingStore.Dispose();
+			}
+		}
+
+		public void Dispose() {
+			Dispose(true);
+		}
 	}
 
 }

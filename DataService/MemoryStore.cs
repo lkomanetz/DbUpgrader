@@ -16,7 +16,8 @@ namespace BackingStore {
 			_documents = new Dictionary<Guid, ScriptDocument>();
 		}
 
-		public IList<ScriptDocument> GetDocuments() {
+		public IList<ScriptDocument> GetDocuments(GetDocumentsRequest request) {
+			request = request ?? new GetDocumentsRequest();
 			if (_documents.Count == 0) {
 				return null;
 			}
@@ -25,6 +26,10 @@ namespace BackingStore {
 
 			foreach (var kvp in _documents) {
 				documents.Add(kvp.Value);
+			}
+
+			if (request.IsComplete.HasValue) {
+				documents = documents.Where(x => x.IsComplete == request.IsComplete.Value).ToList();
 			}
 
 			return Sort(documents);

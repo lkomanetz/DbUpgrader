@@ -20,7 +20,7 @@ namespace ScriptLoader.Tests {
 		public bool Delete(ScriptDocument document) { return true; }
 		public IList<Guid> GetCompletedDocumentIds() { return null; }
 		public IList<Guid> GetCompletedScriptIdsFor(Guid documentId) { return null; }
-		public IList<ScriptDocument> GetDocuments() { return null; }
+		public IList<ScriptDocument> GetDocuments(GetDocumentsRequest request) { return null; }
 		public IList<Script> GetScriptsFor(Guid documentId) { return null; }
 		public void Update(ScriptDocument document) { }
 		public void Update(Script script) { }

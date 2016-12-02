@@ -60,7 +60,10 @@ namespace ScriptExecutor {
 			}
 		}
 
-		public void Execute() {
+		public ExecutionResult Execute() {
+			int scriptsCompleted = 0;
+			int docsCompleted = 0;
+
 			IList<ScriptDocument> docsToExecute = _backingStore.GetDocuments();
 			for (short i = 0; i < docsToExecute.Count; ++i) {
 				Execute(docsToExecute[i].Scripts);
@@ -68,7 +71,14 @@ namespace ScriptExecutor {
 				docsToExecute[i].IsComplete = true;
 				_completedDocs.Add(docsToExecute[i].SysId);
 				_backingStore.Update(docsToExecute[i]);
+				++scriptsCompleted;
 			}
+			++docsCompleted;
+
+			return new ExecutionResult() {
+				ScriptDocumentsCompleted = docsCompleted,
+				ScriptsCompleted = scriptsCompleted
+			};
 		}
 
 		public IList<Guid> GetScriptsAlreadyRanFor(string assemblyName) {

@@ -39,21 +39,14 @@ namespace Executioner.Contracts {
 			}
 
 
-			return (
-				scriptA.SysId == scriptB.SysId &&
-				scriptA.IsComplete == scriptB.IsComplete &&
-				scriptA.DateCreatedUtc == scriptB.DateCreatedUtc &&
-				scriptA.AssemblyName == scriptB.AssemblyName &&
-				scriptA.DocumentId == scriptB.DocumentId &&
-				scriptA.Order == scriptB.Order
-			);
+			return IsEqual(scriptA, scriptB);
 		}
 
 		public static bool operator !=(Script scriptA, Script scriptB) {
 			return !(scriptA == scriptB);
 		}
 
-		private bool IsEqual(Script scriptA, Script scriptB) {
+		private static bool IsEqual(Script scriptA, Script scriptB) {
 			return (
 				scriptA.SysId == scriptB.SysId &&
 				scriptA.IsComplete == scriptB.IsComplete &&

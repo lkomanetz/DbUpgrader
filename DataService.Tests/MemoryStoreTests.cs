@@ -280,6 +280,42 @@ namespace BackingStore.Tests {
 			Assert.IsTrue(updatedScript == newScript);
 		}
 
+		[TestMethod]
+		public void InMemory_GettingIncompleteDocumentsSucceeds() {
+			IList<Guid> incompleteDocIds = new List<Guid>();
+			IList<ScriptDocument> docs = new List<ScriptDocument>();
+			for (short i = 0; i < 4; ++i) {
+				ScriptDocument doc = CreateNewDocument(numOfScripts: 0);
+				doc.IsComplete = (i % 2 == 0);
+				if (!doc.IsComplete) {
+					incompleteDocIds.Add(doc.SysId);
+				}
+				docs.Add(doc);
+			}
+
+			foreach (ScriptDocument doc in docs) {
+				_memoryService.Add(doc);
+			}
+
+			IList<ScriptDocument> incompleteDocs = _memoryService.GetDocuments(
+				new GetDocumentsRequest() {
+					IsComplete = false
+				}
+			);
+
+			Assert.IsTrue(
+				incompleteDocs.Count == incompleteDocIds.Count,
+				"Backing store returned incorrect number of incomplete documents."
+			);
+
+			foreach (ScriptDocument doc in incompleteDocs) {
+				Assert.IsTrue(
+					incompleteDocs.Any(x => x.SysId == doc.SysId),
+					"Incomplete document not found from IBackingStore return object."
+				);
+			}
+		}
+
 		private void AssertOrder(IList<IOrderedItem> items, string expectedOrder) {
 			string actualOrder = String.Empty;
 			foreach (IOrderedItem item in items) {
