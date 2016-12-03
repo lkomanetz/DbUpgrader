@@ -70,6 +70,7 @@ namespace Executioner {
 			};
 		}
 
+		//TODO(Logan) -> Add overloaded method to add an array of IScriptExecutor items.
 		public void AddExecutor(IScriptExecutor executor) {
 			if (this.ScriptExecutors.Any(x => x.GetType().Name.Equals(executor.GetType().Name))) {
 				return;
