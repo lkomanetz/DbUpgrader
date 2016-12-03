@@ -32,9 +32,19 @@ namespace ScriptExecutor {
 			}
 		}
 
+		protected IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
+			if (request.ExecuteAllScripts) {
+				return new List<Script>(doc.Scripts);
+			}
+			else {
+				return doc.Scripts.Where(x => !x.IsComplete).ToList();
+			}
+		}
+
 		public void Dispose() {
 			Dispose(true);
 		}
+
 	}
 
 }

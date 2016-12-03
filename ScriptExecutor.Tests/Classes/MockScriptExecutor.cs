@@ -50,16 +50,6 @@ namespace ScriptExecutor.Tests.Classes {
 			_backingStore.Update(script);
 		}
 
-		//TODO(Logan) -> Refactor this.  Possibly in the BaseScriptExecutor class.  I don't like where it is right now.
-		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
-			if (request.ExecuteAllScripts) {
-				return new List<Script>(doc.Scripts);
-			}
-			else {
-				return doc.Scripts.Where(x => !x.IsComplete).ToList();
-			}			
-		}
-
 	}
 
 }
