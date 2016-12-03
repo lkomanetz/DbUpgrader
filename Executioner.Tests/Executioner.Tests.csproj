@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Classes\MockScriptExecutor.cs" />
     <Compile Include="Classes\MockScriptLoader.cs" />
-    <Compile Include="ScriptExecutorTests.cs" />
+    <Compile Include="ExecutionerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
