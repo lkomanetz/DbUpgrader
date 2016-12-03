@@ -25,7 +25,11 @@ namespace ScriptLoader.Tests {
 		public IList<Script> GetScriptsFor(Guid documentId) { return null; }
 		public void Update(ScriptDocument document) { }
 		public void Update(Script script) { }
-		public void Dispose() { }
+		protected virtual void Dispose(bool dispoing) { }
+		public void Dispose() {
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
 	}
 
