@@ -10,6 +10,7 @@ using ScriptExecutor.Contracts;
 
 namespace Executioner {
 
+	//TODO(Logan) -> Rename namespaces so they make more sense.
 	public class Executioner : IExecutioner, IDisposable {
 		private IScriptLoader _scriptLoader;
 		private IBackingStore _storage;
