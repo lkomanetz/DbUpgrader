@@ -7,28 +7,25 @@ using BackingStore;
 using System.Collections.Generic;
 using Executioner.Contracts;
 using System.Linq;
-using ScriptExecutor.Tests.Classes;
+using Executioner.Tests.Classes;
+using ScriptExecutor.Contracts;
 
-namespace ScriptExecutor.Tests {
+namespace Executioner.Tests {
 
 	[TestClass]
 	public class ScriptExecutorTests {
-		private static MockScriptExecutor _executor;
-
-		[ClassInitialize]
-		public static void Initialize(TestContext context) {
-			_executor = new MockScriptExecutor(new MockScriptLoader(), new MemoryStore());
-		}
 
 		[TestMethod]
 		public void ExecuteUpdatesCompletionProperty() {
-			var result = _executor.Execute();
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.AddExecutor(new MockScriptExecutor());
+			var result = executioner.Run();
 			Assert.IsTrue(
 				result.ScriptDocumentsCompleted == 1,
 				"Script executor did not complete the document loaded by script loader."
 			);
 
-			IList<ScriptDocument> docs = _executor.ScriptDocuments;
+			IList<ScriptDocument> docs = executioner.ScriptDocuments;
 			foreach (ScriptDocument doc in docs) {
 				Assert.IsTrue(doc.IsComplete, "Executor failed to complete a script document.");
 				Assert.IsTrue(
@@ -39,10 +36,12 @@ namespace ScriptExecutor.Tests {
 		}
 
 		[TestMethod]
-		public void ExecuteOnlyRunsNonCompletedTests() {
-			MockScriptExecutor executor = new MockScriptExecutor(new MockScriptLoader(), new MemoryStore());
-			var result = executor.Execute();
-			var secondResult = executor.Execute();
+		public void ExecuteOnlyRunsNonCompletedDocuments() {
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.AddExecutor(new MockScriptExecutor());
+
+			var result = executioner.Run();
+			var secondResult = executioner.Run();
 
 			Assert.IsTrue(result != secondResult, "Multiple executes should not produce same result.");
 		}
@@ -50,9 +49,10 @@ namespace ScriptExecutor.Tests {
 		[TestMethod]
 		public void ExecuteOnlyRunsNewScripts() {
 			IBackingStore memoryStore = new MemoryStore();
-			MockScriptExecutor executor = new MockScriptExecutor(new MockScriptLoader(), memoryStore);
+			Executioner executioner = new Executioner(new MockScriptLoader(), memoryStore);
+			executioner.AddExecutor(new MockScriptExecutor());
 
-			var firstResult = executor.Execute();
+			var firstResult = executioner.Run();
 
 			IList<ScriptDocument> docs = memoryStore.GetDocuments();
 			Assert.IsTrue(docs.Count == 1, "Unit test expecting only one script document.");
@@ -63,14 +63,14 @@ namespace ScriptExecutor.Tests {
 					SysId = Guid.NewGuid(),
 					DateCreatedUtc = DateTime.UtcNow,
 					Order = 0,
-					AssemblyName = "TestAssembly",
+					ExecutorName = "MockScriptExecutor",
 					IsComplete = false,
 					DocumentId = docs[0].SysId
 				};
 				memoryStore.Add(newScript);
 			}
 
-			var secondResult = executor.Execute();
+			var secondResult = executioner.Run();
 			Assert.IsTrue(
 				secondResult.ScriptsCompleted != firstResult.ScriptsCompleted,
 				"Incorrect number of scripts executed on second run."

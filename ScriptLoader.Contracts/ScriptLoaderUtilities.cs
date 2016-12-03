@@ -14,18 +14,21 @@ namespace ScriptLoader.Contracts {
 			XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(ScriptLoaderConstants.SCRIPT_NODE);
 			IList<Script> scripts = new List<Script>();
 
-			Guid docId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText);
+			Guid docId = Guid.Parse(xmlDoc.SelectSingleNode(
+				$"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}").InnerText
+			);
+
 			for (short i = 0; i < scriptNodes.Count; ++i) {
 				Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
-					scriptNodes[i].Attributes["Order"].Value
+					scriptNodes[i].Attributes[ScriptLoaderConstants.ORDER_ATTRIBUTE].Value
 				);
 
 				scripts.Add(new Script() {
-					SysId = Guid.Parse(scriptNodes[i].Attributes["Id"].Value),
+					SysId = Guid.Parse(scriptNodes[i].Attributes[ScriptLoaderConstants.SCRIPT_ID_ATTRIBUTE].Value),
 					ScriptText = scriptNodes[i].InnerText,
 					DateCreatedUtc = orderValues.Item1,
 					Order = orderValues.Item2,
-					AssemblyName = "System.String",
+					ExecutorName = scriptNodes[i].Attributes[ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE].Value,
 					DocumentId = docId
 				});
 			}

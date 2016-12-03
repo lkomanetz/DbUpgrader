@@ -143,7 +143,7 @@ namespace BackingStore.Tests {
 				DateCreatedUtc = doc.Scripts[1].DateCreatedUtc,
 				Order = doc.Scripts[1].Order,
 				DocumentId = doc.Scripts[1].DocumentId,
-				AssemblyName = doc.Scripts[1].AssemblyName,
+				ExecutorName = doc.Scripts[1].ExecutorName,
 				ScriptText = doc.Scripts[1].ScriptText
 			};
 
@@ -261,7 +261,7 @@ namespace BackingStore.Tests {
 
 			Script newScript = new Script() {
 				SysId = doc.Scripts[1].SysId,
-				AssemblyName = doc.Scripts[1].AssemblyName,
+				ExecutorName = doc.Scripts[1].ExecutorName,
 				DocumentId = doc.Scripts[1].DocumentId,
 				ScriptText = doc.Scripts[1].ScriptText,
 				IsComplete = doc.Scripts[1].IsComplete,

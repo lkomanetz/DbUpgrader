@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{96577168-0AA0-4A4A-AFA7-EF53B6A179CA}</ProjectGuid>
+    <ProjectGuid>{46752CEC-1512-4E4C-BC3B-2E450871B1E5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ScriptExecutor.Tests</RootNamespace>
-    <AssemblyName>ScriptExecutor.Tests</AssemblyName>
+    <RootNamespace>Executioner.Tests</RootNamespace>
+    <AssemblyName>Executioner.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -47,13 +47,14 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-          <Private>False</Private>
-        </Reference>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Classes\MockScriptExecutor.cs" />
+    <Compile Include="Classes\MockScriptLoader.cs" />
+    <Compile Include="ScriptExecutorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,31 +63,30 @@
       <Name>BackingStore.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataService\BackingStore.csproj">
-      <Project>{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}</Project>
+      <Project>{f9de2ed1-1f7a-4215-bd0d-a3b140915626}</Project>
       <Name>BackingStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
-      <Project>{D208EE23-BFF8-40F5-9A81-AFDC6089EE5F}</Project>
+      <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
       <Name>Executioner.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj">
       <Project>{2dd7fea5-78cd-4244-8ff8-c07adc6e4d4c}</Project>
       <Name>Executioner.ExtensionMethods</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Executioner\Executioner.csproj">
+      <Project>{04b05264-b56c-4274-aeea-08bd938ae168}</Project>
+      <Name>Executioner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
       <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
       <Name>ScriptExecutor.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptExecutor\ScriptExecutor.csproj">
-      <Project>{63b127ac-b1de-4317-ad48-9617561d6bf2}</Project>
-      <Name>ScriptExecutor</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
       <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
       <Name>ScriptLoader.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -13,7 +13,7 @@ namespace Executioner.Contracts {
 		public DateTime DateCreatedUtc { get; set; }
 		public int Order { get; set; }
 		public string ScriptText { get; set; }
-		public string AssemblyName { get; set; }
+		public string ExecutorName { get; set; }
 		public bool IsComplete { get; set; }
 
 		public override int GetHashCode() {
@@ -51,7 +51,7 @@ namespace Executioner.Contracts {
 				scriptA.SysId == scriptB.SysId &&
 				scriptA.IsComplete == scriptB.IsComplete &&
 				scriptA.DateCreatedUtc == scriptB.DateCreatedUtc &&
-				scriptA.AssemblyName == scriptB.AssemblyName &&
+				scriptA.ExecutorName == scriptB.ExecutorName &&
 				scriptA.DocumentId == scriptB.DocumentId &&
 				scriptA.Order == scriptB.Order
 			);

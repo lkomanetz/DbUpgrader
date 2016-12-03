@@ -45,10 +45,12 @@ namespace ScriptLoader {
 					xmlDoc.LoadXml(xmlStr);
 
 					Tuple<DateTime, int> orderValues = ScriptLoaderUtilities.ParseOrderXmlAttribute(
-						xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/Order").InnerText
+						xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ORDER_NODE}").InnerText
 					);
 
-					Guid docId = Guid.Parse(xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/SysId").InnerText);
+					Guid docId = Guid.Parse(
+						xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}").InnerText
+					);
 					documents[i] = new ScriptDocument() {
 						SysId = docId,
 						DateCreatedUtc = orderValues.Item1,
