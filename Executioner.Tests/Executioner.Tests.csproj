@@ -52,8 +52,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Classes\MockScriptExecutor.cs" />
-    <Compile Include="Classes\MockScriptLoader.cs" />
+    <Compile Include="Classes\ScriptLoaders\BaseMockLoader.cs" />
+    <Compile Include="Classes\ScriptExecutors\MockScriptExecutor.cs" />
+    <Compile Include="Classes\ScriptLoaders\MockScriptLoader.cs" />
+    <Compile Include="Classes\ScriptLoaders\MultipleExecutorLoader.cs" />
+    <Compile Include="Classes\ScriptExecutors\SecondScriptExecutor.cs" />
     <Compile Include="ExecutionerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

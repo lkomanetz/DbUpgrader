@@ -12,14 +12,13 @@ using ScriptExecutor.Contracts;
 
 namespace Executioner.Tests {
 
-	//TODO(Logan) -> Test multiple executors.
 	[TestClass]
 	public class ExecutionerTests {
 
 		[TestMethod]
 		public void ExecuteUpdatesCompletionProperty() {
 			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
-			executioner.AddExecutor(new MockScriptExecutor());
+			executioner.Add(new MockScriptExecutor());
 			var result = executioner.Run();
 			Assert.IsTrue(
 				result.ScriptDocumentsCompleted == 1,
@@ -39,7 +38,7 @@ namespace Executioner.Tests {
 		[TestMethod]
 		public void ExecuteOnlyRunsNonCompletedDocuments() {
 			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
-			executioner.AddExecutor(new MockScriptExecutor());
+			executioner.Add(new MockScriptExecutor());
 
 			var result = executioner.Run();
 			var secondResult = executioner.Run();
@@ -51,7 +50,7 @@ namespace Executioner.Tests {
 		public void ExecuteOnlyRunsNewScripts() {
 			IBackingStore memoryStore = new MemoryStore();
 			Executioner executioner = new Executioner(new MockScriptLoader(), memoryStore);
-			executioner.AddExecutor(new MockScriptExecutor());
+			executioner.Add(new MockScriptExecutor());
 
 			var firstResult = executioner.Run();
 
@@ -80,6 +79,82 @@ namespace Executioner.Tests {
 				secondResult.ScriptsCompleted == scriptsToAdd,
 				$"Expected {scriptsToAdd} scripts to run.\nActual scripts ran = {secondResult.ScriptsCompleted}."
 			);
+		}
+
+		[TestMethod]
+		public void AddingMultipleExecutorsSucceeds() {
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.Add(new IScriptExecutor[2] {
+				new SecondScriptExecutor(),
+				new MockScriptExecutor()
+			});
+
+			IList<IScriptExecutor> itemsFound = executioner.ScriptExecutors
+				.Where(
+					x => x.GetType() == typeof(SecondScriptExecutor) ||
+					x.GetType() == typeof(MockScriptExecutor)
+				)
+				.ToList();
+
+			Assert.IsTrue(itemsFound.Count == 2, "Executioner.Add() failed to add both executors.");
+			bool typesFound = itemsFound.Where(
+					x => x.GetType() == typeof(SecondScriptExecutor) ||
+						x.GetType() == typeof(MockScriptExecutor)
+				)
+				.Count() == 2;
+			Assert.IsTrue(typesFound, "Unable to find either executor added to Executioner class.");
+		}
+
+		[TestMethod]
+		public void AddingIgnoresExecutorsThatAlreadyExist() {
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.Add(new MockScriptExecutor());
+			executioner.Add(new IScriptExecutor[2] {
+				new SecondScriptExecutor(),
+				new MockScriptExecutor()
+			});
+
+			Assert.IsTrue(executioner.ScriptExecutors.Count == 2, "Executioner.Add() added same executor twice.");
+			IList<IScriptExecutor> items = executioner.ScriptExecutors
+				.Where(
+					x => x.GetType() == typeof(MockScriptExecutor) ||
+						x.GetType() == typeof(SecondScriptExecutor)
+				)
+				.ToList();
+			Assert.IsTrue(items.Count == 2, "Executioner.Add() added same executor twice.");
+		}
+
+		[TestMethod]
+		public void ScriptDocumentWithMultipleExecutorsSucceeds() {
+			Executioner executioner = new Executioner(new MultipleExecutorLoader(), new MemoryStore());
+			executioner.Add(new IScriptExecutor[2] {
+				new SecondScriptExecutor(),
+				new MockScriptExecutor()
+			});
+			var result = executioner.Run(new ExecutionRequest() { ExecuteAllScripts = true });
+			Assert.IsTrue(
+				result.ScriptDocumentsCompleted == 1,
+				"Executioner failed to complete document with multiple executors."
+			);
+			Assert.IsTrue(
+				result.ScriptsCompleted == 4,
+				"Executioner failed to complete all scripts with multiple executors."
+			);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(NullReferenceException), "Executioner executed incorrect script executor.")]
+		public void ExecutionerWithMissingExecutorFails() {
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.Add(new SecondScriptExecutor());
+			executioner.Run();
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(InvalidOperationException), "Executioner.ScriptExecutors was not null.")]
+		public void ExecutionerWithNoExecutorsFail() {
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.Run();
 		}
 
 	}

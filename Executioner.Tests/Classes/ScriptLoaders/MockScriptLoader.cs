@@ -11,28 +11,9 @@ using System.Xml;
 
 namespace Executioner.Tests.Classes {
 
-	public class MockScriptLoader : IScriptLoader {
-		public IList<ScriptDocument> Documents { get; private set; }
+	public class MockScriptLoader : BaseMockLoader {
 
-		public void LoadDocuments(IBackingStore backingStore) {
-			XmlDocument doc = GetXmlDoc();
-			Tuple<DateTime, int> orderValues = ScriptLoaderUtilities.ParseOrderXmlAttribute(
-				doc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ORDER_NODE}").InnerText
-			);
-			Guid docId = Guid.Parse(doc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}").InnerText);
-			ScriptDocument sDoc = new ScriptDocument() {
-				SysId = docId,
-				DateCreatedUtc = orderValues.Item1,
-				Order = orderValues.Item2,
-				ResourceName = "System.String",
-				Scripts = ScriptLoaderUtilities.GetScriptsFrom(doc)
-			};
-
-			this.Documents = new List<ScriptDocument>() { sDoc };
-			backingStore.Add(sDoc);
-		}
-
-		private XmlDocument GetXmlDoc() {
+		public override XmlDocument GetXmlDoc() {
 			string xmlStr = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 				<ScriptDocument>
 					<Id>ac04f1b3-219a-4a40-8d7d-869dac218cca</Id>
