@@ -44,11 +44,9 @@ namespace Executioner {
 			int docsCompleted = 0;
 			int scriptsCompleted = 0;
 
-			//TODO(Logan) -> This is ugly and needs to be changed to an enumeration.
-			bool? getCompleteDocs = (request.ExecuteAllScripts) ? null : (bool?)false;
 			var docsToExecute = _storage.GetDocuments(
 				new GetDocumentsRequest() {
-					IsComplete = getCompleteDocs
+					IncludeCompletedDocuments = request.ExecuteAllScripts
 				}
 			);
 

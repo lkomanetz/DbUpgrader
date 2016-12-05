@@ -8,8 +8,7 @@ namespace BackingStore.Contracts {
 
 	public class GetDocumentsRequest {
 
-		//TODO(Logan) -> Change from nullable boolean to an enumeration.
-		public bool? IsComplete { get; set; }
+		public bool IncludeCompletedDocuments { get; set; }
 
 	}
 

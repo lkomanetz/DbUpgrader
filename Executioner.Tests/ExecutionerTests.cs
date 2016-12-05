@@ -55,7 +55,10 @@ namespace Executioner.Tests {
 			var firstResult = executioner.Run();
 
 			IList<ScriptDocument> docs = memoryStore.GetDocuments();
-			Assert.IsTrue(docs.Count == 1, "Unit test expecting only one script document.");
+			Assert.IsTrue(
+				docs.Count == 1,
+				$"Unit test expecting only one script document.\nActul: {docs.Count}"
+			);
 
 			short scriptsToAdd = 1;
 			for (short i = 0; i < scriptsToAdd; ++i) {
@@ -155,6 +158,34 @@ namespace Executioner.Tests {
 		public void ExecutionerWithNoExecutorsFail() {
 			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Run();
+		}
+
+		[TestMethod]
+		public void ExecutionerCanRunAllScriptsMultipleTimes() {
+			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			executioner.Add(new MockScriptExecutor());
+			var firstResult = executioner.Run();
+			var secondResult = executioner.Run(new ExecutionRequest() { ExecuteAllScripts = true });
+
+			string errorMsg = String.Format(
+				"Executioner results unequal.\nFirstResult completed {0} docs\nSecondResult completed {1} docs",
+				firstResult.ScriptDocumentsCompleted,
+				secondResult.ScriptDocumentsCompleted
+			);
+			Assert.IsTrue(
+				firstResult.ScriptDocumentsCompleted == firstResult.ScriptDocumentsCompleted,
+				errorMsg
+			);
+
+			errorMsg = String.Format(
+				"Executioner results unequal.FirstResult completed {0} scripts\nSecondResult completed {1} scripts",
+				firstResult.ScriptsCompleted,
+				secondResult.ScriptsCompleted
+			);
+			Assert.IsTrue(
+				firstResult.ScriptsCompleted == secondResult.ScriptsCompleted,
+				errorMsg
+			);
 		}
 
 	}

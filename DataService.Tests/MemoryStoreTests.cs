@@ -299,7 +299,7 @@ namespace BackingStore.Tests {
 
 			IList<ScriptDocument> incompleteDocs = _memoryService.GetDocuments(
 				new GetDocumentsRequest() {
-					IsComplete = false
+					IncludeCompletedDocuments = false
 				}
 			);
 
@@ -385,7 +385,7 @@ namespace BackingStore.Tests {
 			});
 
 			IList<ScriptDocument> docs = _memoryService.GetDocuments(
-				new GetDocumentsRequest() { IsComplete = false }
+				new GetDocumentsRequest() { IncludeCompletedDocuments = false }
 			);
 
 			Assert.IsTrue(docs.Count > 0, "No incomplete documents found.");

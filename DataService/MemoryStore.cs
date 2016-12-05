@@ -18,7 +18,7 @@ namespace BackingStore {
 		}
 
 		public IList<ScriptDocument> GetDocuments(GetDocumentsRequest request) {
-			request = request ?? new GetDocumentsRequest();
+			request = request ?? new GetDocumentsRequest() { IncludeCompletedDocuments = true };
 			if (_documents.Count == 0) {
 				return null;
 			}
@@ -29,8 +29,11 @@ namespace BackingStore {
 				documents.Add(kvp.Value);
 			}
 
-			if (request.IsComplete.HasValue) {
-				documents = documents.Where(x => x.IsComplete == request.IsComplete.Value).ToList();
+			if (request.IncludeCompletedDocuments) {
+				documents = documents.Where(x => x.IsComplete || !x.IsComplete).ToList();
+			}
+			else {
+				documents = documents.Where(x => !x.IsComplete).ToList();
 			}
 
 			return Sort(documents);
