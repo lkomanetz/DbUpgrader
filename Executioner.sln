@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executioner", "Executioner\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executioner.Tests", "Executioner.Tests\Executioner.Tests.csproj", "{46752CEC-1512-4E4C-BC3B-2E450871B1E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptExecutor.SqlServer.Tests", "ScriptExecutor.SqlServer.Tests\ScriptExecutor.SqlServer.Tests.csproj", "{935A1C16-B50E-4D01-884F-B19FFCD8E759}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{46752CEC-1512-4E4C-BC3B-2E450871B1E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46752CEC-1512-4E4C-BC3B-2E450871B1E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46752CEC-1512-4E4C-BC3B-2E450871B1E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{935A1C16-B50E-4D01-884F-B19FFCD8E759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{935A1C16-B50E-4D01-884F-B19FFCD8E759}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{935A1C16-B50E-4D01-884F-B19FFCD8E759}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{935A1C16-B50E-4D01-884F-B19FFCD8E759}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,7 +12,7 @@ namespace Executioner.Tests {
 
 		[TestMethod]
 		public void ExecuteUpdatesCompletionProperty() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Add(new MockScriptExecutor());
 			var result = executioner.Run();
 			Assert.IsTrue(
@@ -32,7 +32,7 @@ namespace Executioner.Tests {
 
 		[TestMethod]
 		public void ExecuteOnlyRunsNonCompletedDocuments() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Add(new MockScriptExecutor());
 
 			var result = executioner.Run();
@@ -44,7 +44,7 @@ namespace Executioner.Tests {
 		[TestMethod]
 		public void ExecuteOnlyRunsNewScripts() {
 			IBackingStore memoryStore = new MemoryStore();
-			Executioner executioner = new Executioner(new MockScriptLoader(), memoryStore);
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), memoryStore);
 			executioner.Add(new MockScriptExecutor());
 
 			var firstResult = executioner.Run();
@@ -81,7 +81,7 @@ namespace Executioner.Tests {
 
 		[TestMethod]
 		public void AddingMultipleExecutorsSucceeds() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Add(new IScriptExecutor[2] {
 				new SecondScriptExecutor(),
 				new MockScriptExecutor()
@@ -105,7 +105,7 @@ namespace Executioner.Tests {
 
 		[TestMethod]
 		public void AddingIgnoresExecutorsThatAlreadyExist() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Add(new MockScriptExecutor());
 			executioner.Add(new IScriptExecutor[2] {
 				new SecondScriptExecutor(),
@@ -124,7 +124,7 @@ namespace Executioner.Tests {
 
 		[TestMethod]
 		public void ScriptDocumentWithMultipleExecutorsSucceeds() {
-			Executioner executioner = new Executioner(new MultipleExecutorLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MultipleExecutorLoader(), new MemoryStore());
 			executioner.Add(new IScriptExecutor[2] {
 				new SecondScriptExecutor(),
 				new MockScriptExecutor()
@@ -143,7 +143,7 @@ namespace Executioner.Tests {
 		[TestMethod]
 		[ExpectedException(typeof(NullReferenceException), "Executioner executed incorrect script executor.")]
 		public void ExecutionerWithMissingExecutorFails() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Add(new SecondScriptExecutor());
 			executioner.Run();
 		}
@@ -151,13 +151,13 @@ namespace Executioner.Tests {
 		[TestMethod]
 		[ExpectedException(typeof(InvalidOperationException), "Executioner.ScriptExecutors was not null.")]
 		public void ExecutionerWithNoExecutorsFail() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Run();
 		}
 
 		[TestMethod]
 		public void ExecutionerCanRunAllScriptsMultipleTimes() {
-			Executioner executioner = new Executioner(new MockScriptLoader(), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new MockScriptLoader(), new MemoryStore());
 			executioner.Add(new MockScriptExecutor());
 			var firstResult = executioner.Run();
 			var secondResult = executioner.Run(new ExecutionRequest() { ExecuteAllScripts = true });

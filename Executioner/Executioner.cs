@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Executioner {
 
-	//TODO(Logan) -> Rename namespaces so they make more sense.
-	public class Executioner : IExecutioner, IDisposable {
+	public class ScriptExecutioner : IExecutioner, IDisposable {
 		private IScriptLoader _scriptLoader;
 		private IBackingStore _storage;
 
-		public Executioner(IScriptLoader loader, IBackingStore storage) {
+		public ScriptExecutioner(IScriptLoader loader, IBackingStore storage) {
 			_scriptLoader = loader;
 			_storage = storage;
 
@@ -35,7 +34,7 @@ namespace Executioner {
 
 		public ExecutionResult Run(ExecutionRequest request = null) {
 			if (ScriptExecutors == null || ScriptExecutors.Count == 0) {
-				throw new InvalidOperationException("Unable to run Executioner without any script executors.");
+				throw new InvalidOperationException("Unable to run ScriptExecutioner without any script executors.");
 			}
 			request = request ?? new ExecutionRequest();
 			int docsCompleted = 0;
@@ -52,7 +51,7 @@ namespace Executioner {
 				for (short j = 0; j < scriptsToRun.Count; ++j) {
 					IScriptExecutor executor = FindExecutorFor(scriptsToRun[j].ExecutorName);
 					if (executor == null) {
-						throw new NullReferenceException("Executioner.FindExecutorFor(string) failed to find ScriptExecutor.");
+						throw new NullReferenceException("ScriptExecutioner.FindExecutorFor(string) failed to find ScriptExecutor.");
 					}
 
 					executor.Execute(scriptsToRun[j].ScriptText);
@@ -103,8 +102,8 @@ namespace Executioner {
 
 		private IScriptExecutor FindExecutorFor(string executorName) {
 			if (this.ScriptExecutors == null) {
-				string msg = "Executioner.FindExecutoFor(string) failed.\n";
-				msg += "Executioner.ScriptExecutors is null.";
+				string msg = "ScriptExecutioner.FindExecutorFor(string) failed.\n";
+				msg += "ScriptExecutioner.ScriptExecutors is null.";
 				throw new InvalidOperationException(msg);
 			}
 

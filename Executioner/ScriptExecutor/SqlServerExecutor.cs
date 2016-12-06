@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Executioner {
 
+	//TODO(Logan) -> Add checks for empty script text.
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
 
