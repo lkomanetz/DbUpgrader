@@ -41,27 +41,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackingStore\MemoryStore.cs" />
     <Compile Include="Executioner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptExecutor\SqlServerExecutor.cs" />
+    <Compile Include="ScriptLoader\AssemblyLoader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
-      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
-      <Name>BackingStore.Contracts</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
       <Project>{D208EE23-BFF8-40F5-9A81-AFDC6089EE5F}</Project>
       <Name>Executioner.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
-      <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
-      <Name>ScriptExecutor.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
-      <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
-      <Name>ScriptLoader.Contracts</Name>
+    <ProjectReference Include="..\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj">
+      <Project>{2dd7fea5-78cd-4244-8ff8-c07adc6e4d4c}</Project>
+      <Name>Executioner.ExtensionMethods</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

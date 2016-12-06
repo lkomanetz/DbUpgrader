@@ -1,14 +1,9 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ScriptExecutor;
-using ScriptLoader.Contracts;
-using BackingStore.Contracts;
-using BackingStore;
 using System.Collections.Generic;
 using Executioner.Contracts;
 using System.Linq;
 using Executioner.Tests.Classes;
-using ScriptExecutor.Contracts;
 
 namespace Executioner.Tests {
 

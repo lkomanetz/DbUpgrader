@@ -57,17 +57,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
-      <Project>{a7b9bcaa-a266-485c-9acd-f47cdb10b109}</Project>
-      <Name>BackingStore.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataService\BackingStore.csproj">
-      <Project>{f9de2ed1-1f7a-4215-bd0d-a3b140915626}</Project>
-      <Name>BackingStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
       <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
       <Name>Executioner.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Executioner\Executioner.csproj">
+      <Project>{04b05264-b56c-4274-aeea-08bd938ae168}</Project>
+      <Name>Executioner</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

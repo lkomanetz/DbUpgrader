@@ -49,10 +49,6 @@
       <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
       <Name>Executioner.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptLoader.Contracts\ScriptLoader.Contracts.csproj">
-      <Project>{e1a72c43-c0e9-47de-ba36-d378fd2f4445}</Project>
-      <Name>ScriptLoader.Contracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

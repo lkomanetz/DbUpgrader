@@ -1,12 +1,8 @@
-﻿using ScriptLoader.Contracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BackingStore.Contracts;
-using Executioner.Contracts;
-using Executioner.ExtensionMethods;
 using System.Xml;
 
 namespace Executioner.Tests.Classes {

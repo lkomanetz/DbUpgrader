@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScriptLoader.Contracts {
+namespace Executioner.Contracts {
 
 	public class ScriptLoaderConstants {
 

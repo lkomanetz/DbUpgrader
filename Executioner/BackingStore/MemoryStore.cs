@@ -1,5 +1,4 @@
-﻿using BackingStore.Contracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +7,7 @@ using Executioner.Contracts;
 using Executioner.ExtensionMethods;
 using System.Runtime.CompilerServices;
 
-namespace BackingStore {
+namespace Executioner {
 
 	public class MemoryStore : IBackingStore {
 		private IDictionary<Guid, ScriptDocument> _documents;

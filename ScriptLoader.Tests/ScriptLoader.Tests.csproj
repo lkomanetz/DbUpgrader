@@ -58,25 +58,17 @@
     <Compile Include="AssemblyLoaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataService.Contracts\BackingStore.Contracts.csproj">
-      <Project>{A7B9BCAA-A266-485C-9ACD-F47CDB10B109}</Project>
-      <Name>BackingStore.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataService\BackingStore.csproj">
-      <Project>{F9DE2ED1-1F7A-4215-BD0D-A3B140915626}</Project>
-      <Name>BackingStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
       <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
       <Name>Executioner.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Executioner\Executioner.csproj">
+      <Project>{04b05264-b56c-4274-aeea-08bd938ae168}</Project>
+      <Name>Executioner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptLoader.Tests.FakeService\ScriptLoader.Tests.FakeService.csproj">
       <Project>{870cf754-895c-4bdb-be02-a8f7c290d94c}</Project>
       <Name>ScriptLoader.Tests.FakeService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptLoader\ScriptLoader.csproj">
-      <Project>{19fc7408-a9f5-42ad-bee8-aedd0b6674f7}</Project>
-      <Name>ScriptLoader</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

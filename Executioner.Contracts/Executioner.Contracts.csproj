@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackingStore\GetDocumentsRequest.cs" />
+    <Compile Include="BackingStore\IBackingStore.cs" />
     <Compile Include="ExecutionRequest.cs" />
     <Compile Include="ExecutionResult.cs" />
     <Compile Include="IExecutioner.cs" />
@@ -48,12 +50,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="ScriptDocument.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ScriptExecutor.Contracts\ScriptExecutor.Contracts.csproj">
-      <Project>{49af0bdd-e58b-4961-8952-6d79462743c1}</Project>
-      <Name>ScriptExecutor.Contracts</Name>
-    </ProjectReference>
+    <Compile Include="ScriptExecutor\IScriptExecutor.cs" />
+    <Compile Include="ScriptLoader\IScriptLoader.cs" />
+    <Compile Include="ScriptLoader\ScriptLoaderConstants.cs" />
+    <Compile Include="ScriptLoader\ScriptLoaderUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

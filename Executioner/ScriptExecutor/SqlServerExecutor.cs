@@ -1,15 +1,12 @@
-﻿using ScriptExecutor.Contracts;
-using Executioner.Contracts;
-using BackingStore.Contracts;
+﻿using Executioner.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ScriptLoader.Contracts;
 
-namespace ScriptExecutor {
+namespace Executioner {
 
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;

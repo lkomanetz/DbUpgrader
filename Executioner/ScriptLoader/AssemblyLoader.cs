@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ScriptLoader.Contracts;
 using System.Reflection;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
-using BackingStore.Contracts;
 using Executioner.ExtensionMethods;
 
-namespace ScriptLoader {
+namespace Executioner {
 
 	public class AssemblyLoader : IScriptLoader {
 		private Assembly _assembly;

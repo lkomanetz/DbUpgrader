@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BackingStore.Contracts {
+namespace Executioner.Contracts {
 
 	public class GetDocumentsRequest {
 

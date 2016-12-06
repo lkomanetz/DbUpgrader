@@ -19,6 +19,11 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
+// Setting InternalsVisibleTo allows another assembly access to items that
+// are marked with the 'internal' access modifier.  Mostly used for unit
+// tests.
+[assembly: InternalsVisibleTo("ScriptLoader.Tests")]
+
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("04b05264-b56c-4274-aeea-08bd938ae168")]
 

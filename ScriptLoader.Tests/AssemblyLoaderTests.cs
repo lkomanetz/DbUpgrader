@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using Executioner.Contracts;
 using ScriptLoader.Tests.FakeService;
-using BackingStore.Contracts;
+using Executioner;
 
 namespace ScriptLoader.Tests {
 
