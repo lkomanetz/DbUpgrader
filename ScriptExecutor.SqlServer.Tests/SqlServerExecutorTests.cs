@@ -13,9 +13,12 @@ namespace ScriptExecutor.SqlServer.Tests {
 		[TestMethod]
 		public void ScriptExecutor_SqlServer_ConnectionSucceeds() {
 			string connectionStr = ConfigurationManager.ConnectionStrings["TestConnectionString"].ConnectionString;
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor'SqlScriptExecutor' Order='2016-06-22:1'>Hello</Script>"
+			};
 			SqlServerExecutor sqlExecutor = new SqlServerExecutor(connectionStr);
 			ScriptExecutioner executioner = new ScriptExecutioner(
-				new MockSqlScriptLoader(),
+				new BaseMockLoader(scripts),
 				new MemoryStore()
 			);
 			executioner.Add(sqlExecutor);

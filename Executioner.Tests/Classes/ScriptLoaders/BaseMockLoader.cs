@@ -9,6 +9,12 @@ using System.Xml;
 namespace Executioner.Tests.Classes {
 
 	public abstract class BaseMockLoader : IScriptLoader {
+		private string[] _scriptElements;
+
+		public BaseMockLoader(string[] scriptElements) {
+			_scriptElements = scriptElements;
+		}
+
 		public IList<ScriptDocument> Documents { get; protected set; }
 
 		public void LoadDocuments(IBackingStore storage) {
@@ -40,7 +46,23 @@ namespace Executioner.Tests.Classes {
 			storage.Add(sDoc);
 		}
 
-		public abstract XmlDocument GetXmlDoc();
+		private XmlDocument GetXmlDoc() {
+			string scriptStr = String.Empty;
+			foreach (string item in _scriptElements) {
+				scriptStr += $"{item}\n";
+			}
+			string xmlStr = $@"<xml version='1.0' encoding='utf-8'?>
+				<ScriptDocument>
+					<Id>ac04f1b3-219a-4a40-8d7d-869dac218cca</Id>
+					<Order>2016-06-21</Order>
+					{scriptStr}	
+				</ScriptDocument>";
+
+			XmlDocument xmlDoc = new XmlDocument();
+			xmlDoc.LoadXml(xmlStr);
+
+			return xmlDoc;
+		}
 
 	}
 
