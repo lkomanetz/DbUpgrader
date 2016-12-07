@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Executioner.Tests.Classes {
 
-	public abstract class BaseMockLoader : IScriptLoader {
+	public class BaseMockLoader : IScriptLoader {
 		private string[] _scriptElements;
 
 		public BaseMockLoader(string[] scriptElements) {
@@ -51,7 +51,7 @@ namespace Executioner.Tests.Classes {
 			foreach (string item in _scriptElements) {
 				scriptStr += $"{item}\n";
 			}
-			string xmlStr = $@"<xml version='1.0' encoding='utf-8'?>
+			string xmlStr = $@"<?xml version='1.0' encoding='utf-8'?>
 				<ScriptDocument>
 					<Id>ac04f1b3-219a-4a40-8d7d-869dac218cca</Id>
 					<Order>2016-06-21</Order>

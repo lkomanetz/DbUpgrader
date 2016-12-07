@@ -6,17 +6,21 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ScriptExecutor.SqlServer.Tests {
 
-	//TODO(Logan) -> Refactor the unit tests so I can dynamically add scripts as needed for a test.
 	[TestClass]
 	public class SqlServerExecutorTests {
+		private static string connectionString;
+
+		[ClassInitialize]
+		public static void Initialize(TestContext context) {
+			connectionString = ConfigurationManager.ConnectionStrings["TestConnectionString"].ConnectionString;
+		}
 
 		[TestMethod]
 		public void ScriptExecutor_SqlServer_ConnectionSucceeds() {
-			string connectionStr = ConfigurationManager.ConnectionStrings["TestConnectionString"].ConnectionString;
 			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor'SqlScriptExecutor' Order='2016-06-22:1'>Hello</Script>"
+				$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2016-06-22:1'>print 'Hello'</Script>"
 			};
-			SqlServerExecutor sqlExecutor = new SqlServerExecutor(connectionStr);
+			SqlServerExecutor sqlExecutor = new SqlServerExecutor(connectionString);
 			ScriptExecutioner executioner = new ScriptExecutioner(
 				new BaseMockLoader(scripts),
 				new MemoryStore()
@@ -25,6 +29,21 @@ namespace ScriptExecutor.SqlServer.Tests {
 			executioner.Run();
 		}
 
+		[TestMethod]
+		[ExpectedException(typeof(InvalidOperationException), "Empty SQL script attempted to run.")]
+		public void ScriptExecutor_SqlServer_ExceptionThrownOnEmptyScript() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2016-06-22'></Script>"
+			};
+
+			ScriptExecutioner executioner = new ScriptExecutioner(
+				new BaseMockLoader(scripts),
+				new MemoryStore()
+			);
+
+			executioner.Add(new SqlServerExecutor(connectionString));
+			executioner.Run();
+		}
 	}
 
 }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Executioner {
 
-	//TODO(Logan) -> Add checks for empty script text.
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
 
@@ -27,12 +26,13 @@ namespace Executioner {
 				cmd.ExecuteNonQuery();
 				transaction.Commit();
 			}
-			catch (SqlException ex) {
-				string msg = $"Script execution failed.\n";
-				msg += $"Sql: {scriptText}\n";
-				msg += $"SqlException Trace: {ex.StackTrace}";
+			catch (InvalidOperationException ex) {
 				transaction.Rollback();
-				throw new Exception(msg);
+				throw ex;
+			}
+			catch (SqlException ex) {
+				transaction.Rollback();
+				throw ex;
 			}
 			finally {
 				transaction.Dispose();
