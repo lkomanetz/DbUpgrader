@@ -8,6 +8,6 @@
 	</Target>
 
 	<Target Name="Build">
-		<MSBuild Projects="..\Executioner.sln" Configuration="${BuildConfiguration}" />
+		<MSBuild Projects="..\Executioner.sln" Properties="Configuration=${BuildConfiguration}" />
 	</Target>
 </Project>
