@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Main">
 	<PropertyGroup>
-		<BuildConfiguration>$(buildConfig)</BuildConfiguration>
+		<CompileConfiguration>$(buildConfig)</CompileConfiguration>
 	</PropertyGroup>
 	<Target Name="Main">
 		<CallTarget Targets="Build" />
 	</Target>
 
 	<Target Name="Build">
-		<MSBuild Projects="..\Executioner.sln" Configuration="${BuildConfiguration}" />
+		<MSBuild Projects="..\Executioner.sln" Properties="Configuration=$(CompileConfiguration)" />
 	</Target>
 </Project>
