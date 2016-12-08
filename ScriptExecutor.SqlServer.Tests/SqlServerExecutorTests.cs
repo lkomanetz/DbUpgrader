@@ -26,7 +26,6 @@ namespace ScriptExecutor.SqlServer.Tests {
 				new MemoryStore()
 			);
 			executioner.Add(sqlExecutor);
-			Assert.IsTrue(false);
 			executioner.Run();
 		}
 
