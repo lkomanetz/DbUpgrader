@@ -5,7 +5,7 @@
 		<OutputDirectory>Artifacts</OutputDirectory>
 	</PropertyGroup>
 	<Target Name="Main">
-		<RemoveDir Directorites="$(OutputDirectory)" />
+		<RemoveDir Directories="$(OutputDirectory)" />
 		<MakeDir Directories="$(OutputDirectory)" />
 		<CallTarget Targets="Build" />
 	</Target>
