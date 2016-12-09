@@ -2,12 +2,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Main">
 	<PropertyGroup>
 		<CompileConfiguration>$(buildConfig)</CompileConfiguration>
+		<OutputDirectory>Artifacts</OutputDirectory>
 	</PropertyGroup>
 	<Target Name="Main">
+		<RemoveDir Directorites="$(OutputDirectory)" />
+		<MakeDir Directories="$(OutputDirectory)" />
 		<CallTarget Targets="Build" />
 	</Target>
 
 	<Target Name="Build">
-		<MSBuild Projects="..\Executioner.sln" Properties="Configuration=$(CompileConfiguration)" />
+		<MSBuild Projects="..\Executioner.sln" Properties="Configuration=$(CompileConfiguration);OutputPath=$(OutputDirectory)" />
 	</Target>
 </Project>
