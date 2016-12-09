@@ -16,6 +16,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 		}
 
 		[TestMethod]
+		//[DeploymentItem("App.config")]
 		public void ScriptExecutor_SqlServer_ConnectionSucceeds() {
 			string[] scripts = new string[] {
 				$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2016-06-22:1'>print 'Hello'</Script>"
