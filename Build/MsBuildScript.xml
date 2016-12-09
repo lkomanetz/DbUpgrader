@@ -5,8 +5,6 @@
 	</PropertyGroup>
 	<Target Name="Main">
 		<CallTarget Targets="Build" />
-		<Copy SourceFiles="..\ScriptExecutor.SqlServer.Tests\App.config"
-			DestinationFolder="..\ScriptExecutor.SqlServer.Tests\bin\Release" />
 	</Target>
 
 	<Target Name="Build">
