@@ -6,10 +6,8 @@
 		<DestinationDir>..\Artifacts</DestinationDir>
 	</PropertyGroup>
 	<Target Name="Main">
-		<!--
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="MoveBinaries" />
-		-->
 		<CallTarget Targets="Build" />
 	</Target>
 
