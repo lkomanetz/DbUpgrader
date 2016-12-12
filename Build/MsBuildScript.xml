@@ -2,12 +2,33 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Main">
 	<PropertyGroup>
 		<CompileConfiguration>$(buildConfig)</CompileConfiguration>
+		<SourceDir>..\Executioner\bin\Release</SourceDir>
+		<DestinationDir>..\Artifacts</DestinationDir>
 	</PropertyGroup>
 	<Target Name="Main">
+		<CallTarget Targets="Clean" />
+		<CallTarget Targets="MoveBinaries" />
 		<CallTarget Targets="Build" />
 	</Target>
 
 	<Target Name="Build">
 		<MSBuild Projects="..\Executioner.sln" Properties="Configuration=$(CompileConfiguration)" />
+	</Target>
+
+	<Target Name="Clean">
+		<ItemGroup>
+			<DirectoriesToClean Include="..\Artifacts" />
+		</ItemGroup>
+		<RemoveDir Directories="@(DirectoriesToClean)" />
+		<MakeDir Directories="@(DirectoriesToClean)" />
+	</Target>
+
+	<Target Name="MoveBinaries">
+		<CreateItem Include="$(SourceDir)\**\*.dll">
+			<Output TaskParameter="Include" ItemName="BinaryFiles" />
+		</CreateItem>
+
+		<Copy SourceFiles="@(BinaryFiles)"
+			DestinationFolder="$(DestinationDir)" />
 	</Target>
 </Project>
