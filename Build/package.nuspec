@@ -12,8 +12,8 @@
 	</metadata>
 
 	<files>
-		<file src="..\lib\net45\Executioner.dll" />
-		<file src="..\lib\net45\Executioner.Contracts.dll" />
-		<file src="..\lib\net45\Executioner.ExtensionMethods.dll" />
+		<file src="..\lib\Executioner.dll" />
+		<file src="..\lib\Executioner.Contracts.dll" />
+		<file src="..\lib\Executioner.ExtensionMethods.dll" />
 	</files>
 </package>

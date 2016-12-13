@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<CompileConfiguration>$(buildConfig)</CompileConfiguration>
 		<SourceDir>..\Executioner\bin\Release</SourceDir>
-		<DestinationDir>..\lib\net45</DestinationDir>
+		<DestinationDir>..\lib</DestinationDir>
 	</PropertyGroup>
 	<Target Name="Main">
 		<CallTarget Targets="Clean" />
