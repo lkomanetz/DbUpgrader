@@ -12,8 +12,8 @@
 	</metadata>
 
 	<files>
-		<file src="..\lib\Executioner.dll" />
-		<file src="..\lib\Executioner.Contracts.dll" />
-		<file src="..\lib\Executioner.ExtensionMethods.dll" />
+		<file src="..\lib\Executioner.dll" target="lib" />
+		<file src="..\lib\Executioner.Contracts.dll" target="lib" />
+		<file src="..\lib\Executioner.ExtensionMethods.dll" target="lib" />
 	</files>
 </package>
