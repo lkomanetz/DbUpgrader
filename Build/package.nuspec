@@ -14,6 +14,6 @@
 	<files>
 		<file src="..\Artifacts\Executioner.dll" />
 		<file src="..\Artifacts\Executioner.Contracts.dll" />
-		<file src="..\Artifacts\Executioner.Extensions.dll" />
+		<file src="..\Artifacts\Executioner.ExtensionMethods.dll" />
 	</files>
 </package>
