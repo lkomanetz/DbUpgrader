@@ -17,7 +17,7 @@
 
 	<Target Name="Clean">
 		<ItemGroup>
-			<DirectoriesToClean Include="..\Artifacts" />
+			<DirectoriesToClean Include="$(DestinationDir)" />
 		</ItemGroup>
 		<RemoveDir Directories="@(DirectoriesToClean)" />
 		<MakeDir Directories="@(DirectoriesToClean)" />
