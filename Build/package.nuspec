@@ -1,0 +1,19 @@
+<?xml version "1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2016/06/nuspec.xsd">
+	<metadata>
+		<id>Fmp.Executioner</id>
+		<version>1.0</version>
+		<authors>Komanetz, Logan</authors>
+		<licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
+		<projectUrl>http://github.com/lkomanetz/Executioner</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<releaseNotes>Initial release</releaseNotes>
+		<description>Allows multitude of scripting languages to run in requested order.</description>
+	</metadata>
+
+	<files>
+		<file src="..\Artifacts\Executioner.dll" />
+		<file src="..\Artifacts\Executioner.Contracts.dll" />
+		<file src="..\Artifacts\Executioner.Extensions.dll" />
+	</files>
+</package>
