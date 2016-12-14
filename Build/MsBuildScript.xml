@@ -4,11 +4,13 @@
 		<CompileConfiguration>$(buildConfig)</CompileConfiguration>
 		<SourceDir>..\Executioner\bin\Release</SourceDir>
 		<DestinationDir>..\lib\net45</DestinationDir>
+		<NugetExeLocation>C:\Program Files (x86)\NuGet</NugetExeLocation>
 	</PropertyGroup>
 	<Target Name="Main">
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="MoveBinaries" />
 		<CallTarget Targets="Build" />
+		<CallTarget Targets="CreateNugetPackage" />
 	</Target>
 
 	<Target Name="Build">
@@ -30,5 +32,10 @@
 
 		<Copy SourceFiles="@(BinaryFiles)"
 			DestinationFolder="$(DestinationDir)" />
+	</Target>
+
+	<Target Name="CreateNugetPackage">
+		<Exec WorkingDirectory="$(NugetExeLocation)"
+			Command="nuget.exe pack Build\package.nuspec" />
 	</Target>
 </Project>
