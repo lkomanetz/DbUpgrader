@@ -36,6 +36,6 @@
 
 	<Target Name="CreateNugetPackage">
 		<Exec WorkingDirectory="$(NugetExeLocation)"
-			Command="$(NugetExeLocation)\nuget.exe pack Build\package.nuspec" />
+			Command="powershell.exe .\nuget.exe pack Build\package.nuspec" />
 	</Target>
 </Project>
