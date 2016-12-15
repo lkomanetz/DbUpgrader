@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//TODO(Logan) -> Test the use of the API through NuGet in another solution.
 namespace Executioner {
 
 	public class ScriptExecutioner : IExecutioner, IDisposable {
