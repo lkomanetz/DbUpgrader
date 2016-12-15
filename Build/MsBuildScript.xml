@@ -36,6 +36,6 @@
 
 	<Target Name="CreateNugetPackage">
 		<Exec WorkingDirectory="$(NugetExeLocation)" 
-			Command="nuget.exe pack 'C:\Program Files (x86)\Jenkins\jobs\The Executioner\workspace\Build\package.nuspec'" />
+			Command="nuget.exe pack quot;C:\Program Files (x86)\Jenkins\jobs\The Executioner\workspace\Build\package.nuspecquot;" />
 	</Target>
 </Project>
