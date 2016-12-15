@@ -7,6 +7,7 @@
 		<NugetExeLocation>C:\Program Files (x86)\NuGet</NugetExeLocation>
 		<NugetOutputDir>C:\Program Files (x86)\Jenkins\Jobs\The Executioner\workspace\lib</NugetOutputDir>
 	</PropertyGroup>
+
 	<Target Name="Main">
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="MoveBinaries" />
