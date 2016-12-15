@@ -5,6 +5,7 @@
 		<SourceDir>..\Executioner\bin\Release</SourceDir>
 		<DestinationDir>..\lib\net45</DestinationDir>
 		<NugetExeLocation>C:\Program Files (x86)\NuGet</NugetExeLocation>
+		<NugetOutputDir>C:\Program Files (x86)\Jenkins\Jobs\The Executioner\workspace\lib</NugetOutputDir>
 	</PropertyGroup>
 	<Target Name="Main">
 		<CallTarget Targets="Clean" />
@@ -36,6 +37,6 @@
 
 	<Target Name="CreateNugetPackage">
 		<Exec WorkingDirectory="$(NugetExeLocation)" 
-			Command="nuget.exe pack &quot;C:\Program Files (x86)\Jenkins\jobs\The Executioner\workspace\Build\package.nuspec&quot; -outputdirectory $(DestinationDir)" />
+			Command="nuget.exe pack &quot;C:\Program Files (x86)\Jenkins\jobs\The Executioner\workspace\Build\package.nuspec&quot; -outputdirectory $(NugetOutputDir)" />
 	</Target>
 </Project>
