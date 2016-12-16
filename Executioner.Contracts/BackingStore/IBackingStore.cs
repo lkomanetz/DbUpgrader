@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Executioner.Contracts {
 
+	//TODO(Logan) -> Create FileSystem backing store for persistence.
+	//TODO(Logan) -> Create separate 'Tests' project for File System backing store.
 	public interface IBackingStore : IDisposable {
 
 		IList<ScriptDocument> GetDocuments(GetDocumentsRequest request = null);
