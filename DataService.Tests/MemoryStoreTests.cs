@@ -217,7 +217,7 @@ namespace BackingStore.Tests {
 			DateTime currentTime = DateTime.UtcNow;
 			ScriptDocument doc = CreateNewDocument(numOfScripts: 0);
 
-			IList<Script> scripts = new List<Script>() {
+			List<Script> scripts = new List<Script>() {
 				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime.AddDays(2), order: 0),
 				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime.AddDays(1), order: 0),
 				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 0)
@@ -238,7 +238,7 @@ namespace BackingStore.Tests {
 			DateTime currentTime = DateTime.UtcNow;
 			ScriptDocument doc = CreateNewDocument(numOfScripts: 0);
 
-			IList<Script> scripts = new List<Script>() {
+			List<Script> scripts = new List<Script>() {
 				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 2),
 				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 1),
 				CreateScriptFor(docId: doc.SysId, dateCreated: currentTime, order: 0)

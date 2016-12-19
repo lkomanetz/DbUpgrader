@@ -10,9 +10,9 @@ namespace Executioner.Contracts {
 
 	public class ScriptLoaderUtilities {
 
-		public static IList<Script> GetScriptsFrom(XmlDocument xmlDoc) {
+		public static List<Script> GetScriptsFrom(XmlDocument xmlDoc) {
 			XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(ScriptLoaderConstants.SCRIPT_NODE);
-			IList<Script> scripts = new List<Script>();
+			List<Script> scripts = new List<Script>();
 
 			Guid docId = Guid.Parse(xmlDoc.SelectSingleNode(
 				$"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}").InnerText

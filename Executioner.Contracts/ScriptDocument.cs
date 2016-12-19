@@ -11,7 +11,7 @@ namespace Executioner.Contracts {
 		public Guid SysId { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 		public int Order { get; set; }
-		public IList<Script> Scripts { get; set; }
+		public List<Script> Scripts { get; set; }
 		public string ResourceName { get; set; }
 		public bool IsComplete { get; set; }
 

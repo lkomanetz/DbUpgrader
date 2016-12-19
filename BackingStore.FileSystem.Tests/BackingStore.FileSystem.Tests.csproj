@@ -53,6 +53,16 @@
     <Compile Include="FileSystemTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
+      <Project>{D208EE23-BFF8-40F5-9A81-AFDC6089EE5F}</Project>
+      <Name>Executioner.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Executioner\Executioner.csproj">
+      <Project>{04b05264-b56c-4274-aeea-08bd938ae168}</Project>
+      <Name>Executioner</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
