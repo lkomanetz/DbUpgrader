@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Executioner.Contracts;
 using System.Collections.Generic;
 using Executioner.BackingStore;
-using System.Reflection;
 using System.Linq;
 
 namespace BackingStore.FileSystem.Tests {
@@ -20,9 +19,9 @@ namespace BackingStore.FileSystem.Tests {
 			_backingStore = new FileSystemStore(_rootDir);
 		}
 
-		[ClassCleanup]
-		public static void Cleanup() {
-			Directory.Delete(_rootDir, true);	
+		[TestCleanup]
+		public void Cleanup() {
+			_backingStore.Clean();
 		}
 
 		[TestMethod]
@@ -110,6 +109,55 @@ namespace BackingStore.FileSystem.Tests {
 			Assert.IsTrue(
 				foundScripts.Where(x => x.SysId == newScriptId).SingleOrDefault() != null,
 				$"Script Id '{newScriptId}' not found after add."
+			);
+		}
+
+		[TestMethod]
+		public void DeleteScript_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			doc.Scripts.Add(new Script() {
+				SysId = Guid.NewGuid(),
+				DocumentId = doc.SysId,
+				DateCreatedUtc = DateTime.UtcNow,
+				Order = 0,
+				IsComplete = false
+			});
+			Guid scriptIdDeleted = doc.Scripts[0].SysId;
+			_backingStore.Add(doc);
+
+			bool scriptDeleted = _backingStore.Delete(doc.Scripts[0]);
+			Assert.IsTrue(scriptDeleted, $"Script Id '{scriptIdDeleted}' not deleted.");
+
+			IList<Script> scripts = _backingStore.GetScriptsFor(doc.SysId);
+			if (scripts.Count > 0) {
+				Assert.IsTrue(
+					scripts.Where(x => x.SysId == scriptIdDeleted).SingleOrDefault() == null,
+					$"Script Id '{scriptIdDeleted}' not deleted."
+				);
+			}
+		}
+
+		[TestMethod]
+		public void GetDocuments_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			ScriptDocument anotherDoc = CreateDocument();
+			_backingStore.Add(doc);
+			_backingStore.Add(anotherDoc);
+
+			IList<ScriptDocument> docs = _backingStore.GetDocuments();
+			Assert.IsTrue(
+				docs.Count == 2,
+				$"Incorrect number of documents returned.\nExpected {2}\nActual {docs.Count}"
+			);
+
+			int docsFound = docs.Where(
+				x => x.SysId == doc.SysId ||
+					x.SysId == anotherDoc.SysId
+				)
+				.Count();
+			Assert.IsTrue(
+				docsFound == 2,
+				$"Incorrect number of documents returned.\nExpected {2}\nActual {docsFound}"
 			);
 		}
 

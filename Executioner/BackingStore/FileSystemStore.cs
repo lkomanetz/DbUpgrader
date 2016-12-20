@@ -45,7 +45,20 @@ namespace Executioner.BackingStore {
 		}
 
 		public bool Delete(Script script) {
-			throw new NotImplementedException();
+			ScriptDocument doc = Deserialize(script.DocumentId);
+			if (doc == null) {
+				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
+			}
+			bool scriptRemoved = doc.Scripts.Remove(
+				doc.Scripts.Where(x => x.SysId == script.SysId).SingleOrDefault()
+			);
+
+			if (scriptRemoved) {
+				doc.Scripts = (List<Script>)Sort(doc.Scripts);
+				Serialize(doc);
+			}
+
+			return scriptRemoved;
 		}
 
 		public bool Delete(ScriptDocument document) {
@@ -78,7 +91,30 @@ namespace Executioner.BackingStore {
 		}
 
 		public IList<ScriptDocument> GetDocuments(GetDocumentsRequest request = null) {
-			throw new NotImplementedException();
+			request = request ?? new GetDocumentsRequest() { IncludeCompletedDocuments = true };
+			IEnumerable<string> filePaths = Directory.EnumerateFiles(_rootDir);
+			if (filePaths.Count() == 0) {
+				return null;
+			}
+
+			List<ScriptDocument> documents = new List<ScriptDocument>();
+			foreach (string path in filePaths) {
+				string fileName = Path.GetFileNameWithoutExtension(path);
+				Guid sysId = Guid.Empty;
+				if (!Guid.TryParse(fileName, out sysId)) {
+					throw new FormatException($"{fileName} is incorrect GUID format.");
+				}
+				documents.Add(Deserialize(sysId));
+			}
+
+			if (request.IncludeCompletedDocuments) {
+				documents = documents.Where(x => x.IsComplete || !x.IsComplete).ToList();
+			}
+			else {
+				documents = documents.Where(x => !x.IsComplete).ToList();
+			}
+
+			return Sort(documents);
 		}
 
 		public IList<Script> GetScriptsFor(Guid documentId) {
@@ -132,6 +168,13 @@ namespace Executioner.BackingStore {
 			return scripts
 				.OrderBy(script => script.DateCreatedUtc)
 				.ThenBy(script => script.Order)
+				.ToList();
+		}
+
+		private IList<ScriptDocument> Sort(IList<ScriptDocument> documents) {
+			return documents
+				.OrderBy(doc => doc.DateCreatedUtc)
+				.ThenBy(doc => doc.Order)
 				.ToList();
 		}
 
