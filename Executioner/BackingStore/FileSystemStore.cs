@@ -22,26 +22,26 @@ namespace Executioner.BackingStore {
 		}
 
 		public void Add(Script script) {
-			throw new NotImplementedException();
+			ScriptDocument doc = Deserialize(script.DocumentId);
+			if (doc == null) {
+				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
+			}
+
+			doc.Scripts.Add(script);
+			doc.Scripts = (List<Script>)Sort(doc.Scripts);
+			doc.IsComplete = AreComplete(doc.Scripts);
+
+			Serialize(doc);
 		}
 
 		public void Add(ScriptDocument document) {
-			string fileLoc = $@"{_rootDir}\{document.SysId}{ScriptLoaderConstants.FILE_EXTENSION}";
-			if (File.Exists(fileLoc)) {
-				return;
-			}
-
-			Directory.CreateDirectory(_rootDir);
-			FileStream stream = File.Create(fileLoc);
-			stream.Dispose();
-
-			using (StreamWriter sw = new StreamWriter(fileLoc)) {
-				_serializer.Serialize(sw, document);
-			}
+			Serialize(document);
 		}
 
 		public void Clean() {
-			throw new NotImplementedException();
+			if (Directory.Exists(_rootDir)) {
+				Directory.Delete(_rootDir, true);
+			}
 		}
 
 		public bool Delete(Script script) {
@@ -65,7 +65,8 @@ namespace Executioner.BackingStore {
 		}
 
 		public void Dispose() {
-			throw new NotImplementedException();
+			_serializer = null;
+			_rootDir = null;
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
@@ -81,15 +82,7 @@ namespace Executioner.BackingStore {
 		}
 
 		public IList<Script> GetScriptsFor(Guid documentId) {
-			string fileLoc = $@"{_rootDir}\{documentId}{ScriptLoaderConstants.FILE_EXTENSION}";
-			if (!File.Exists(fileLoc)) {
-				return null;
-			}
-
-			ScriptDocument doc = null;
-			using (StreamReader reader = new StreamReader(fileLoc)) {
-				doc = (ScriptDocument)_serializer.Deserialize(reader);
-			}
+			ScriptDocument doc = Deserialize(documentId);
 
 			if (doc == null) {
 				return null;
@@ -104,6 +97,35 @@ namespace Executioner.BackingStore {
 
 		public void Update(ScriptDocument document) {
 			throw new NotImplementedException();
+		}
+
+		private ScriptDocument Deserialize(Guid docId) {
+			string fileLoc = $@"{_rootDir}\{docId}{ScriptLoaderConstants.FILE_EXTENSION}";
+			if (!File.Exists(fileLoc)) {
+				return null;
+			}
+
+			ScriptDocument doc = null;
+			using (StreamReader reader = new StreamReader(fileLoc)) {
+				doc = (ScriptDocument)_serializer.Deserialize(reader);
+			}
+
+			return doc;
+		}
+
+		private void Serialize(ScriptDocument doc) {
+			string fileLoc = $@"{_rootDir}\{doc.SysId}{ScriptLoaderConstants.FILE_EXTENSION}";
+
+			if (!Directory.Exists(_rootDir)) {
+				Directory.CreateDirectory(_rootDir);
+			}
+
+			FileStream fs = File.Create(fileLoc);
+			fs.Dispose();
+
+			using (StreamWriter sw = new StreamWriter(fileLoc, false)) {
+				_serializer.Serialize(sw, doc);
+			}
 		}
 
 		private IList<Script> Sort(IList<Script> scripts) {

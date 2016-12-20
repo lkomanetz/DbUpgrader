@@ -66,6 +66,53 @@ namespace BackingStore.FileSystem.Tests {
 			);
 		}
 
+		[TestMethod]
+		public void FileSystemStore_Clear_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			ScriptDocument anotherDoc = CreateDocument();
+			_backingStore.Add(doc);
+			_backingStore.Add(doc);
+
+			_backingStore.Clean();
+			Assert.IsTrue(
+				!Directory.Exists(_rootDir),
+				$"Directory '{_rootDir}' still exists."
+			);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(FileNotFoundException), "Script file unexpectedly found.")]
+		public void AddScriptForInvalidDocId_Fails() {
+			Script fakeScript = new Script() {
+				DocumentId = Guid.NewGuid(),
+				SysId = Guid.NewGuid(),
+				DateCreatedUtc = DateTime.UtcNow
+			};
+
+			_backingStore.Add(fakeScript);
+		}
+
+		[TestMethod]
+		public void AddScriptForValidDocId_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			_backingStore.Add(doc);
+
+			Guid newScriptId = Guid.NewGuid();
+			Script newScript = new Script() {
+				SysId = newScriptId,
+				DocumentId = doc.SysId,
+				DateCreatedUtc = DateTime.UtcNow
+			};
+
+			_backingStore.Add(newScript);
+			IList<Script> foundScripts = _backingStore.GetScriptsFor(doc.SysId);
+
+			Assert.IsTrue(
+				foundScripts.Where(x => x.SysId == newScriptId).SingleOrDefault() != null,
+				$"Script Id '{newScriptId}' not found after add."
+			);
+		}
+
 		private ScriptDocument CreateDocument() {
 			Guid docId = Guid.NewGuid();
 
