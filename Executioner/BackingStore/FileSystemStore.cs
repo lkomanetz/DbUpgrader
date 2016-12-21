@@ -83,11 +83,37 @@ namespace Executioner.BackingStore {
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
-			throw new NotImplementedException();
+			IEnumerable<string> filePaths = Directory.EnumerateFiles(_rootDir);
+			if (filePaths.Count() == 0) {
+				return null;
+			}
+
+			IList<Guid> completedDocIds = new List<Guid>();
+			foreach (string path in filePaths) {
+				string fileName = Path.GetFileNameWithoutExtension(path);
+				Guid sysId = Guid.Empty;
+				if (!Guid.TryParse(fileName, out sysId)) {
+					throw new FormatException($"{fileName} is incorrect GUID format.");
+				}
+				ScriptDocument doc = Deserialize(sysId);
+				if (doc.IsComplete) {
+					completedDocIds.Add(doc.SysId);
+				}
+			}
+
+			return completedDocIds;
 		}
 
 		public IList<Guid> GetCompletedScriptIdsFor(Guid documentId) {
-			throw new NotImplementedException();
+			ScriptDocument doc = Deserialize(documentId);
+			if (doc == null) {
+				throw new FileNotFoundException($"Document Id '{documentId}' not found.");
+			}
+
+			return doc.Scripts
+				.Where(x => x.IsComplete)
+				.Select(x => x.SysId)
+				.ToList();
 		}
 
 		public IList<ScriptDocument> GetDocuments(GetDocumentsRequest request = null) {
@@ -128,11 +154,24 @@ namespace Executioner.BackingStore {
 		}
 
 		public void Update(Script script) {
-			throw new NotImplementedException();
+			ScriptDocument doc = Deserialize(script.DocumentId);
+			if (doc == null) {
+				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
+			}
+			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
+
+			doc.Scripts[index] = script;
+			doc.IsComplete = AreComplete(doc.Scripts);
+			Serialize(doc);
 		}
 
 		public void Update(ScriptDocument document) {
-			throw new NotImplementedException();
+			string fileLoc = $@"{_rootDir}\{document.SysId}{ScriptLoaderConstants.FILE_EXTENSION}";
+			if (!File.Exists(fileLoc)) {
+				throw new FileNotFoundException($"Document Id '{document.SysId}' not found.");
+			}
+
+			Serialize(document);
 		}
 
 		private ScriptDocument Deserialize(Guid docId) {

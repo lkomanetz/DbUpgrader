@@ -161,6 +161,80 @@ namespace BackingStore.FileSystem.Tests {
 			);
 		}
 
+		[TestMethod]
+		public void UpdateDocument_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			bool previousState = doc.IsComplete;
+			_backingStore.Add(doc);
+			doc.IsComplete = true;
+
+			_backingStore.Update(doc);
+			IList<ScriptDocument> docs = _backingStore.GetDocuments();
+			Assert.IsTrue(docs.Count == 1, "Incorrect number of documents returned.");
+			Assert.IsTrue(
+				docs[0].IsComplete && !previousState,
+				"Document did not update."
+			);
+		}
+
+		[TestMethod]
+		public void UpdateScript_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			_backingStore.Add(doc);
+
+			doc.Scripts[0].IsComplete = true;
+			doc.Scripts[0].ScriptText = "Test";
+			_backingStore.Update(doc.Scripts[0]);
+
+			IList<Script> foundScripts = _backingStore.GetScriptsFor(doc.SysId);
+			Assert.IsTrue(foundScripts.Count == 1, "Incorrect number of scripts returned.");
+			Assert.IsTrue(
+				foundScripts[0].IsComplete && foundScripts[0].ScriptText.Equals("Test"),
+				"Script not updated"
+			);
+		}
+
+		[TestMethod]
+		public void GetCompletedDocumentIds_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			ScriptDocument anotherDoc = CreateDocument();
+			anotherDoc.Scripts[0].IsComplete = true;
+			anotherDoc.IsComplete = true;
+
+			_backingStore.Add(doc);
+			_backingStore.Add(anotherDoc);
+
+			IList<Guid> completedIds = _backingStore.GetCompletedDocumentIds();
+			Assert.IsTrue(completedIds.Count == 1, "Incorrect completed Ids returned.");
+			Assert.IsTrue(
+				completedIds[0] == anotherDoc.SysId,
+				$"Expected completed Id {anotherDoc.SysId}\nActual completed Id {completedIds[0]}"
+			);
+		}
+
+		[TestMethod]
+		public void GetCompletedScriptIds_Succeeds() {
+			Guid completedScriptId = Guid.NewGuid();
+			ScriptDocument doc = CreateDocument();
+			doc.Scripts.Add(new Script() {
+				SysId = completedScriptId,
+				DocumentId = doc.SysId,
+				IsComplete = true,
+				DateCreatedUtc = DateTime.UtcNow,
+				Order = 0,
+				ExecutorName = "TestExecutor",
+				ScriptText = String.Empty
+			});
+
+			_backingStore.Add(doc);
+			IList<Guid> completedScriptIds = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
+			Assert.IsTrue(completedScriptIds.Count == 1, "Incorrect amount of script Ids returned.");
+			Assert.IsTrue(
+				completedScriptIds[0] == completedScriptId,
+				$"Expected Id {completedScriptId}\nActual Id {completedScriptIds[0]}"
+			);
+		}
+
 		private ScriptDocument CreateDocument() {
 			Guid docId = Guid.NewGuid();
 
