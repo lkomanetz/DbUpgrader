@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Executioner.Contracts;
 using System.Collections.Generic;
-using Executioner.BackingStore;
+using Executioner;
 using System.Linq;
 
 namespace BackingStore.FileSystem.Tests {
