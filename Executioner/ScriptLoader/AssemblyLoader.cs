@@ -12,6 +12,7 @@ using Executioner.ExtensionMethods;
 
 namespace Executioner {
 
+	// TODO(Logan) -> Fix bug where script loader overwrites what was loaded before.
 	public class AssemblyLoader : IScriptLoader {
 		private Assembly _assembly;
 

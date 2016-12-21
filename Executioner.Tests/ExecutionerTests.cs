@@ -218,6 +218,26 @@ namespace Executioner.Tests {
 			);
 		}
 
+		[TestMethod]
+		public void MultipleInstantiationsExecutesCorrectNumberOfScripts() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
+			};
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			executioner.Add(new MockScriptExecutor());
+			var firstResult = executioner.Run();
+
+			executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			executioner.Add(new MockScriptExecutor());
+			var secondResult = executioner.Run();
+
+			Assert.IsTrue(
+				secondResult.ScriptDocumentsCompleted == 0 && secondResult.ScriptsCompleted == 0,
+				"Incorrect number of scripts ran on second run."
+			);
+		}
+
 	}
 
 }
