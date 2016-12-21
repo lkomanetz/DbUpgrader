@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Runtime.CompilerServices;
 
-namespace Executioner.BackingStore {
+namespace Executioner {
 
 	public class FileSystemStore : IBackingStore {
 
