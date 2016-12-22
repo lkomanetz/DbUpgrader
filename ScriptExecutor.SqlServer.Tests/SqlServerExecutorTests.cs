@@ -23,7 +23,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 			SqlServerExecutor sqlExecutor = new SqlServerExecutor(connectionString);
 			ScriptExecutioner executioner = new ScriptExecutioner(
 				new BaseMockLoader(scripts),
-				new MemoryStore()
+				new MockLogger()
 			);
 			executioner.Add(sqlExecutor);
 			executioner.Run();
@@ -38,7 +38,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 
 			ScriptExecutioner executioner = new ScriptExecutioner(
 				new BaseMockLoader(scripts),
-				new MemoryStore()
+				new MockLogger()
 			);
 
 			executioner.Add(new SqlServerExecutor(connectionString));

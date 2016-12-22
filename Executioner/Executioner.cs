@@ -1,4 +1,5 @@
 ﻿using Executioner.Contracts;
+using Executioner.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +11,23 @@ namespace Executioner {
 	public class ScriptExecutioner : IExecutioner, IDisposable {
 		private IScriptLoader _scriptLoader;
 		private IBackingStore _storage;
+		private ILogger _logger;
 
-		public ScriptExecutioner(IScriptLoader loader, IBackingStore storage) {
+		public ScriptExecutioner(IScriptLoader loader, ILogger logger) {
 			_scriptLoader = loader;
-			_storage = storage;
+			//_storage = storage;
+			_logger = logger;
 
-			_scriptLoader.LoadDocuments(_storage);
+			_scriptLoader.LoadDocuments();
 			this.ScriptExecutors = new List<IScriptExecutor>();
 		}
 
-		public IList<ScriptDocument> ScriptDocuments { get { return _storage.GetDocuments(); } }
+		public IList<ScriptDocument> ScriptDocuments { get { return _scriptLoader.Documents; } }
 		public IList<IScriptExecutor> ScriptExecutors { get; private set; }
 
 		protected virtual void Dispose(bool disposing) {
 			if (disposing) {
-				_storage.Dispose();
+				//_storage.Dispose();
 			}
 		}
 
@@ -33,6 +36,7 @@ namespace Executioner {
 		}
 
 		public ExecutionResult Run(ExecutionRequest request = null) {
+			_scriptLoader.LoadDocuments();
 			if (ScriptExecutors == null || ScriptExecutors.Count == 0) {
 				throw new InvalidOperationException("Unable to run ScriptExecutioner without any script executors.");
 			}
@@ -40,13 +44,20 @@ namespace Executioner {
 			int docsCompleted = 0;
 			int scriptsCompleted = 0;
 
-			var docsToExecute = _storage.GetDocuments(
-				new GetDocumentsRequest() {
-					IncludeCompletedDocuments = request.ExecuteAllScripts
-				}
-			);
+			//var docsToExecute = _storage.GetDocuments(
+			//	new GetDocumentsRequest() {
+			//		IncludeCompletedDocuments = request.ExecuteAllScripts
+			//	}
+			//);
+
+			IList<Guid> completedDocIds = _logger.GetCompletedDocumentIds();
+			var docsToExecute = _scriptLoader.Documents
+				.Where(x => !completedDocIds.Contains(x.SysId))
+				.ToList()
+				.SortOrderedItems();
 
 			for (short i = 0; i < docsToExecute.Count; ++i) {
+				_logger.Add(docsToExecute[i]);
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
 				for (short j = 0; j < scriptsToRun.Count; ++j) {
 					IScriptExecutor executor = FindExecutorFor(scriptsToRun[j].ExecutorName);
@@ -56,11 +67,11 @@ namespace Executioner {
 
 					executor.Execute(scriptsToRun[j].ScriptText);
 					scriptsToRun[j].IsComplete = true;
-					_storage.Update(scriptsToRun[j]);
+					_logger.Update(scriptsToRun[j]);
 					++scriptsCompleted;
 				}
 				docsToExecute[i].IsComplete = true;
-				_storage.Update(docsToExecute[i]);
+				//_storage.Update(docsToExecute[i]);
 				++docsCompleted;
 			}
 

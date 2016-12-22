@@ -6,17 +6,17 @@ using System.Collections.Generic;
 using Executioner;
 using System.Linq;
 
-namespace BackingStore.FileSystem.Tests {
+namespace Logger.FileSystem.Tests {
 
 	[TestClass]
 	public class FileSystemTests {
-		private static FileSystemStore _backingStore;
+		private static FileSystemLogger _backingStore;
 		private static string _rootDir;
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
 			_rootDir = @"C:\TestDir";
-			_backingStore = new FileSystemStore(_rootDir);
+			_backingStore = new FileSystemLogger(_rootDir);
 		}
 
 		[TestCleanup]
@@ -35,35 +35,35 @@ namespace BackingStore.FileSystem.Tests {
 			);
 		}
 
-		[TestMethod]
-		public void DeleteDocument_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
-			_backingStore.Delete(doc);
+		//[TestMethod]
+		//public void DeleteDocument_Succeeds() {
+		//	ScriptDocument doc = CreateDocument();
+		//	_backingStore.Add(doc);
+		//	_backingStore.Delete(doc);
 
-			Assert.IsTrue(
-				!File.Exists($@"{_rootDir}\{doc.SysId}{ScriptLoaderConstants.FILE_EXTENSION}"),
-				$"Document Id '{doc.SysId}' file still exists."
-			);
-		}
+		//	Assert.IsTrue(
+		//		!File.Exists($@"{_rootDir}\{doc.SysId}{ScriptLoaderConstants.FILE_EXTENSION}"),
+		//		$"Document Id '{doc.SysId}' file still exists."
+		//	);
+		//}
 
-		[TestMethod]
-		public void RetrievingScriptsFromDocument_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
+		//[TestMethod]
+		//public void RetrievingScriptsFromDocument_Succeeds() {
+		//	ScriptDocument doc = CreateDocument();
+		//	_backingStore.Add(doc);
 
-			IList<Script> foundScripts = _backingStore.GetScriptsFor(doc.SysId);
-			Assert.IsTrue(
-				foundScripts.Count == doc.Scripts.Count,
-				"Incorrect number of scripts returned."
-			);
+		//	IList<Script> foundScripts = _backingStore.GetScriptsFor(doc.SysId);
+		//	Assert.IsTrue(
+		//		foundScripts.Count == doc.Scripts.Count,
+		//		"Incorrect number of scripts returned."
+		//	);
 
-			IList<Script> differences = doc.Scripts.Except(foundScripts).ToList();
-			Assert.IsTrue(
-				differences.Count == 0,
-				$"Script differences found: {differences.Count}."
-			);
-		}
+		//	IList<Script> differences = doc.Scripts.Except(foundScripts).ToList();
+		//	Assert.IsTrue(
+		//		differences.Count == 0,
+		//		$"Script differences found: {differences.Count}."
+		//	);
+		//}
 
 		[TestMethod]
 		public void FileSystemStore_Clear_Succeeds() {
@@ -100,81 +100,82 @@ namespace BackingStore.FileSystem.Tests {
 			Script newScript = new Script() {
 				SysId = newScriptId,
 				DocumentId = doc.SysId,
-				DateCreatedUtc = DateTime.UtcNow
+				DateCreatedUtc = DateTime.UtcNow,
+				IsComplete = true
 			};
 
 			_backingStore.Add(newScript);
-			IList<Script> foundScripts = _backingStore.GetScriptsFor(doc.SysId);
+			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
 
 			Assert.IsTrue(
-				foundScripts.Where(x => x.SysId == newScriptId).SingleOrDefault() != null,
+				foundScripts.Where(x => x == newScriptId).SingleOrDefault() != null,
 				$"Script Id '{newScriptId}' not found after add."
 			);
 		}
 
-		[TestMethod]
-		public void DeleteScript_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			doc.Scripts.Add(new Script() {
-				SysId = Guid.NewGuid(),
-				DocumentId = doc.SysId,
-				DateCreatedUtc = DateTime.UtcNow,
-				Order = 0,
-				IsComplete = false
-			});
-			Guid scriptIdDeleted = doc.Scripts[0].SysId;
-			_backingStore.Add(doc);
+		//[TestMethod]
+		//public void DeleteScript_Succeeds() {
+		//	ScriptDocument doc = CreateDocument();
+		//	doc.Scripts.Add(new Script() {
+		//		SysId = Guid.NewGuid(),
+		//		DocumentId = doc.SysId,
+		//		DateCreatedUtc = DateTime.UtcNow,
+		//		Order = 0,
+		//		IsComplete = false
+		//	});
+		//	Guid scriptIdDeleted = doc.Scripts[0].SysId;
+		//	_backingStore.Add(doc);
 
-			bool scriptDeleted = _backingStore.Delete(doc.Scripts[0]);
-			Assert.IsTrue(scriptDeleted, $"Script Id '{scriptIdDeleted}' not deleted.");
+		//	bool scriptDeleted = _backingStore.Delete(doc.Scripts[0]);
+		//	Assert.IsTrue(scriptDeleted, $"Script Id '{scriptIdDeleted}' not deleted.");
 
-			IList<Script> scripts = _backingStore.GetScriptsFor(doc.SysId);
-			if (scripts.Count > 0) {
-				Assert.IsTrue(
-					scripts.Where(x => x.SysId == scriptIdDeleted).SingleOrDefault() == null,
-					$"Script Id '{scriptIdDeleted}' not deleted."
-				);
-			}
-		}
+		//	IList<Script> scripts = _backingStore.GetScriptsFor(doc.SysId);
+		//	if (scripts.Count > 0) {
+		//		Assert.IsTrue(
+		//			scripts.Where(x => x.SysId == scriptIdDeleted).SingleOrDefault() == null,
+		//			$"Script Id '{scriptIdDeleted}' not deleted."
+		//		);
+		//	}
+		//}
 
-		[TestMethod]
-		public void GetDocuments_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			ScriptDocument anotherDoc = CreateDocument();
-			_backingStore.Add(doc);
-			_backingStore.Add(anotherDoc);
+		//[TestMethod]
+		//public void GetDocuments_Succeeds() {
+		//	ScriptDocument doc = CreateDocument();
+		//	ScriptDocument anotherDoc = CreateDocument();
+		//	_backingStore.Add(doc);
+		//	_backingStore.Add(anotherDoc);
 
-			IList<ScriptDocument> docs = _backingStore.GetDocuments();
-			Assert.IsTrue(
-				docs.Count == 2,
-				$"Incorrect number of documents returned.\nExpected {2}\nActual {docs.Count}"
-			);
+		//	IList<ScriptDocument> docs = _backingStore.GetDocuments();
+		//	Assert.IsTrue(
+		//		docs.Count == 2,
+		//		$"Incorrect number of documents returned.\nExpected {2}\nActual {docs.Count}"
+		//	);
 
-			int docsFound = docs.Where(
-				x => x.SysId == doc.SysId ||
-					x.SysId == anotherDoc.SysId
-				)
-				.Count();
-			Assert.IsTrue(
-				docsFound == 2,
-				$"Incorrect number of documents returned.\nExpected {2}\nActual {docsFound}"
-			);
-		}
+		//	int docsFound = docs.Where(
+		//		x => x.SysId == doc.SysId ||
+		//			x.SysId == anotherDoc.SysId
+		//		)
+		//		.Count();
+		//	Assert.IsTrue(
+		//		docsFound == 2,
+		//		$"Incorrect number of documents returned.\nExpected {2}\nActual {docsFound}"
+		//	);
+		//}
 
 		[TestMethod]
 		public void UpdateDocument_Succeeds() {
 			ScriptDocument doc = CreateDocument();
 			bool previousState = doc.IsComplete;
 			_backingStore.Add(doc);
-			doc.IsComplete = true;
 
-			_backingStore.Update(doc);
-			IList<ScriptDocument> docs = _backingStore.GetDocuments();
+			foreach (Script script in doc.Scripts) {
+				script.IsComplete = true;
+				_backingStore.Update(script);
+			}
+			//doc.IsComplete = true;
+			//_backingStore.Update(doc);
+			IList<Guid> docs = _backingStore.GetCompletedDocumentIds();
 			Assert.IsTrue(docs.Count == 1, "Incorrect number of documents returned.");
-			Assert.IsTrue(
-				docs[0].IsComplete && !previousState,
-				"Document did not update."
-			);
 		}
 
 		[TestMethod]
@@ -186,12 +187,8 @@ namespace BackingStore.FileSystem.Tests {
 			doc.Scripts[0].ScriptText = "Test";
 			_backingStore.Update(doc.Scripts[0]);
 
-			IList<Script> foundScripts = _backingStore.GetScriptsFor(doc.SysId);
+			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
 			Assert.IsTrue(foundScripts.Count == 1, "Incorrect number of scripts returned.");
-			Assert.IsTrue(
-				foundScripts[0].IsComplete && foundScripts[0].ScriptText.Equals("Test"),
-				"Script not updated"
-			);
 		}
 
 		[TestMethod]

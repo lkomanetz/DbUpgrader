@@ -54,10 +54,15 @@
   </Choose>
   <ItemGroup>
     <Compile Include="IListTests.cs" />
+    <Compile Include="OrderedItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestClass.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
+      <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
+      <Name>Executioner.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj">
       <Project>{2dd7fea5-78cd-4244-8ff8-c07adc6e4d4c}</Project>
       <Name>Executioner.ExtensionMethods</Name>

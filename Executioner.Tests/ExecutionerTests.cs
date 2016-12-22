@@ -7,15 +7,27 @@ using Executioner.Tests.Classes;
 
 namespace Executioner.Tests {
 
+	//TODO(Logan) -> Fix broken unit tests.
 	[TestClass]
 	public class ExecutionerTests {
+		private static FileSystemLogger _logger;
+
+		[ClassInitialize]
+		public static void Initialize(TestContext context) {
+			_logger = new FileSystemLogger(@"C:\ExecutorTest");
+		}
+
+		[ClassCleanup]
+		public static void Cleanup() {
+			_logger.Clean();
+		}
 
 		[TestMethod]
 		public void ExecuteUpdatesCompletionProperty() {
 			string[] scripts = new string[] {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new MockScriptExecutor());
 			var result = executioner.Run();
 			Assert.IsTrue(
@@ -38,7 +50,7 @@ namespace Executioner.Tests {
 			string[] scripts = new string[] {
 				"<Script Id='278b7ef3-09da-4d1b-a101-390f4e6a5407' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new MockScriptExecutor());
 
 			var result = executioner.Run();
@@ -49,18 +61,17 @@ namespace Executioner.Tests {
 
 		[TestMethod]
 		public void ExecuteOnlyRunsNewScripts() {
-			string[] scripts = new string[] {
+			List<string> scripts = new List<string>() {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
 
-			IBackingStore memoryStore = new MemoryStore();
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), memoryStore);
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts.ToArray()), _logger);
 			executioner.Add(new MockScriptExecutor());
 
 			var firstResult = executioner.Run();
 
-			IList<ScriptDocument> docs = memoryStore.GetDocuments();
+			IList<ScriptDocument> docs = executioner.ScriptDocuments;
 			Assert.IsTrue(
 				docs.Count == 1,
 				$"Unit test expecting only one script document.\nActul: {docs.Count}"
@@ -76,8 +87,12 @@ namespace Executioner.Tests {
 					IsComplete = false,
 					DocumentId = docs[0].SysId
 				};
-				memoryStore.Add(newScript);
+				scripts.Add($"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:2'></Script>");
+				_logger.Add(newScript);
 			}
+
+			executioner = new ScriptExecutioner(new BaseMockLoader(scripts.ToArray()), _logger);
+			executioner.Add(new MockScriptExecutor());
 
 			var secondResult = executioner.Run();
 			Assert.IsTrue(
@@ -97,7 +112,7 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
 
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new IScriptExecutor[2] {
 				new SecondScriptExecutor(),
 				new MockScriptExecutor()
@@ -125,7 +140,7 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new MockScriptExecutor());
 			executioner.Add(new IScriptExecutor[2] {
 				new SecondScriptExecutor(),
@@ -148,7 +163,7 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new IScriptExecutor[2] {
 				new SecondScriptExecutor(),
 				new MockScriptExecutor()
@@ -170,7 +185,7 @@ namespace Executioner.Tests {
 			string[] scripts = new string[] {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new SecondScriptExecutor());
 			executioner.Run();
 		}
@@ -182,7 +197,7 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Run();
 		}
 
@@ -192,7 +207,7 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new MockScriptExecutor());
 			var firstResult = executioner.Run();
 			var secondResult = executioner.Run(new ExecutionRequest() { ExecuteAllScripts = true });
@@ -224,11 +239,11 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new MockScriptExecutor());
 			var firstResult = executioner.Run();
 
-			executioner = new ScriptExecutioner(new BaseMockLoader(scripts), new MemoryStore());
+			executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Add(new MockScriptExecutor());
 			var secondResult = executioner.Run();
 

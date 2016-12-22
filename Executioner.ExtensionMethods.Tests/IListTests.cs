@@ -42,6 +42,69 @@ namespace Executioner.ExtensionMethods.Tests {
 			Assert.IsFalse(testList.Any(x => x.Boolean), "ForEach did not change all true booleans to false.");
 		}
 
+		[TestMethod]
+		public void IList_SortOnOrderSucceeds() {
+			DateTime now = DateTime.UtcNow;
+
+			IList<OrderedItem> items = new List<OrderedItem>() {
+				new OrderedItem() { Id = 0, DateCreatedUtc = now, Order = 1 },
+				new OrderedItem() { Id = 1, DateCreatedUtc = now, Order = 3 },
+				new OrderedItem() { Id = 2, DateCreatedUtc = now, Order = 0 },
+				new OrderedItem() { Id = 3, DateCreatedUtc = now, Order = 2 }
+			};
+			IList<OrderedItem> sortedList = items.SortOrderedItems();
+
+			AssertOrder(
+				new int[] { 2, 0, 3, 1 },
+				sortedList.Select(x => x.Id).ToArray()
+			);
+		}
+
+		[TestMethod]
+		public void IList_SortOnDateCreatedUtcSucceeds() {
+			DateTime now = DateTime.UtcNow;
+			IList<OrderedItem> items = new List<OrderedItem>() {
+				new OrderedItem() { Id = 0, DateCreatedUtc = now },
+				new OrderedItem() { Id = 1, DateCreatedUtc = now.AddDays(-1) },
+				new OrderedItem() { Id = 2, DateCreatedUtc = now.AddDays(1) }
+			};
+
+			IList<OrderedItem> sortedList = items.SortOrderedItems();
+			AssertOrder(
+				new int[] { 1, 0, 2 },
+				sortedList.Select(x => x.Id).ToArray()
+			);
+		}
+
+		[TestMethod]
+		public void IList_SortOnDateAndOrderSucceeds() {
+			DateTime now = DateTime.UtcNow;
+			IList<OrderedItem> items = new List<OrderedItem>() {
+				new OrderedItem() { Id = 0, DateCreatedUtc = now, Order = 0 },
+				new OrderedItem() { Id = 1, DateCreatedUtc = now, Order = 1 },
+				new OrderedItem() { Id = 2, DateCreatedUtc = now.AddSeconds(-1), Order = 1 },
+				new OrderedItem() { Id = 3, DateCreatedUtc = now.AddSeconds(-1), Order = 0 },
+				new OrderedItem() { Id = 4, DateCreatedUtc = now.AddDays(1), Order = 0 }
+			};
+
+			IList<OrderedItem> sortedList = items.SortOrderedItems();
+			AssertOrder(
+				new int[] { 3, 2, 0, 1, 4 },
+				sortedList.Select(x => x.Id).ToArray()
+			);
+		}
+
+		private void AssertOrder(int[] expectedOrder, int[] actualOrder) {
+			Assert.IsTrue(
+				expectedOrder.Length == actualOrder.Length,
+				$"Actual order length {actualOrder.Length} != Expected order lenght {expectedOrder.Length}."
+			);
+
+			for (int i = 0; i < expectedOrder.Length; ++i) {
+				Assert.IsTrue(actualOrder[i] == expectedOrder[i], $"{actualOrder[i]} != {expectedOrder[i]}.");
+			}
+		}
+
 		private IList<TestClass> CreateList() {
 			IList<TestClass> testList = new List<TestClass>();
 

@@ -22,11 +22,8 @@ namespace Executioner {
 
 		public IList<ScriptDocument> Documents { get; private set; }
 
-		public void LoadDocuments(IBackingStore backingStore) {
+		public void LoadDocuments() {
 			Documents = GetDocumentsToRun(_assembly);
-			foreach (ScriptDocument doc in this.Documents) {
-				backingStore.Add(doc);
-			}
 		}
 
 		internal ScriptDocument[] GetDocumentsToRun(Assembly assembly) {

@@ -17,18 +17,11 @@ namespace ScriptLoader.Tests {
 
 		private static AssemblyLoader _loader;
 		private static Assembly _fakeServiceAssembly;
-		private static IBackingStore _backingStore;
 
 		[ClassInitialize]
 		public static void Initialize(TestContext context) {
-			_backingStore = new MockBackingStore();
 			_fakeServiceAssembly = typeof(MyFakeService).Assembly;
 			_loader = new AssemblyLoader(_fakeServiceAssembly);
-		}
-
-		[ClassCleanup]
-		public static void Cleanup() {
-			_backingStore.Dispose();
 		}
 
 		[TestMethod]
@@ -39,7 +32,7 @@ namespace ScriptLoader.Tests {
 
 		[TestMethod]
 		public void AssemblyLoader_LoadDocumentsSucceeds() {
-			_loader.LoadDocuments(_backingStore); // This is loading from an assembly resource found in the [ClassInitialize] method.
+			_loader.LoadDocuments(); // This is loading from an assembly resource found in the [ClassInitialize] method.
 			Assert.IsTrue(
 				_loader.Documents.Count == 1,
 				$"Expected 1 document -> Actual {_loader.Documents.Count}."

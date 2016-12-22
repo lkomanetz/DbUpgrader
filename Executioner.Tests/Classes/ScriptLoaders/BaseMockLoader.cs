@@ -17,7 +17,7 @@ namespace Executioner.Tests.Classes {
 
 		public IList<ScriptDocument> Documents { get; protected set; }
 
-		public void LoadDocuments(IBackingStore storage) {
+		public void LoadDocuments() {
 			XmlDocument doc = GetXmlDoc();
 			string orderNodeName = String.Format(
 				"{0}/{1}",
@@ -43,7 +43,6 @@ namespace Executioner.Tests.Classes {
 			};
 
 			this.Documents = new List<ScriptDocument>() { sDoc };
-			storage.Add(sDoc);
 		}
 
 		private XmlDocument GetXmlDoc() {

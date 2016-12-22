@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Executioner.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,5 +26,17 @@ namespace Executioner.ExtensionMethods
 			}
 		}
 
+		public static IList<T> SortOrderedItems<T>(this IList<T> source) where T : IOrderedItem {
+			return source.OrderBy(x => x.DateCreatedUtc)
+					.ThenBy(x => x.Order)
+					.ToList();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool AreComplete(this IList<Script> scripts) {
+			return scripts.All(x => x.IsComplete);
+		}
+
 	}
+
 }

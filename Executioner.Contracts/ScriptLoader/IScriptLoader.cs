@@ -9,7 +9,7 @@ namespace Executioner.Contracts {
 	public interface IScriptLoader {
 		
 		IList<ScriptDocument> Documents { get; }
-		void LoadDocuments(IBackingStore backingStore);
+		void LoadDocuments();
 
 	}
 
