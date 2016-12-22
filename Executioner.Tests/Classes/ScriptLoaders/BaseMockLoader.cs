@@ -15,7 +15,7 @@ namespace Executioner.Tests.Classes {
 			_scriptElements = scriptElements;
 		}
 
-		public IList<ScriptDocument> Documents { get; protected set; }
+		public IList<ScriptDocument> Documents { get; set; }
 
 		public void LoadDocuments() {
 			XmlDocument doc = GetXmlDoc();

@@ -41,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackingStore\FileSystemStore.cs" />
-    <Compile Include="BackingStore\MemoryStore.cs" />
     <Compile Include="Executioner.cs" />
     <Compile Include="Loggers\FileSystemLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -7,19 +7,18 @@ using Executioner.Tests.Classes;
 
 namespace Executioner.Tests {
 
-	//TODO(Logan) -> Fix broken unit tests.
 	[TestClass]
 	public class ExecutionerTests {
 		private static FileSystemLogger _logger;
 
-		[ClassInitialize]
-		public static void Initialize(TestContext context) {
-			_logger = new FileSystemLogger(@"C:\ExecutorTest");
+		[TestCleanup]
+		public void Cleanup() {
+			_logger.Clean();
 		}
 
-		[ClassCleanup]
-		public static void Cleanup() {
-			_logger.Clean();
+		[TestInitialize]
+		public void Initialize() {
+			_logger = new FileSystemLogger(@"C:\ExecutorTests");
 		}
 
 		[TestMethod]
@@ -65,8 +64,9 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
+			BaseMockLoader loader = new BaseMockLoader(scripts.ToArray());
 
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts.ToArray()), _logger);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
 			executioner.Add(new MockScriptExecutor());
 
 			var firstResult = executioner.Run();
@@ -87,12 +87,9 @@ namespace Executioner.Tests {
 					IsComplete = false,
 					DocumentId = docs[0].SysId
 				};
-				scripts.Add($"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:2'></Script>");
 				_logger.Add(newScript);
+				loader.Documents[0].Scripts.Add(newScript);
 			}
-
-			executioner = new ScriptExecutioner(new BaseMockLoader(scripts.ToArray()), _logger);
-			executioner.Add(new MockScriptExecutor());
 
 			var secondResult = executioner.Run();
 			Assert.IsTrue(
@@ -223,7 +220,7 @@ namespace Executioner.Tests {
 			);
 
 			errorMsg = String.Format(
-				"Executioner results unequal.FirstResult completed {0} scripts\nSecondResult completed {1} scripts",
+				"Executioner results unequal.\nFirstResult completed {0} scripts\nSecondResult completed {1} scripts",
 				firstResult.ScriptsCompleted,
 				secondResult.ScriptsCompleted
 			);
