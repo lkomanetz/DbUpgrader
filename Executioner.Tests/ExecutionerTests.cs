@@ -9,7 +9,7 @@ namespace Executioner.Tests {
 
 	[TestClass]
 	public class ExecutionerTests {
-		private static FileSystemLogger _logger;
+		private static ILogger _logger;
 
 		[TestCleanup]
 		public void Cleanup() {
@@ -18,7 +18,7 @@ namespace Executioner.Tests {
 
 		[TestInitialize]
 		public void Initialize() {
-			_logger = new FileSystemLogger(@"C:\ExecutorTests");
+			_logger = new MockLogger();
 		}
 
 		[TestMethod]
@@ -87,8 +87,9 @@ namespace Executioner.Tests {
 					IsComplete = false,
 					DocumentId = docs[0].SysId
 				};
+
 				_logger.Add(newScript);
-				loader.Documents[0].Scripts.Add(newScript);
+				loader.Add(newScript);	
 			}
 
 			var secondResult = executioner.Run();

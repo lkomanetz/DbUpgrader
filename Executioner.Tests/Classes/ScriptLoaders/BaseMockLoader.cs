@@ -1,4 +1,5 @@
 ﻿using Executioner.Contracts;
+using Executioner.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,23 @@ namespace Executioner.Tests.Classes {
 			};
 
 			this.Documents = new List<ScriptDocument>() { sDoc };
+		}
+
+		public void Add(Script script) {
+			ScriptDocument doc = this.Documents
+				.Where(x => x.SysId == script.DocumentId)
+				.SingleOrDefault();
+
+			if (doc == null) {
+				return;
+			}
+			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
+			if (index == -1) {
+				doc.Scripts.Add(script);
+			}
+			else {
+				doc.Scripts[index] = script;
+			}
 		}
 
 		private XmlDocument GetXmlDoc() {

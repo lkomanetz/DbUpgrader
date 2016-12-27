@@ -52,6 +52,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Classes\MockLogger.cs" />
     <Compile Include="Classes\ScriptLoaders\BaseMockLoader.cs" />
     <Compile Include="Classes\ScriptExecutors\MockScriptExecutor.cs" />
     <Compile Include="Classes\ScriptExecutors\SecondScriptExecutor.cs" />

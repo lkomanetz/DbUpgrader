@@ -101,7 +101,8 @@ namespace Executioner {
 				return new List<Script>(doc.Scripts);
 			}
 			else {
-				return doc.Scripts.Where(x => !x.IsComplete).ToList();
+				IList<Guid> completedScriptIds = _logger.GetCompletedScriptIdsFor(doc.SysId);
+				return doc.Scripts.Where(x => !completedScriptIds.Contains(x.SysId)).ToList();
 			}
 		}
 
