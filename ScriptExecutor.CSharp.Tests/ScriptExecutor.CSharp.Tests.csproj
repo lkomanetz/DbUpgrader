@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA89D6CC-D2E9-4A2D-BA1B-6D13D9868AAD}</ProjectGuid>
+    <ProjectGuid>{5F2A734D-2932-415F-9284-6DE0E4973CBF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BackingStore.FileSystem.Tests</RootNamespace>
-    <AssemblyName>BackingStore.FileSystem.Tests</AssemblyName>
+    <RootNamespace>ScriptExecutor.CSharp.Tests</RootNamespace>
+    <AssemblyName>ScriptExecutor.CSharp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -51,13 +51,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="FileSystemTests.cs" />
+    <Compile Include="CSharpExecutorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
-      <Project>{D208EE23-BFF8-40F5-9A81-AFDC6089EE5F}</Project>
+      <Project>{d208ee23-bff8-40f5-9a81-afdc6089ee5f}</Project>
       <Name>Executioner.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Executioner.Tests\Executioner.Tests.csproj">
+      <Project>{46752cec-1512-4e4c-bc3b-2e450871b1e5}</Project>
+      <Name>Executioner.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Executioner\Executioner.csproj">
       <Project>{04b05264-b56c-4274-aeea-08bd938ae168}</Project>

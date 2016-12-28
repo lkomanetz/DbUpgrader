@@ -52,6 +52,7 @@
     <Compile Include="Script.cs" />
     <Compile Include="ScriptDocument.cs" />
     <Compile Include="ScriptExecutor\IScriptExecutor.cs" />
+    <Compile Include="ScriptExecutor\ScriptExecutorConstants.cs" />
     <Compile Include="ScriptLoader\IScriptLoader.cs" />
     <Compile Include="ScriptLoader\ScriptLoaderConstants.cs" />
     <Compile Include="ScriptLoader\ScriptLoaderUtilities.cs" />
