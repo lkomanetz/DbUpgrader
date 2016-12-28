@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ScriptExecutor.CSharp.Tests {
 
+	//TODO(Logan) -> Add test for calling static method from current executing assembly.
+	//TODO(Logan) -> Add test for calling static method from another assembly.
 	[TestClass]
 	public class CSharpExecutorTests {
 
