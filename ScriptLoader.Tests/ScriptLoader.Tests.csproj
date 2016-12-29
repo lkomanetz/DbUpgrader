@@ -66,6 +66,10 @@
       <Project>{04b05264-b56c-4274-aeea-08bd938ae168}</Project>
       <Name>Executioner</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptLoader.Tests.AnotherFakeService\ScriptLoader.Tests.AnotherFakeService.csproj">
+      <Project>{6a13902d-d6f2-48f7-82c7-4ed180b62a94}</Project>
+      <Name>ScriptLoader.Tests.AnotherFakeService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptLoader.Tests.FakeService\ScriptLoader.Tests.FakeService.csproj">
       <Project>{870cf754-895c-4bdb-be02-a8f7c290d94c}</Project>
       <Name>ScriptLoader.Tests.FakeService</Name>

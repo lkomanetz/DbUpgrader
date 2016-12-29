@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptExecutor.CSharp.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptExecutor.CSharp.Tests.TestClasses", "ScriptExecutor.CSharp.Tests.TestClasses\ScriptExecutor.CSharp.Tests.TestClasses.csproj", "{CF3B36A7-2226-4C13-9F18-E7BDCB5C74FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptLoader.Tests.AnotherFakeService", "ScriptLoader.Tests.AnotherFakeService\ScriptLoader.Tests.AnotherFakeService.csproj", "{6A13902D-D6F2-48F7-82C7-4ED180B62A94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{CF3B36A7-2226-4C13-9F18-E7BDCB5C74FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF3B36A7-2226-4C13-9F18-E7BDCB5C74FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF3B36A7-2226-4C13-9F18-E7BDCB5C74FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A13902D-D6F2-48F7-82C7-4ED180B62A94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A13902D-D6F2-48F7-82C7-4ED180B62A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A13902D-D6F2-48F7-82C7-4ED180B62A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A13902D-D6F2-48F7-82C7-4ED180B62A94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

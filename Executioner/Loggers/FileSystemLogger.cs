@@ -12,10 +12,12 @@ namespace Executioner {
 
 	public class FileSystemLogger : ILogger {
 
+		private string _fileExt;
 		private string _rootDir;
 		private XmlSerializer _serializer;
 
 		public FileSystemLogger(string rootDirectory) {
+			_fileExt = ".xml";
 			_rootDir = rootDirectory;
 			_serializer = new XmlSerializer(typeof(ScriptDocument));
 
@@ -94,7 +96,7 @@ namespace Executioner {
 		}
 
 		private ScriptDocument Deserialize(Guid docId) {
-			string fileLoc = $@"{_rootDir}\{docId}{ScriptLoaderConstants.FILE_EXTENSION}";
+			string fileLoc = $@"{_rootDir}\{docId}{_fileExt}";
 			if (!File.Exists(fileLoc)) {
 				return null;
 			}
@@ -108,7 +110,7 @@ namespace Executioner {
 		}
 
 		private void Serialize(ScriptDocument doc) {
-			string fileLoc = $@"{_rootDir}\{doc.SysId}{ScriptLoaderConstants.FILE_EXTENSION}";
+			string fileLoc = $@"{_rootDir}\{doc.SysId}{_fileExt}";
 
 			if (!Directory.Exists(_rootDir)) {
 				Directory.CreateDirectory(_rootDir);

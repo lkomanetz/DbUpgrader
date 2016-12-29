@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ScriptDocument>
+	<Id>1e9b4c83-9b46-4c33-9c9a-1d39c20b49ae</Id>
+	<Order>2016-12-30</Order>
+	<Scripts>
+		<Script Id="9cecb4fd-7e94-4f9e-9ac7-29766ed9fb62" Executor="SqlServerExecutor" Order="2016-12-30">
+			PRINT 'Hello World!'	
+		</Script>	
+	</Scripts>
+</ScriptDocument>
