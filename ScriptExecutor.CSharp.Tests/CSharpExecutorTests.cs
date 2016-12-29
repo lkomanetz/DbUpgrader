@@ -9,7 +9,6 @@ using System.Collections.Generic;
 
 namespace ScriptExecutor.CSharp.Tests {
 
-	//TODO(Logan) -> Add test for calling static method from another assembly.
 	[TestClass]
 	public class CSharpExecutorTests {
 
