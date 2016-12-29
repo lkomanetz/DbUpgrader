@@ -7,20 +7,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Executioner {
 
 	public class CSharpExecutor : IScriptExecutor {
 
+		public CSharpExecutor() {
+			this.UsingStatements = new List<string>();
+			this.ReferencedAssemblies = new List<Assembly>();
+		}
+
+		public IList<string> UsingStatements { get; set; }
+		public IList<Assembly> ReferencedAssemblies { get; set; }
+
 		public void Execute(string scriptText) {
 			CSharpCodeProvider provider = new CSharpCodeProvider();
-			CompilerParameters parameters = new CompilerParameters() {
-				GenerateInMemory = true,
-				GenerateExecutable = false
-			};
+			CompilerParameters parameters = CreateParameters();
 
 			string csSource = GenerateSourceString(scriptText);
+			
 			CompilerResults results = provider.CompileAssemblyFromSource(parameters, csSource);
 			CheckForErrors(results);
 
@@ -46,8 +52,15 @@ namespace Executioner {
 		}
 
 		private string GenerateSourceString(string scriptText) {
+			SanitizeUsingStatements();
+
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("using System;");
+
+			foreach (string statement in this.UsingStatements) {
+				sb.AppendLine($"using {statement};");
+			}
+
 			sb.AppendLine($"namespace {ScriptExecutorConstants.CS_NAMESPACE_NAME} {{");
 			sb.AppendLine($"public class {ScriptExecutorConstants.CS_CLASS_NAME} {{");
 			sb.AppendLine($"public static void {ScriptExecutorConstants.CS_MAIN_METHOD}(){{");
@@ -56,6 +69,31 @@ namespace Executioner {
 
 			return sb.ToString();
 		}
+
+		private CompilerParameters CreateParameters() {
+			CompilerParameters parameters = new CompilerParameters() {
+				GenerateInMemory = true,
+				GenerateExecutable = false
+			};
+
+			foreach (Assembly assembly in this.ReferencedAssemblies) {
+				parameters.ReferencedAssemblies.Add(assembly.Location);
+			}
+
+			return parameters;
+		}
+
+		private void SanitizeUsingStatements() {
+			for (short i = 0; i < this.UsingStatements.Count; ++i) {
+				this.UsingStatements[i] = this.UsingStatements[i].Replace(";", "");
+				this.UsingStatements[i] = Regex.Replace(
+					this.UsingStatements[i],
+					@"(using\s*)",
+					""
+				);
+			}
+		}
+
 	}
 
 }
