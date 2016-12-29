@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Executioner.cs" />
+    <Compile Include="ScriptExecutioner.cs" />
     <Compile Include="Loggers\FileSystemLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptExecutor\CSharpExecutor.cs" />
