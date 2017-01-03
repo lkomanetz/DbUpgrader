@@ -3,6 +3,7 @@ using Executioner.Tests.Classes;
 using System;
 using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace ScriptExecutor.SqlServer.Tests {
 
@@ -20,12 +21,15 @@ namespace ScriptExecutor.SqlServer.Tests {
 			string[] scripts = new string[] {
 				$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2016-06-22:1'>print 'Hello'</Script>"
 			};
-			SqlServerExecutor sqlExecutor = new SqlServerExecutor(connectionString);
 			ScriptExecutioner executioner = new ScriptExecutioner(
 				new BaseMockLoader(scripts),
 				new MockLogger()
 			);
-			executioner.Add(sqlExecutor);
+			var executor = (SqlServerExecutor)executioner.ScriptExecutors
+				.Where(x => x.GetType() == typeof(SqlServerExecutor))
+				.Single();
+			executor.ConnectionString = connectionString;
+
 			executioner.Run();
 		}
 
@@ -41,9 +45,14 @@ namespace ScriptExecutor.SqlServer.Tests {
 				new MockLogger()
 			);
 
-			executioner.Add(new SqlServerExecutor(connectionString));
+			var executor = (SqlServerExecutor)executioner.ScriptExecutors
+				.Where(x => x.GetType() == typeof(SqlServerExecutor))
+				.Single();
+			executor.ConnectionString = connectionString;
+
 			executioner.Run();
 		}
+
 	}
 
 }

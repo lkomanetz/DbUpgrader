@@ -11,8 +11,17 @@ namespace Executioner {
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
 
+		public SqlServerExecutor() {
+			_connectionString = String.Empty;
+		}
+
 		public SqlServerExecutor(string connectionString) {
 			_connectionString = connectionString;
+		}
+
+		public string ConnectionString {
+			get { return _connectionString; }
+			set { _connectionString = value; }
 		}
 
 		public void Execute(string scriptText) {

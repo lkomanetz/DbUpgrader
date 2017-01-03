@@ -3,6 +3,8 @@ using Executioner.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +19,9 @@ namespace Executioner {
 			_logger = logger;
 
 			_scriptLoader.LoadDocuments();
+
 			this.ScriptExecutors = new List<IScriptExecutor>();
+			CreateExecutors();
 		}
 
 		public IList<ScriptDocument> ScriptDocuments { get { return _scriptLoader.Documents; } }
@@ -83,8 +87,7 @@ namespace Executioner {
 			}
 		}
 
-		private IList<ScriptDocument> GetDocumentsToRun(ExecutionRequest request, IList<ScriptDocument> docs)
-		{
+		private IList<ScriptDocument> GetDocumentsToRun(ExecutionRequest request, IList<ScriptDocument> docs) {
 			if (request.ExecuteAllScripts) {
 				return new List<ScriptDocument>(docs);
 			}
@@ -116,6 +119,43 @@ namespace Executioner {
 			return this.ScriptExecutors
 				.Where(x => x.GetType().Name.Equals(executorName))
 				.SingleOrDefault();
+		}
+
+		private Type GetObjectType(string executorName) {
+			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			Type objectType = null;
+
+			foreach (Assembly assembly in assemblies) {
+				objectType = assembly.GetTypes()
+					.Where(x => x.IsClass && x.Name == executorName)
+					.SingleOrDefault();
+				
+				if (objectType != null) {
+					break;
+				}	
+			}
+
+			return objectType;
+		}
+
+		internal void CreateExecutors() {
+			foreach (ScriptDocument doc in this.ScriptDocuments) {
+				foreach (Script script in doc.Scripts) {
+					string className = script.ExecutorName;
+					if (String.IsNullOrEmpty(className)) {
+						throw new NullReferenceException("Script.ExecutorName property cannot be null.");
+					}
+
+					bool typeExists = this.ScriptExecutors.Any(x => x.GetType().Name == script.ExecutorName);
+					if (typeExists) {
+						continue;
+					}
+
+					Type objectType = GetObjectType(script.ExecutorName);
+					IScriptExecutor executor = (IScriptExecutor)Activator.CreateInstance(objectType);
+					this.ScriptExecutors.Add(executor);
+				}
+			}
 		}
 
 	}

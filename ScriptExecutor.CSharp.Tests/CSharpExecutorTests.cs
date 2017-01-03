@@ -6,6 +6,7 @@ using ScriptExecutor.CSharp.Tests.Classes;
 using ScriptExecutor.CSharp.Tests.TestClasses;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ScriptExecutor.CSharp.Tests {
 
@@ -163,7 +164,10 @@ namespace ScriptExecutor.CSharp.Tests {
 				new MockLogger()
 			);
 
-			var executor = new CSharpExecutor();
+			var executor = (CSharpExecutor)executioner.ScriptExecutors
+				.Where(x => x.GetType() == typeof(CSharpExecutor))
+				.Single();
+
 			executor.ReferencedAssemblies = referencedAssemblies;
 			foreach (string statement in usingStatements) {
 				executor.UsingStatements.Add(statement);

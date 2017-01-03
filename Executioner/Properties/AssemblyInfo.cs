@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 // are marked with the 'internal' access modifier.  Mostly used for unit
 // tests.
 [assembly: InternalsVisibleTo("ScriptLoader.Tests")]
+[assembly: InternalsVisibleTo("Executioner.Tests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("04b05264-b56c-4274-aeea-08bd938ae168")]

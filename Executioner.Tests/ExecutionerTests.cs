@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Executioner.Contracts;
 using System.Linq;
 using Executioner.Tests.Classes;
+using System.Reflection;
 
 namespace Executioner.Tests {
 
@@ -19,6 +20,67 @@ namespace Executioner.Tests {
 		[TestInitialize]
 		public void Initialize() {
 			_logger = new MockLogger();
+		}
+
+		[TestMethod]
+		public void CreateExecutorsFromScriptsSucceeds() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
+			};
+			var loader = new BaseMockLoader(scripts);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
+
+			//foreach (ScriptDocument doc in loader.Documents) {
+			//	executioner.CreateExecutors(doc.Scripts, Assembly.GetExecutingAssembly());
+			//}
+
+			Assert.IsTrue(
+				executioner.ScriptExecutors.Count == 1,
+				$"Expected {1} executor\nActual count {executioner.ScriptExecutors.Count}"
+			);
+
+			Assert.IsTrue(
+				executioner.ScriptExecutors[0].GetType() == typeof(MockScriptExecutor),
+				"Incorrect executor loaded."
+			);
+		}
+
+		[TestMethod]
+		public void CreateMultipleExecutorsFromScriptsSucceeds() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21'></Script>"
+			};
+			var loader = new BaseMockLoader(scripts);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
+
+			//foreach (ScriptDocument doc in loader.Documents) {
+			//	executioner.CreateExecutors(doc.Scripts, Assembly.GetExecutingAssembly());
+			//}
+
+			Assert.IsTrue(
+				executioner.ScriptExecutors.Count == scripts.Length,
+				$"Expected {scripts.Length} executors\nActual count {executioner.ScriptExecutors.Count}"
+			);
+		}
+
+		[TestMethod]
+		public void CreateExecutorFromMultipleScriptsSucceeds() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
+			};
+			var loader = new BaseMockLoader(scripts);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
+
+			//foreach (ScriptDocument doc in loader.Documents) {
+			//	executioner.CreateExecutors(doc.Scripts, Assembly.GetExecutingAssembly());
+			//}
+
+			Assert.IsTrue(
+				executioner.ScriptExecutors.Count == 1,
+				$"Expected {1} executor\nActual count {executioner.ScriptExecutors.Count}"
+			);
 		}
 
 		[TestMethod]
@@ -178,22 +240,11 @@ namespace Executioner.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(NullReferenceException), "Executioner executed incorrect script executor.")]
-		public void ExecutionerWithMissingExecutorFails() {
-			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
-			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new SecondScriptExecutor());
-			executioner.Run();
-		}
-
-		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException), "Executioner.ScriptExecutors was not null.")]
+		[ExpectedException(typeof(NullReferenceException), "Executioner.ScriptExecutors was not null.")]
 		public void ExecutionerWithNoExecutorsFail() {
 			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
-				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
+				$"<Script Id='{Guid.NewGuid()}' Order='2016-06-21'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Order='2016-06-21:1'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
 			executioner.Run();
