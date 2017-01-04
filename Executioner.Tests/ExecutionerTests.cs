@@ -30,10 +30,6 @@ namespace Executioner.Tests {
 			var loader = new BaseMockLoader(scripts);
 			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
 
-			//foreach (ScriptDocument doc in loader.Documents) {
-			//	executioner.CreateExecutors(doc.Scripts, Assembly.GetExecutingAssembly());
-			//}
-
 			Assert.IsTrue(
 				executioner.ScriptExecutors.Count == 1,
 				$"Expected {1} executor\nActual count {executioner.ScriptExecutors.Count}"
@@ -54,10 +50,6 @@ namespace Executioner.Tests {
 			var loader = new BaseMockLoader(scripts);
 			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
 
-			//foreach (ScriptDocument doc in loader.Documents) {
-			//	executioner.CreateExecutors(doc.Scripts, Assembly.GetExecutingAssembly());
-			//}
-
 			Assert.IsTrue(
 				executioner.ScriptExecutors.Count == scripts.Length,
 				$"Expected {scripts.Length} executors\nActual count {executioner.ScriptExecutors.Count}"
@@ -73,14 +65,20 @@ namespace Executioner.Tests {
 			var loader = new BaseMockLoader(scripts);
 			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
 
-			//foreach (ScriptDocument doc in loader.Documents) {
-			//	executioner.CreateExecutors(doc.Scripts, Assembly.GetExecutingAssembly());
-			//}
-
 			Assert.IsTrue(
 				executioner.ScriptExecutors.Count == 1,
 				$"Expected {1} executor\nActual count {executioner.ScriptExecutors.Count}"
 			);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException), "Executor loaded with full namespace used.")]
+		public void CreateExecutorWithNamespaceSucceeds() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='Executioner.Tests.Classes.MockScriptExecutor' Order='2016-06-21'></Script>"
+			};
+			var loader = new BaseMockLoader(scripts);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
 		}
 
 		[TestMethod]
@@ -89,8 +87,8 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new MockScriptExecutor());
 			var result = executioner.Run();
+
 			Assert.IsTrue(
 				result.ScriptDocumentsCompleted == 1,
 				"Script executor did not complete the document loaded by script loader."
@@ -112,7 +110,6 @@ namespace Executioner.Tests {
 				"<Script Id='278b7ef3-09da-4d1b-a101-390f4e6a5407' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new MockScriptExecutor());
 
 			var result = executioner.Run();
 			var secondResult = executioner.Run();
@@ -129,8 +126,6 @@ namespace Executioner.Tests {
 			BaseMockLoader loader = new BaseMockLoader(scripts.ToArray());
 
 			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
-			executioner.Add(new MockScriptExecutor());
-
 			var firstResult = executioner.Run();
 
 			IList<ScriptDocument> docs = executioner.ScriptDocuments;
@@ -173,15 +168,10 @@ namespace Executioner.Tests {
 			};
 
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new IScriptExecutor[2] {
-				new SecondScriptExecutor(),
-				new MockScriptExecutor()
-			});
-
 			IList<IScriptExecutor> itemsFound = executioner.ScriptExecutors
 				.Where(
 					x => x.GetType() == typeof(SecondScriptExecutor) ||
-					x.GetType() == typeof(MockScriptExecutor)
+						x.GetType() == typeof(MockScriptExecutor)
 				)
 				.ToList();
 
@@ -201,11 +191,6 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new MockScriptExecutor());
-			executioner.Add(new IScriptExecutor[2] {
-				new SecondScriptExecutor(),
-				new MockScriptExecutor()
-			});
 
 			Assert.IsTrue(executioner.ScriptExecutors.Count == 2, "Executioner.Add() added same executor twice.");
 			IList<IScriptExecutor> items = executioner.ScriptExecutors
@@ -224,10 +209,6 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='SecondScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new IScriptExecutor[2] {
-				new SecondScriptExecutor(),
-				new MockScriptExecutor()
-			});
 			var result = executioner.Run(new ExecutionRequest() { ExecuteAllScripts = true });
 			Assert.IsTrue(
 				result.ScriptDocumentsCompleted == 1,
@@ -257,7 +238,6 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new MockScriptExecutor());
 			var firstResult = executioner.Run();
 			var secondResult = executioner.Run(new ExecutionRequest() { ExecuteAllScripts = true });
 
@@ -289,11 +269,9 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
 			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new MockScriptExecutor());
 			var firstResult = executioner.Run();
 
 			executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
-			executioner.Add(new MockScriptExecutor());
 			var secondResult = executioner.Run();
 
 			Assert.IsTrue(

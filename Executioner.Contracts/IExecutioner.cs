@@ -10,8 +10,6 @@ namespace Executioner.Contracts {
 
 		IList<ScriptDocument> ScriptDocuments { get; }
 		ExecutionResult Run(ExecutionRequest request = null);
-		void Add(IScriptExecutor executor);
-		void Add(IScriptExecutor[] executors);
 
 	}
 

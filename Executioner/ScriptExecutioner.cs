@@ -66,27 +66,6 @@ namespace Executioner {
 			};
 		}
 
-		public void Add(IScriptExecutor executor) {
-			bool executorExists = this.ScriptExecutors
-				.Any(x => x.GetType().Name.Equals(executor.GetType().Name));
-
-			if (executorExists) {
-				return;
-			}
-
-			this.ScriptExecutors.Add(executor);
-		}
-
-		public void Add(IScriptExecutor[] executors) {
-			for (short i = 0; i < executors.Length; ++i) {
-				bool typeExists = this.ScriptExecutors.Any(x => x.GetType() == executors[i].GetType());
-				if (typeExists) {
-					continue;
-				}
-				this.ScriptExecutors.Add(executors[i]);
-			}
-		}
-
 		private IList<ScriptDocument> GetDocumentsToRun(ExecutionRequest request, IList<ScriptDocument> docs) {
 			if (request.ExecuteAllScripts) {
 				return new List<ScriptDocument>(docs);
@@ -105,7 +84,10 @@ namespace Executioner {
 			}
 			else {
 				IList<Guid> completedScriptIds = _logger.GetCompletedScriptIdsFor(doc.SysId);
-				return doc.Scripts.Where(x => !completedScriptIds.Contains(x.SysId)).ToList();
+				return doc.Scripts
+					.Where(x => !completedScriptIds.Contains(x.SysId))
+					.ToList()
+					.SortOrderedItems();
 			}
 		}
 
@@ -121,7 +103,13 @@ namespace Executioner {
 				.SingleOrDefault();
 		}
 
-		private Type GetObjectType(string executorName) {
+		/*
+		 * In order to get the type of the executor name passed in, I ended up having to go through all assemblies
+		 * in the current application domain.  I wanted to keep the ScriptDocument simple without having to add more
+		 * things to it in order to load the type through reflection.  This is more of a brute force method to find
+		 * the type with just a name.
+		 */
+		private Type GetClassType(string executorName) {
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			Type objectType = null;
 
@@ -151,7 +139,7 @@ namespace Executioner {
 						continue;
 					}
 
-					Type objectType = GetObjectType(script.ExecutorName);
+					Type objectType = GetClassType(script.ExecutorName);
 					IScriptExecutor executor = (IScriptExecutor)Activator.CreateInstance(objectType);
 					this.ScriptExecutors.Add(executor);
 				}

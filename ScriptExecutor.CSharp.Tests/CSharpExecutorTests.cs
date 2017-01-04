@@ -173,10 +173,9 @@ namespace ScriptExecutor.CSharp.Tests {
 				executor.UsingStatements.Add(statement);
 			}
 
-			executioner.Add(executor);
-
 			return executioner;
 		}
+
 	}
 
 }
