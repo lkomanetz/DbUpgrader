@@ -47,6 +47,7 @@
     <Compile Include="ScriptExecutor\CSharpExecutor.cs" />
     <Compile Include="ScriptExecutor\SqlServerExecutor.cs" />
     <Compile Include="ScriptLoader\AssemblyLoader.cs" />
+    <Compile Include="ScriptLoader\FileSystemLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj">
