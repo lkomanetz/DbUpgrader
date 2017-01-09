@@ -40,6 +40,7 @@ namespace Executioner {
 			return documents.ToArray();
 		}
 
+		//TODO(Logan) -> This code is also in FileSystemLoader.  May need to abstract it out.
 		private ScriptDocument CreateScriptDocument(Assembly assembly, string resource) {
 			ScriptDocument doc = null;
 
