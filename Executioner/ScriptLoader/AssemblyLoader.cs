@@ -1,14 +1,8 @@
 ﻿using Executioner.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
-using System.Xml;
-using System.Text.RegularExpressions;
-using Executioner.ExtensionMethods;
 
 namespace Executioner {
 
@@ -33,41 +27,13 @@ namespace Executioner {
 					.ToArray<string>();
 
 				for (short i = 0; i < resources.Length; ++i) {
-					documents.Add(CreateScriptDocument(assembly, resources[i]));
+					using (Stream stream = assembly.GetManifestResourceStream(resources[i])) {
+						documents.Add(ScriptLoaderUtilities.CreateScriptDocument(stream, resources[i]));
+					}
 				}
 			}
 
 			return documents.ToArray();
-		}
-
-		//TODO(Logan) -> This code is also in FileSystemLoader.  May need to abstract it out.
-		private ScriptDocument CreateScriptDocument(Assembly assembly, string resource) {
-			ScriptDocument doc = null;
-
-			using (Stream stream = assembly.GetManifestResourceStream(resource))
-			using (StreamReader reader = new StreamReader(stream)) {
-				string xmlStr = reader.ReadToEnd();
-
-				XmlDocument xmlDoc = new XmlDocument();
-				xmlDoc.LoadXml(xmlStr);
-
-				Tuple<DateTime, int> orderValues = ScriptLoaderUtilities.ParseOrderXmlAttribute(
-					xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ORDER_NODE}").InnerText
-				);
-
-				Guid docId = Guid.Parse(
-					xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}").InnerText
-				);
-				doc = new ScriptDocument() {
-					SysId = docId,
-					DateCreatedUtc = orderValues.Item1,
-					Order = orderValues.Item2,
-					ResourceName = resource,
-					Scripts = ScriptLoaderUtilities.GetScriptsFrom(xmlDoc)
-				};
-			}
-
-			return doc;
 		}
 
 	}

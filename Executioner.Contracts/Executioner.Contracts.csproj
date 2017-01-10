@@ -41,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackingStore\GetDocumentsRequest.cs" />
-    <Compile Include="BackingStore\IBackingStore.cs" />
     <Compile Include="ExecutionRequest.cs" />
     <Compile Include="ExecutionResult.cs" />
     <Compile Include="IExecutioner.cs" />
