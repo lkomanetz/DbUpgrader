@@ -12,14 +12,24 @@ namespace Executioner.Tests.Classes {
 	public class BaseMockLoader : IScriptLoader {
 		private string[] _scriptElements;
 
+		public BaseMockLoader() {
+			_scriptElements = new string[0];
+			this.Documents = new List<ScriptDocument>();
+		}
+
 		public BaseMockLoader(string[] scriptElements) {
 			_scriptElements = scriptElements;
+			this.Documents = new List<ScriptDocument>();
 		}
 
 		public IList<ScriptDocument> Documents { get; set; }
 
 		public void LoadDocuments() {
 			XmlDocument doc = GetXmlDoc();
+			if (doc == null) {
+				return;
+			}
+
 			string orderNodeName = String.Format(
 				"{0}/{1}",
 				ScriptLoaderConstants.ROOT_NODE,
@@ -43,7 +53,7 @@ namespace Executioner.Tests.Classes {
 				Scripts = ScriptLoaderUtilities.GetScriptsFrom(doc)
 			};
 
-			this.Documents = new List<ScriptDocument>() { sDoc };
+			this.Documents.Add(sDoc);
 		}
 
 		public void Add(Script script) {
@@ -68,6 +78,11 @@ namespace Executioner.Tests.Classes {
 			foreach (string item in _scriptElements) {
 				scriptStr += $"{item}\n";
 			}
+
+			if (String.IsNullOrEmpty(scriptStr)) {
+				return null;
+			}
+
 			string xmlStr = $@"<?xml version='1.0' encoding='utf-8'?>
 				<ScriptDocument>
 					<Id>ac04f1b3-219a-4a40-8d7d-869dac218cca</Id>

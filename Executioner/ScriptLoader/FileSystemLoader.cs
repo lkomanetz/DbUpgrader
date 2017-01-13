@@ -28,11 +28,19 @@ namespace Executioner {
 				this.Documents = new List<ScriptDocument>();
 			}
 
+			if (!Directory.Exists(_rootDir)) {
+				throw new DirectoryNotFoundException($"{_rootDir} not found.");
+			}
+
 			IEnumerable<string> files = Directory.EnumerateFiles(_rootDir);
 			foreach (string file in files) {
 				using (Stream stream = new FileStream(file, FileMode.Open)) {
 					this.Documents.Add(ScriptLoaderUtilities.CreateScriptDocument(stream, file));
 				}
+			}
+
+			if (this.Documents.Count == 0) {
+				throw new FileNotFoundException($"Script Documents not found in '{_rootDir}'.");
 			}
 		}
 

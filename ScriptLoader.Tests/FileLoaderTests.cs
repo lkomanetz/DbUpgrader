@@ -10,12 +10,12 @@ namespace ScriptLoader.Tests {
 
 	[TestClass]
 	public class FileLoaderTests {
-		private static string rootDir;
-		private static int documentCount;
-		private static IList<Guid> documentIds;
+		private string rootDir;
+		private int documentCount;
+		private IList<Guid> documentIds;
 
-		[ClassInitialize]
-		public static void Initialize(TestContext context) {
+		[TestInitialize]
+		public void Initialize() {
 			rootDir = "C:\\FileLoaderTests";
 			documentCount = 5;
 			documentIds = new List<Guid>();
@@ -30,9 +30,11 @@ namespace ScriptLoader.Tests {
 			}
 		}
 
-		[ClassCleanup]
-		public static void Cleanup() {
-			Directory.Delete(rootDir, true);	
+		[TestCleanup]
+		public void Cleanup() {
+			if (Directory.Exists(rootDir)) {
+				Directory.Delete(rootDir, true);	
+			}
 		}
 
 		[TestMethod]
@@ -54,7 +56,27 @@ namespace ScriptLoader.Tests {
 			}
 		}
 
-		private static string GetScripts() {
+		[TestMethod]
+		[ExpectedException(typeof(DirectoryNotFoundException), "Directory found when it should be missing.")]
+		public void FileLoader_MissingRootDirectoryThrowsException() {
+			Directory.Delete(rootDir, true);
+			FileSystemLoader loader = new FileSystemLoader(rootDir);
+			loader.LoadDocuments();
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(FileNotFoundException), "Documents found when directory was empty.")]
+		public void FileLoader_MissingDocumentsThrowsException() {
+			IEnumerable<string> files = Directory.EnumerateFiles(rootDir);
+			foreach (string file in files) {
+				File.Delete(file);
+			}
+
+			FileSystemLoader loader = new FileSystemLoader(rootDir);
+			loader.LoadDocuments();
+		}
+
+		private string GetScripts() {
 			return $@"
 				<Scripts>
 					<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09'>PRINT 'Hello'</Script>
