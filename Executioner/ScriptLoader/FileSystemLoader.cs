@@ -12,6 +12,10 @@ namespace Executioner {
 			_rootDir = String.Empty;
 		}
 
+		public FileSystemLoader(string rootDirectory) {
+			_rootDir = rootDirectory;
+		}
+
 		public IList<ScriptDocument> Documents { get; internal set; }
 
 		public string Location {

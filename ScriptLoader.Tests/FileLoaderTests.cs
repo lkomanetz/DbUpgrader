@@ -37,8 +37,7 @@ namespace ScriptLoader.Tests {
 
 		[TestMethod]
 		public void FileLoader_LoadDocumentsSucceeds() {
-			FileSystemLoader loader = new FileSystemLoader();
-			loader.Location = rootDir;
+			FileSystemLoader loader = new FileSystemLoader(rootDir);
 			loader.LoadDocuments();
 
 			Assert.IsTrue(
