@@ -57,11 +57,10 @@ namespace ScriptLoader.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(DirectoryNotFoundException), "Directory found when it should be missing.")]
-		public void FileLoader_MissingRootDirectoryThrowsException() {
+		public void FileLoader_MissingRootDirectoryCreatesNew() {
 			Directory.Delete(rootDir, true);
 			FileSystemLoader loader = new FileSystemLoader(rootDir);
-			loader.LoadDocuments();
+			Assert.IsTrue(Directory.Exists(rootDir), "Root directory not found.");
 		}
 
 		[TestMethod]
