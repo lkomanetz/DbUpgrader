@@ -72,8 +72,8 @@ namespace Executioner.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(ArgumentNullException), "Executor loaded with full namespace used.")]
-		public void CreateExecutorWithNamespaceSucceeds() {
+		[ExpectedException(typeof(Exception), "Executor loaded with full namespace used.")]
+		public void CreateExecutorWithNamespaceFails() {
 			string[] scripts = new string[] {
 				$"<Script Id='{Guid.NewGuid()}' Executor='Executioner.Tests.Classes.MockScriptExecutor' Order='2016-06-21'></Script>"
 			};
