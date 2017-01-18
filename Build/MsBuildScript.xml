@@ -11,6 +11,7 @@
 	<Target Name="Main">
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="MoveBinaries" />
+		<CallTarget Targets="MoveDebugFiles" />
 		<CallTarget Targets="Build" />
 		<CallTarget Targets="CreateNugetPackage" />
 	</Target>
