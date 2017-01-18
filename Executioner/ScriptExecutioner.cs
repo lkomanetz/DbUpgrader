@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Executioner {
 
+	//TODO(Logan) -> Add events for scripts that have loaded and executed.
 	public class ScriptExecutioner : IExecutioner, IDisposable {
 		private IScriptLoader _scriptLoader;
 		private ILogger _logger;
