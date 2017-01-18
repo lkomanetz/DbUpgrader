@@ -25,32 +25,13 @@ namespace Executioner {
 		}
 
 		public void Execute(string scriptText) {
-			SqlConnection conn = new SqlConnection(_connectionString);
-			SqlTransaction transaction = null;
-
-			try {
+			using (SqlConnection conn = new SqlConnection(_connectionString)) {
 				conn.Open();
-				transaction = conn.BeginTransaction();
-				SqlCommand cmd = new SqlCommand(scriptText, conn, transaction);
-				cmd.ExecuteNonQuery();
-				transaction.Commit();
-			}
-			catch (InvalidOperationException ex) {
-				transaction.Rollback();
-				throw ex;
-			}
-			catch (SqlException ex) {
-				transaction.Rollback();
-				throw ex;
-			}
-			catch (Exception ex) {
-				transaction.Rollback();
-				throw ex;
-			}
-			finally {
-				transaction.Dispose();
-				conn.Close();
-				conn.Dispose();
+				using (SqlTransaction tx = conn.BeginTransaction()) {
+					SqlCommand cmd = new SqlCommand(scriptText, conn, tx);
+					cmd.ExecuteNonQuery();
+					tx.Commit();
+				}
 			}
 		}
 
