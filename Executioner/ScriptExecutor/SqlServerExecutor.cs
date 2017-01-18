@@ -43,6 +43,10 @@ namespace Executioner {
 				transaction.Rollback();
 				throw ex;
 			}
+			catch (Exception ex) {
+				transaction.Rollback();
+				throw ex;
+			}
 			finally {
 				transaction.Dispose();
 				conn.Close();
