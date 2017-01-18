@@ -140,6 +140,10 @@ namespace Executioner {
 					}
 
 					Type objectType = GetClassType(script.ExecutorName);
+					if (objectType == null) {
+						throw new Exception($"Unable to find C# type for executor '{script.ExecutorName}'.");
+					}
+
 					IScriptExecutor executor = (IScriptExecutor)Activator.CreateInstance(objectType);
 					this.ScriptExecutors.Add(executor);
 				}
