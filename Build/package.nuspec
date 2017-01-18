@@ -15,5 +15,7 @@
 		<file src="..\lib\net45\Executioner.dll" target="lib\net45" />
 		<file src="..\lib\net45\Executioner.Contracts.dll" target="lib\net45" />
 		<file src="..\lib\net45\Executioner.ExtensionMethods.dll" target="lib\net45" />
+		<file src="..\lib\net45\Executioner.pdb" target="lib\net45" />
+		<file src="..\lib\net45\Executioner.ExtensionMethods.pdb" target="lib\net45" />
 	</files>
 </package>

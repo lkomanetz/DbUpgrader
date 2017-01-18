@@ -11,6 +11,7 @@
 	<Target Name="Main">
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="MoveBinaries" />
+		<CallTarget Targets="MoveDebugFiles" />
 		<CallTarget Targets="Build" />
 		<CallTarget Targets="CreateNugetPackage" />
 	</Target>
@@ -33,6 +34,15 @@
 		</CreateItem>
 
 		<Copy SourceFiles="@(BinaryFiles)"
+			DestinationFolder="$(DestinationDir)" />
+	</Target>
+
+	<Target Name="MoveDebugFiles">
+		<CreateItem Include="$(SourceDir)\**\*.pdb">
+			<Output TaskParameter="Include" ItemName="DebugFiles" />
+		</CreateItem>
+
+		<Copy SourceFiles="@(DebugFiles)"
 			DestinationFolder="$(DestinationDir)" />
 	</Target>
 
