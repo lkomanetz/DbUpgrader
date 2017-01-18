@@ -51,7 +51,10 @@ namespace Executioner {
 						throw new NullReferenceException("ScriptExecutioner.FindExecutorFor(string) failed to find ScriptExecutor.");
 					}
 
-					executor.Execute(scriptsToRun[j].ScriptText);
+					bool executed = executor.Execute(scriptsToRun[j].ScriptText);
+					if (!executed) {
+						throw new Exception($"Script id '{scriptsToRun[j].SysId}' failed to execute.");
+					}
 					scriptsToRun[j].IsComplete = true;
 					_logger.Update(scriptsToRun[j]);
 					++scriptsCompleted;

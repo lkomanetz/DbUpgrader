@@ -10,8 +10,11 @@ namespace Executioner.Tests.Classes {
 
 	public class MockScriptExecutor : IScriptExecutor {
 
-		public void Execute(string scriptText) {
+		public bool ScriptExecuted { get; set; }
+
+		public bool Execute(string scriptText) {
 			Console.WriteLine($"Executed script: {scriptText}");
+			return ScriptExecuted;
 		}
 
 	}

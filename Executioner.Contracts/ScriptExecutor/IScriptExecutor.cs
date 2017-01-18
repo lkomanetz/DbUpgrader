@@ -8,7 +8,7 @@ namespace Executioner.Contracts {
 
 	public interface IScriptExecutor {
 
-		void Execute(string scriptText);
+		bool Execute(string scriptText);
 
 	}
 

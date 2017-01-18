@@ -21,7 +21,7 @@ namespace Executioner {
 		public IList<string> UsingStatements { get; set; }
 		public IList<Assembly> ReferencedAssemblies { get; set; }
 
-		public void Execute(string scriptText) {
+		public bool Execute(string scriptText) {
 			CSharpCodeProvider provider = new CSharpCodeProvider();
 			CompilerParameters parameters = CreateParameters();
 
@@ -37,6 +37,7 @@ namespace Executioner {
 
 			MethodInfo method = program.GetMethod(ScriptExecutorConstants.CS_MAIN_METHOD);
 			method.Invoke(null, null);
+			return true;
 		}
 
 		private void CheckForErrors(CompilerResults results) {

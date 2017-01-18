@@ -11,9 +11,11 @@ namespace Executioner.Tests.Classes {
 	/// executors.</para>
 	/// </summary>
 	public class SecondScriptExecutor : IScriptExecutor {
+		public bool ScriptExecuted { get; set; }
 
-		public void Execute(string scriptText) {
+		public bool Execute(string scriptText) {
 			Console.WriteLine($"Executed: {scriptText}");
+			return ScriptExecuted;
 		}
 
 	}

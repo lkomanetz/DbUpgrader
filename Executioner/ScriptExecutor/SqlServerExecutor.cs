@@ -24,15 +24,19 @@ namespace Executioner {
 			set { _connectionString = value; }
 		}
 
-		public void Execute(string scriptText) {
+		public bool Execute(string scriptText) {
+			bool scriptExecuted = false;
 			using (SqlConnection conn = new SqlConnection(_connectionString)) {
 				conn.Open();
 				using (SqlTransaction tx = conn.BeginTransaction()) {
 					SqlCommand cmd = new SqlCommand(scriptText, conn, tx);
 					cmd.ExecuteNonQuery();
 					tx.Commit();
+					scriptExecuted = true;
 				}
 			}
+
+			return scriptExecuted;
 		}
 
 	}
