@@ -42,7 +42,7 @@
 			<Output TaskParameter="Include" ItemName="DebugFiles" />
 		</CreateItem>
 
-		<Copy SourceFiles="@DebugFiles"
+		<Copy SourceFiles="@(DebugFiles)"
 			DestinationFolder="$(DestinationDir)" />
 	</Target>
 
