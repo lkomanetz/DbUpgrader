@@ -305,6 +305,33 @@ namespace Executioner.Tests {
 			executioner.Run();
 		}
 
+		[TestMethod]
+		public void ScriptEventsSucceeds() {
+			IList<Guid> executedScripts = new List<Guid>();
+			IList<Guid> executingScripts = new List<Guid>();
+			Guid scriptId = Guid.NewGuid();
+			string[] scripts = new string[] {
+				$"<Script Id='{scriptId}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>"
+			};
+
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
+			SetExecutionStatus(executioner, true);
+			executioner.OnScriptExecuted += (obj, args) => {
+				executedScripts.Add(args.Script.SysId);
+			};
+			executioner.OnScriptExecuting += (obj, args) => {
+				executingScripts.Add(args.Script.SysId);
+			};
+			executioner.Run();
+
+			Assert.IsTrue(executedScripts.Count == scripts.Length, "Incorrect number of scripts executed.");
+			Assert.IsTrue(executedScripts.Contains(scriptId), $"Script Id '{scriptId}' not found.");
+			Assert.IsTrue(
+				executedScripts.Except(executingScripts).Count() == 0,
+				"Script events not in sync with what is executing and executed."
+			);
+		}
+
 		private void SetExecutionStatus(ScriptExecutioner executioner, bool executed) {
 			MockScriptExecutor mockExecutor = (MockScriptExecutor)executioner.ScriptExecutors
 				.Where(x => x.GetType() == typeof(MockScriptExecutor))

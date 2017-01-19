@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Executioner {
 
-	//TODO(Logan) -> Add events for scripts that have loaded and executed.
 	public class ScriptExecutioner : IExecutioner, IDisposable {
 		private IScriptLoader _scriptLoader;
 		private ILogger _logger;
@@ -27,6 +25,8 @@ namespace Executioner {
 
 		public IList<ScriptDocument> ScriptDocuments { get { return _scriptLoader.Documents; } }
 		public IList<IScriptExecutor> ScriptExecutors { get; private set; }
+		public EventHandler<ScriptExecutedEventArgs> OnScriptExecuted;
+		public EventHandler<ScriptExecutingEventArgs> OnScriptExecuting;
 
 		protected virtual void Dispose(bool disposing) { }
 
@@ -48,16 +48,7 @@ namespace Executioner {
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
 				for (short j = 0; j < scriptsToRun.Count; ++j) {
 					IScriptExecutor executor = FindExecutorFor(scriptsToRun[j].ExecutorName);
-					if (executor == null) {
-						throw new NullReferenceException("ScriptExecutioner.FindExecutorFor(string) failed to find ScriptExecutor.");
-					}
-
-					bool executed = executor.Execute(scriptsToRun[j].ScriptText);
-					if (!executed) {
-						throw new Exception($"Script id '{scriptsToRun[j].SysId}' failed to execute.");
-					}
-					scriptsToRun[j].IsComplete = true;
-					_logger.Update(scriptsToRun[j]);
+					Execute(executor, scriptsToRun[j]);
 					++scriptsCompleted;
 				}
 				docsToExecute[i].IsComplete = true;
@@ -102,9 +93,34 @@ namespace Executioner {
 				throw new InvalidOperationException(msg);
 			}
 
-			return this.ScriptExecutors
+			IScriptExecutor foundExecutor = this.ScriptExecutors
 				.Where(x => x.GetType().Name.Equals(executorName))
 				.SingleOrDefault();
+
+			if (foundExecutor == null) {
+				throw new NullReferenceException($"Failed to find executor '{executorName}'.");
+			}
+
+			return foundExecutor;
+		}
+
+		//TODO(Logan) -> Figure out how to clean this up.  I'm duplicating code here.
+		private void ScriptExecuted(Script script) {
+			EventHandler<ScriptExecutedEventArgs> tempHandler = OnScriptExecuted;
+			if (tempHandler == null) {
+				return;
+			}
+
+			tempHandler(this, new ScriptExecutedEventArgs(script));
+		}
+
+		private void ScriptExecuting(Script script) {
+			EventHandler<ScriptExecutingEventArgs> tempHandler = OnScriptExecuting;
+			if (tempHandler == null) {
+				return;
+			}
+
+			tempHandler(this, new ScriptExecutingEventArgs(script));
 		}
 
 		/*
@@ -152,6 +168,18 @@ namespace Executioner {
 					this.ScriptExecutors.Add(executor);
 				}
 			}
+		}
+
+		private void Execute(IScriptExecutor executor, Script script) {
+			ScriptExecuting(script);
+			bool executed = executor.Execute(script.ScriptText);
+			if (!executed) {
+				throw new Exception($"Script id '{script.SysId}' failed to execute.");
+			}
+
+			script.IsComplete = true;
+			_logger.Update(script);
+			ScriptExecuted(script);
 		}
 
 	}

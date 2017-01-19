@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ScriptExecutedEventArgs.cs" />
+    <Compile Include="Events\ScriptExecutingEventArgs.cs" />
     <Compile Include="ScriptExecutioner.cs" />
     <Compile Include="Loggers\FileSystemLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
