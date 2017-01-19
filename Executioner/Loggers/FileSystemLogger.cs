@@ -44,7 +44,10 @@ namespace Executioner {
 		}
 
 		public void Add(ScriptDocument document) {
-			Serialize(document);
+			ScriptDocument existingDoc = Deserialize(document.SysId);
+			if (existingDoc == null) {
+				Serialize(document);
+			}
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {

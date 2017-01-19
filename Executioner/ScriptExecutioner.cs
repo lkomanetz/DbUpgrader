@@ -51,7 +51,6 @@ namespace Executioner {
 					Execute(executor, scriptsToRun[j]);
 					++scriptsCompleted;
 				}
-				docsToExecute[i].IsComplete = true;
 				++docsCompleted;
 			}
 

@@ -36,6 +36,20 @@ namespace Logger.FileSystem.Tests {
 		}
 
 		[TestMethod]
+		public void AddSameDocumentMakesNoChanges() {
+			ScriptDocument doc = CreateDocument();
+			_backingStore.Add(doc);
+			doc.IsComplete = true;
+			_backingStore.Add(doc);
+
+			IList<Guid> completedDocIds = _backingStore.GetCompletedDocumentIds();
+			Assert.IsTrue(
+				completedDocIds == null || completedDocIds.Count == 0,
+				"Script Document changed after second add."
+			);
+		}
+
+		[TestMethod]
 		public void AddScriptOnlyAddsIfNew() {
 			ScriptDocument doc = CreateDocument();
 			doc.Scripts[0].IsComplete = true;

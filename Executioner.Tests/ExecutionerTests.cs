@@ -147,12 +147,15 @@ namespace Executioner.Tests {
 					Order = 0,
 					ExecutorName = "MockScriptExecutor",
 					IsComplete = false,
-					DocumentId = docs[0].SysId
+					DocumentId = docs[0].SysId,
+					ScriptText = String.Empty
 				};
 
 				loader.Add(newScript);	
 			}
 
+			executioner = new ScriptExecutioner(loader, _logger);
+			SetExecutionStatus(executioner, true);
 			var secondResult = executioner.Run();
 			Assert.IsTrue(
 				secondResult.ScriptsCompleted != firstResult.ScriptsCompleted,
