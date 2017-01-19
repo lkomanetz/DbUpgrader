@@ -32,6 +32,10 @@ namespace Executioner {
 				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
 			}
 
+			if (doc.Scripts.Any(x => x.SysId == script.SysId)) {
+				return;
+			}
+
 			doc.Scripts.Add(script);
 			doc.Scripts = (List<Script>)doc.Scripts.SortOrderedItems();
 			doc.IsComplete = doc.Scripts.AreComplete();

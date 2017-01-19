@@ -65,25 +65,28 @@ namespace Executioner {
 			if (request.ExecuteAllScripts) {
 				return new List<ScriptDocument>(docs);
 			}
-			else {
-				IList<Guid> completedDocIds = _logger.GetCompletedDocumentIds();
-				return docs.Where(x => !completedDocIds.Contains(x.SysId))
-					.ToList()
-					.SortOrderedItems();
-			}
+
+			AddNewScriptsToLog(request, docs);
+			IList<Guid> completedDocIds = _logger.GetCompletedDocumentIds();
+			return docs.Where(x => !completedDocIds.Contains(x.SysId))
+				.ToList()
+				.SortOrderedItems();
 		}
 
 		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
 			if (request.ExecuteAllScripts) {
 				return new List<Script>(doc.Scripts);
 			}
-			else {
-				IList<Guid> completedScriptIds = _logger.GetCompletedScriptIdsFor(doc.SysId);
-				return doc.Scripts
-					.Where(x => !completedScriptIds.Contains(x.SysId))
-					.ToList()
-					.SortOrderedItems();
+
+			IList<Guid> completedScriptIds = _logger.GetCompletedScriptIdsFor(doc.SysId);
+			if (completedScriptIds == null) {
+				return null;
 			}
+
+			return doc.Scripts
+				.Where(x => !completedScriptIds.Contains(x.SysId))
+				.ToList()
+				.SortOrderedItems();
 		}
 
 		private IScriptExecutor FindExecutorFor(string executorName) {
@@ -102,6 +105,19 @@ namespace Executioner {
 			}
 
 			return foundExecutor;
+		}
+
+		private void AddNewScriptsToLog(ExecutionRequest request, IList<ScriptDocument> docs) {
+			foreach (ScriptDocument doc in docs) {
+				IList<Script> scriptsToRun = GetScriptsToRun(request, doc);
+				if (scriptsToRun == null) {
+					continue;
+				}
+
+				foreach (Script script in scriptsToRun) {
+					_logger.Add(script);
+				}
+			}
 		}
 
 		//TODO(Logan) -> Figure out how to clean this up.  I'm duplicating code here.

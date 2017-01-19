@@ -36,6 +36,22 @@ namespace Logger.FileSystem.Tests {
 		}
 
 		[TestMethod]
+		public void AddScriptOnlyAddsIfNew() {
+			ScriptDocument doc = CreateDocument();
+			doc.Scripts[0].IsComplete = true;
+			_backingStore.Add(doc);
+
+			Script existingScript = doc.Scripts[0];
+			_backingStore.Add(existingScript);
+
+			int scriptCount = _backingStore.GetCompletedScriptIdsFor(doc.SysId).Count;
+			Assert.IsTrue(
+				scriptCount == 1,
+				$"Expected completed scripts: {1}\nActual completed scripts: {scriptCount}"
+			);
+		}
+
+		[TestMethod]
 		public void FileSystemStore_Clear_Succeeds() {
 			ScriptDocument doc = CreateDocument();
 			ScriptDocument anotherDoc = CreateDocument();

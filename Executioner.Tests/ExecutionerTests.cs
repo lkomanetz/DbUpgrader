@@ -150,7 +150,6 @@ namespace Executioner.Tests {
 					DocumentId = docs[0].SysId
 				};
 
-				_logger.Add(newScript);
 				loader.Add(newScript);	
 			}
 
