@@ -10,11 +10,11 @@ namespace Logger.FileSystem.Tests {
 
 	[TestClass]
 	public class FileSystemTests {
-		private static FileSystemLogger _backingStore;
-		private static string _rootDir;
+		private FileSystemLogger _backingStore;
+		private string _rootDir;
 
-		[ClassInitialize]
-		public static void Initialize(TestContext context) {
+		[TestInitialize]
+		public void Initialize() {
 			_rootDir = @"C:\TestDir";
 			_backingStore = new FileSystemLogger(_rootDir);
 		}
@@ -123,8 +123,6 @@ namespace Logger.FileSystem.Tests {
 				script.IsComplete = true;
 				_backingStore.Update(script);
 			}
-			//doc.IsComplete = true;
-			//_backingStore.Update(doc);
 			IList<Guid> docs = _backingStore.GetCompletedDocumentIds();
 			Assert.IsTrue(docs.Count == 1, "Incorrect number of documents returned.");
 		}
@@ -149,10 +147,13 @@ namespace Logger.FileSystem.Tests {
 			anotherDoc.Scripts[0].IsComplete = true;
 			anotherDoc.IsComplete = true;
 
+			IList<Guid> completedIds = _backingStore.GetCompletedDocumentIds();
+			Assert.IsTrue(completedIds.Count == 0, "List of completed Ids greater than zero.");
+
 			_backingStore.Add(doc);
 			_backingStore.Add(anotherDoc);
 
-			IList<Guid> completedIds = _backingStore.GetCompletedDocumentIds();
+			completedIds = _backingStore.GetCompletedDocumentIds();
 			Assert.IsTrue(completedIds.Count == 1, "Incorrect completed Ids returned.");
 			Assert.IsTrue(
 				completedIds[0] == anotherDoc.SysId,

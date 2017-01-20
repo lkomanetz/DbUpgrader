@@ -75,7 +75,7 @@ namespace Executioner {
 		public IList<Guid> GetCompletedScriptIdsFor(Guid documentId) {
 			ScriptDocument doc = Deserialize(documentId);
 			if (doc == null) {
-				throw new FileNotFoundException($"Document Id '{documentId}' not found.");
+				return null;
 			}
 
 			return doc.Scripts
