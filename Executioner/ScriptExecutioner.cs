@@ -68,8 +68,7 @@ namespace Executioner {
 			AddNewScriptsToLog(request, docs);
 			IList<Guid> completedDocIds = _logger.GetCompletedDocumentIds();
 			return docs.Where(x => !completedDocIds.Contains(x.SysId))
-				.ToList()
-				.SortOrderedItems();
+				.ToList();
 		}
 
 		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
@@ -84,8 +83,7 @@ namespace Executioner {
 
 			return doc.Scripts
 				.Where(x => !completedScriptIds.Contains(x.SysId))
-				.ToList()
-				.SortOrderedItems();
+				.ToList();
 		}
 
 		private IScriptExecutor FindExecutorFor(string executorName) {
@@ -117,25 +115,6 @@ namespace Executioner {
 					_logger.Add(script);
 				}
 			}
-		}
-
-		//TODO(Logan) -> Figure out how to clean this up.  I'm duplicating code here.
-		private void ScriptExecuted(Script script) {
-			EventHandler<ScriptExecutedEventArgs> tempHandler = OnScriptExecuted;
-			if (tempHandler == null) {
-				return;
-			}
-
-			tempHandler(this, new ScriptExecutedEventArgs(script));
-		}
-
-		private void ScriptExecuting(Script script) {
-			EventHandler<ScriptExecutingEventArgs> tempHandler = OnScriptExecuting;
-			if (tempHandler == null) {
-				return;
-			}
-
-			tempHandler(this, new ScriptExecutingEventArgs(script));
 		}
 
 		/*
@@ -186,7 +165,7 @@ namespace Executioner {
 		}
 
 		private void Execute(IScriptExecutor executor, Script script) {
-			ScriptExecuting(script);
+			OnScriptExecuting?.Invoke(this, new ScriptExecutingEventArgs(script));
 			bool executed = executor.Execute(script.ScriptText);
 			if (!executed) {
 				throw new Exception($"Script id '{script.SysId}' failed to execute.");
@@ -194,7 +173,7 @@ namespace Executioner {
 
 			script.IsComplete = true;
 			_logger.Update(script);
-			ScriptExecuted(script);
+			OnScriptExecuted?.Invoke(this, new ScriptExecutedEventArgs(script));
 		}
 
 	}

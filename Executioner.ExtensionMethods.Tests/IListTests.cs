@@ -94,6 +94,19 @@ namespace Executioner.ExtensionMethods.Tests {
 			);
 		}
 
+		[TestMethod]
+		[ExpectedException(typeof(Exception), "Sorting did not throw expected exception.")]
+		public void IList_SortFailsWithDuplicateOrder() {
+			DateTime now = DateTime.UtcNow;
+			IList<OrderedItem> items = new List<OrderedItem>() {
+				new OrderedItem() { Id = 0, DateCreatedUtc = now, Order = 0 },
+				new OrderedItem() { Id = 1, DateCreatedUtc = now, Order = 0 },
+				new OrderedItem() { Id = 2, DateCreatedUtc = now, Order = 1 }
+			};
+
+			IList<OrderedItem> sortedList = items.SortOrderedItems();
+		}
+
 		private void AssertOrder(int[] expectedOrder, int[] actualOrder) {
 			Assert.IsTrue(
 				expectedOrder.Length == actualOrder.Length,

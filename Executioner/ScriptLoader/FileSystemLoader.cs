@@ -1,4 +1,5 @@
 ﻿using Executioner.Contracts;
+using Executioner.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,6 +40,8 @@ namespace Executioner {
 			if (this.Documents.Count == 0) {
 				throw new FileNotFoundException($"Script Documents not found in '{_rootDir}'.");
 			}
+
+			this.Documents = this.Documents.SortOrderedItems();
 		}
 
 		private void CreateRootDirectory() {

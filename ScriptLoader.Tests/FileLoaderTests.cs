@@ -20,14 +20,7 @@ namespace ScriptLoader.Tests {
 			documentCount = 5;
 			documentIds = new List<Guid>();
 
-			Directory.CreateDirectory(rootDir);
-			for (short i = 0; i < documentCount; ++i) {
-				Guid sysId = Guid.NewGuid();
-				string doc = $"<ScriptDocument><Id>{sysId}</Id><Order>2017-01-09:{i}</Order>{GetScripts()}</ScriptDocument>";
-				File.WriteAllText($"{rootDir}\\Doc_{i}.sdoc", doc);
-
-				documentIds.Add(sysId);
-			}
+			GenerateDocuments(GetScripts());
 		}
 
 		[TestCleanup]
@@ -75,12 +68,25 @@ namespace ScriptLoader.Tests {
 			loader.LoadDocuments();
 		}
 
+		// This is only used in the Initialize() method.
 		private string GetScripts() {
 			return $@"
 				<Scripts>
 					<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09'>PRINT 'Hello'</Script>
 					<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09:1'>PRINT 'Hello'</Script>
 				</Scripts>";
+		}
+
+		private void GenerateDocuments(string scripts) {
+			documentIds.Clear();
+
+			Directory.CreateDirectory(rootDir);
+			for (short i = 0; i < documentCount; ++i) {
+				Guid sysId = Guid.NewGuid();
+				string doc = $"<ScriptDocument><Id>{sysId}</Id><Order>2017-01-09:{i}</Order>{scripts}</ScriptDocument>";
+				File.WriteAllText($"{rootDir}\\Doc_{i}.sdoc", doc);
+				documentIds.Add(sysId);
+			}
 		}
 
 	}

@@ -27,6 +27,15 @@ namespace Executioner.ExtensionMethods
 		}
 
 		public static IList<T> SortOrderedItems<T>(this IList<T> source) where T : IOrderedItem {
+			var result = source.GroupBy(x => new { x.DateCreatedUtc, x.Order })
+				.Where(g => g.Count() > 1)
+				.Select(g => g.Key)
+				.ToList();
+
+			if (result.Count > 0) {
+				throw new Exception("Duplicate orders found when sorting IList<IOrderedItem>");
+			}
+
 			return source.OrderBy(x => x.DateCreatedUtc)
 					.ThenBy(x => x.Order)
 					.ToList();

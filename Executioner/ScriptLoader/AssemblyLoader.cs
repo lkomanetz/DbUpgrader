@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.IO;
+using Executioner.ExtensionMethods;
 
 namespace Executioner {
 
@@ -33,7 +34,7 @@ namespace Executioner {
 				}
 			}
 
-			return documents.ToArray();
+			return documents.SortOrderedItems().ToArray();
 		}
 
 	}
