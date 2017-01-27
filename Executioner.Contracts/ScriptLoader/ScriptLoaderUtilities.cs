@@ -15,7 +15,11 @@ namespace Executioner.Contracts {
 			using (StreamReader reader = new StreamReader(stream)) {
 				string xmlStr = reader.ReadToEnd();
 				XmlDocument xmlDoc = new XmlDocument();
-				xmlDoc.LoadXml(xmlStr);
+
+				using (StringReader sr = new StringReader(xmlStr))
+				using (XmlTextReader xtr = new XmlTextReader(sr) { Namespaces = false }) {
+					xmlDoc.Load(xtr);
+				}
 
 				Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
 					xmlDoc.SelectSingleNode($"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ORDER_NODE}").InnerText

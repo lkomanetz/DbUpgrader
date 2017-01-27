@@ -186,17 +186,18 @@ namespace Logger.FileSystem.Tests {
 
 		private ScriptDocument CreateDocument() {
 			Guid docId = Guid.NewGuid();
+			DateTime now = DateTime.UtcNow;
 
 			return new ScriptDocument() {
 				SysId = docId,
 				Order = 0,
-				DateCreatedUtc = DateTime.UtcNow,
+				DateCreatedUtc = now,
 				IsComplete = false,
 				ResourceName = "TestResource",
 				Scripts = new List<Script>() {
 					new Script() {
 						SysId = Guid.NewGuid(),
-						DateCreatedUtc = DateTime.UtcNow,
+						DateCreatedUtc = now.AddSeconds(1),
 						Order = 0,
 						DocumentId = docId,
 						ExecutorName = "TestExecutor",
