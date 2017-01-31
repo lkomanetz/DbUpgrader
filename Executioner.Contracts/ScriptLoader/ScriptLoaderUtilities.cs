@@ -72,12 +72,16 @@ namespace Executioner.Contracts {
 					scriptNodes[i].Attributes[ScriptLoaderConstants.ORDER_ATTRIBUTE].Value
 				);
 
+				string executor = (scriptNodes[i].Attributes[ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE] == null) ?
+					String.Empty :
+					scriptNodes[i].Attributes[ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE].Value;
+
 				scripts.Add(new Script() {
 					SysId = Guid.Parse(scriptNodes[i].Attributes[ScriptLoaderConstants.SCRIPT_ID_ATTRIBUTE].Value),
 					ScriptText = scriptNodes[i].InnerText,
 					DateCreatedUtc = orderValues.Item1,
 					Order = orderValues.Item2,
-					ExecutorName = scriptNodes[i].Attributes[ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE].Value,
+					ExecutorName = executor,
 					DocumentId = docId
 				});
 			}

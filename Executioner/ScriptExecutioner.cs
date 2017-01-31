@@ -98,7 +98,7 @@ namespace Executioner {
 				.SingleOrDefault();
 
 			if (foundExecutor == null) {
-				throw new NullReferenceException($"Failed to find executor '{executorName}'.");
+				throw new ScriptExecutorNotFoundException(executorName);
 			}
 
 			return foundExecutor;
@@ -140,12 +140,12 @@ namespace Executioner {
 			return objectType;
 		}
 
-		internal void CreateExecutors() {
+		private void CreateExecutors() {
 			foreach (ScriptDocument doc in this.ScriptDocuments) {
 				foreach (Script script in doc.Scripts) {
 					string className = script.ExecutorName;
 					if (String.IsNullOrEmpty(className)) {
-						throw new NullReferenceException("Script.ExecutorName property cannot be null.");
+						throw new ScriptExecutorNotFoundException(className);
 					}
 
 					bool typeExists = this.ScriptExecutors.Any(x => x.GetType().Name == script.ExecutorName);

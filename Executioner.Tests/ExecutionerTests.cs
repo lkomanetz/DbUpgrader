@@ -231,7 +231,7 @@ namespace Executioner.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(NullReferenceException), "Executioner.ScriptExecutors was not null.")]
+		[ExpectedException(typeof(ScriptExecutorNotFoundException), "Executioner.ScriptExecutors was not null.")]
 		public void ExecutionerWithNoExecutorsFail() {
 			string[] scripts = new string[] {
 				$"<Script Id='{Guid.NewGuid()}' Order='2016-06-21'></Script>",
