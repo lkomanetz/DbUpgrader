@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 using Executioner.Contracts;
 using Executioner.ExtensionMethods;
-using System.Xml.Serialization;
 using System.IO;
+using System.Runtime.Serialization.Json;
 
 namespace Executioner {
 
@@ -14,12 +14,12 @@ namespace Executioner {
 
 		private string _fileExt;
 		private string _rootDir;
-		private XmlSerializer _serializer;
+		private DataContractJsonSerializer _serializer;
 
 		public FileSystemLogger(string rootDirectory) {
-			_fileExt = ".xml";
+			_fileExt = ".json";
 			_rootDir = rootDirectory;
-			_serializer = new XmlSerializer(typeof(ScriptDocument));
+			_serializer = new DataContractJsonSerializer(typeof(LogEntry));
 
 			if (!Directory.Exists(_rootDir)) {
 				Directory.CreateDirectory(_rootDir);
@@ -108,15 +108,16 @@ namespace Executioner {
 				return null;
 			}
 
-			ScriptDocument doc = null;
-			using (StreamReader reader = new StreamReader(fileLoc)) {
-				doc = (ScriptDocument)_serializer.Deserialize(reader);
+			LogEntry entry = null;
+			using (FileStream reader = new FileStream(fileLoc, FileMode.Open)) {
+				entry = (LogEntry)_serializer.ReadObject(reader);
 			}
 
-			return doc;
+			return entry.ToScriptDocument();
 		}
 
 		private void Serialize(ScriptDocument doc) {
+			LogEntry entry = LogEntry.ToLogEntry(doc);
 			string fileLoc = $@"{_rootDir}\{doc.SysId}{_fileExt}";
 
 			if (!Directory.Exists(_rootDir)) {
@@ -126,9 +127,58 @@ namespace Executioner {
 			FileStream fs = File.Create(fileLoc);
 			fs.Dispose();
 
-			using (StreamWriter sw = new StreamWriter(fileLoc, false)) {
-				_serializer.Serialize(sw, doc);
+			using (FileStream writer = new FileStream(fileLoc, FileMode.Create, FileAccess.Write)) {
+				_serializer.WriteObject(writer, entry);	
 			}
+		}
+
+		/*
+		 * This class exists to reduce log size.  The reason it's private is because it is not meant to be known
+		 * in any other part of the solution except for in the FileSystemLogger class. This keeps the interface the
+		 * same but allowed me to change implementation detail without the rest of the solution having to change anything.
+		 */
+		[DataContract]
+		private class LogEntry {
+
+			[DataMember] public Guid SysId { get; set; }
+			[DataMember] public bool IsComplete { get; set; }
+			[DataMember] public LogEntry[] Scripts { get; set; }
+
+			public ScriptDocument ToScriptDocument() {
+				ScriptDocument doc = new ScriptDocument() {
+					SysId = this.SysId,
+					IsComplete = this.IsComplete
+				};
+
+				if (this.Scripts != null) {
+					foreach (LogEntry script in this.Scripts) {
+						doc.Scripts.Add(new Script() {
+							SysId = script.SysId,
+							IsComplete = script.IsComplete
+						});
+					}
+				}
+
+				return doc;
+			}
+
+			public static LogEntry ToLogEntry(ScriptDocument doc) {
+				LogEntry entry = new LogEntry() {
+					SysId = doc.SysId,
+					IsComplete = doc.IsComplete
+				};
+
+				entry.Scripts = new LogEntry[doc.Scripts.Count];
+				for (short i = 0; i < doc.Scripts.Count; ++i) {
+					entry.Scripts[i] = new LogEntry() {
+						SysId = doc.Scripts[i].SysId,
+						IsComplete = doc.Scripts[i].IsComplete
+					};
+				}
+
+				return entry;
+			}
+
 		}
 
 	}

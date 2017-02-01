@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 namespace Executioner.Contracts {
 
 	public class ScriptDocument : IOrderedItem {
+		
+		public ScriptDocument() {
+			this.Scripts = new List<Script>();
+		}
 
 		public Guid SysId { get; set; }
 		public DateTime DateCreatedUtc { get; set; }

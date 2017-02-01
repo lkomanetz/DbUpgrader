@@ -30,7 +30,7 @@ namespace Logger.FileSystem.Tests {
 			_backingStore.Add(doc);
 
 			Assert.IsTrue(
-				File.Exists($@"{_rootDir}\{doc.SysId}.xml"),
+				File.Exists($@"{_rootDir}\{doc.SysId}.json"),
 				$"Document Id '{doc.SysId}' file not created"
 			);
 		}
