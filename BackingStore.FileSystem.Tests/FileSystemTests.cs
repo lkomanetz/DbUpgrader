@@ -114,6 +114,29 @@ namespace Logger.FileSystem.Tests {
 		}
 
 		[TestMethod]
+		public void AddingMultipleScripts_Succeeds() {
+			ScriptDocument doc = CreateDocument();
+			_backingStore.Add(doc);
+
+			IList<Guid> scriptIds = new List<Guid>() { Guid.NewGuid(), Guid.NewGuid() };
+			foreach (Guid id in scriptIds) {
+				Script newScript = new Script() {
+					SysId = id,
+					DocumentId = doc.SysId,
+					DateCreatedUtc = DateTime.UtcNow,
+					IsComplete = true
+				};
+				_backingStore.Add(newScript);
+			}
+
+			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
+			Assert.IsTrue(
+				foundScripts.Where(x => !scriptIds.Contains(x)).Count() == 0,
+				"Scripts not added to log."
+			);
+		}
+
+		[TestMethod]
 		public void UpdateDocument_Succeeds() {
 			ScriptDocument doc = CreateDocument();
 			bool previousState = doc.IsComplete;

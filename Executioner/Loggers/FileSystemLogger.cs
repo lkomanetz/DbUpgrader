@@ -27,26 +27,29 @@ namespace Executioner {
 		}
 
 		public void Add(Script script) {
-			ScriptDocument doc = Deserialize(script.DocumentId);
-			if (doc == null) {
+			LogEntry entry = Deserialize(script.DocumentId);
+
+			if (entry == null) {
 				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
 			}
 
-			if (doc.Scripts.Any(x => x.SysId == script.SysId)) {
+			if (entry.Scripts.Any(x => x.SysId == script.SysId)) {
 				return;
 			}
 
-			doc.Scripts.Add(script);
-			doc.Scripts = (List<Script>)doc.Scripts.SortOrderedItems();
-			doc.IsComplete = doc.Scripts.AreComplete();
+			entry.Scripts.Add(new LogEntry() {
+				SysId = script.SysId,
+				IsComplete = script.IsComplete,
+			});
+			entry.IsComplete = entry.Scripts.All(x => x.IsComplete);
 
-			Serialize(doc);
+			Serialize(entry);
 		}
 
 		public void Add(ScriptDocument document) {
-			ScriptDocument existingDoc = Deserialize(document.SysId);
-			if (existingDoc == null) {
-				Serialize(document);
+			LogEntry entry = Deserialize(document.SysId);
+			if (entry == null) {
+				Serialize(LogEntry.ToLogEntry(document));
 			}
 		}
 
@@ -63,9 +66,10 @@ namespace Executioner {
 				if (!Guid.TryParse(fileName, out sysId)) {
 					throw new FormatException($"{fileName} is incorrect GUID format.");
 				}
-				ScriptDocument doc = Deserialize(sysId);
-				if (doc.IsComplete) {
-					completedDocIds.Add(doc.SysId);
+
+				LogEntry entry = Deserialize(sysId);
+				if (entry.IsComplete) {
+					completedDocIds.Add(entry.SysId);
 				}
 			}
 
@@ -73,27 +77,28 @@ namespace Executioner {
 		}
 
 		public IList<Guid> GetCompletedScriptIdsFor(Guid documentId) {
-			ScriptDocument doc = Deserialize(documentId);
-			if (doc == null) {
+			LogEntry entry = Deserialize(documentId);
+			if (entry == null) {
 				return null;
 			}
 
-			return doc.Scripts
-				.Where(x => x.IsComplete)
-				.Select(x => x.SysId)
+			return entry.Scripts
+				.Where(scriptEntry => scriptEntry.IsComplete)
+				.Select(scriptEntry => scriptEntry.SysId)
 				.ToList();
 		}
 
 		public void Update(Script script) {
-			ScriptDocument doc = Deserialize(script.DocumentId);
-			if (doc == null) {
+			LogEntry entry = Deserialize(script.DocumentId);
+			if (entry == null) {
 				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
 			}
-			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
 
-			doc.Scripts[index] = script;
-			doc.IsComplete = doc.Scripts.AreComplete();
-			Serialize(doc);
+			int index = entry.Scripts.FindIndex(x => x.SysId == script.SysId);
+
+			entry.Scripts[index] = new LogEntry() { SysId = script.SysId, IsComplete = script.IsComplete };
+			entry.IsComplete = entry.Scripts.All(x => x.IsComplete);
+			Serialize(entry);
 		}
 
 		public void Clean() {
@@ -102,7 +107,7 @@ namespace Executioner {
 			}
 		}
 
-		private ScriptDocument Deserialize(Guid docId) {
+		private LogEntry Deserialize(Guid docId) {
 			string fileLoc = $@"{_rootDir}\{docId}{_fileExt}";
 			if (!File.Exists(fileLoc)) {
 				return null;
@@ -113,12 +118,11 @@ namespace Executioner {
 				entry = (LogEntry)_serializer.ReadObject(reader);
 			}
 
-			return entry.ToScriptDocument();
+			return entry;
 		}
 
-		private void Serialize(ScriptDocument doc) {
-			LogEntry entry = LogEntry.ToLogEntry(doc);
-			string fileLoc = $@"{_rootDir}\{doc.SysId}{_fileExt}";
+		private void Serialize(LogEntry entry) {
+			string fileLoc = $@"{_rootDir}\{entry.SysId}{_fileExt}";
 
 			if (!Directory.Exists(_rootDir)) {
 				Directory.CreateDirectory(_rootDir);
@@ -142,25 +146,7 @@ namespace Executioner {
 
 			[DataMember] public Guid SysId { get; set; }
 			[DataMember] public bool IsComplete { get; set; }
-			[DataMember] public LogEntry[] Scripts { get; set; }
-
-			public ScriptDocument ToScriptDocument() {
-				ScriptDocument doc = new ScriptDocument() {
-					SysId = this.SysId,
-					IsComplete = this.IsComplete
-				};
-
-				if (this.Scripts != null) {
-					foreach (LogEntry script in this.Scripts) {
-						doc.Scripts.Add(new Script() {
-							SysId = script.SysId,
-							IsComplete = script.IsComplete
-						});
-					}
-				}
-
-				return doc;
-			}
+			[DataMember] public List<LogEntry> Scripts { get; set; }
 
 			public static LogEntry ToLogEntry(ScriptDocument doc) {
 				LogEntry entry = new LogEntry() {
@@ -168,12 +154,14 @@ namespace Executioner {
 					IsComplete = doc.IsComplete
 				};
 
-				entry.Scripts = new LogEntry[doc.Scripts.Count];
+				entry.Scripts = new List<LogEntry>();
 				for (short i = 0; i < doc.Scripts.Count; ++i) {
-					entry.Scripts[i] = new LogEntry() {
-						SysId = doc.Scripts[i].SysId,
-						IsComplete = doc.Scripts[i].IsComplete
-					};
+					entry.Scripts.Add(
+						new LogEntry() {
+							SysId = doc.Scripts[i].SysId,
+							IsComplete = doc.Scripts[i].IsComplete
+						}
+					);
 				}
 
 				return entry;

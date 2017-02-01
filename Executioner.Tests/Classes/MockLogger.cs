@@ -26,7 +26,7 @@ namespace Executioner.Tests.Classes
 				doc.Scripts.Add(script);
 			}
 			doc.Scripts = (List<Script>)doc.Scripts.SortOrderedItems();
-			doc.IsComplete = doc.Scripts.AreComplete();
+			doc.IsComplete = doc.Scripts.All(x => x.IsComplete);
 		}
 
 		public void Add(ScriptDocument document) {
@@ -61,7 +61,7 @@ namespace Executioner.Tests.Classes
 			ScriptDocument doc = GetDocument(script.DocumentId);
 			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
 			doc.Scripts[index] = script;
-			doc.IsComplete = doc.Scripts.AreComplete();
+			doc.IsComplete = doc.Scripts.All(x => x.IsComplete);
 		}
 
 		private ScriptDocument GetDocument(Guid docId) {

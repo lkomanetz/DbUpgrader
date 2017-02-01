@@ -41,11 +41,6 @@ namespace Executioner.ExtensionMethods
 					.ToList();
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool AreComplete(this IList<Script> scripts) {
-			return scripts.All(x => x.IsComplete);
-		}
-
 	}
 
 }
