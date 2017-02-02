@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using Executioner.Contracts;
-using Executioner.ExtensionMethods;
 using System.IO;
 using System.Runtime.Serialization.Json;
 
