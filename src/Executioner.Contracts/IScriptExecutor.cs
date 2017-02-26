@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Executioner.Contracts {
+namespace Executioner {
+	namespace Contracts {
 
-	public interface IScriptExecutor {
+		public interface IScriptExecutor {
 
-		bool Execute(string scriptText);
+			bool Execute(string scriptText);
+
+		}
 
 	}
 
