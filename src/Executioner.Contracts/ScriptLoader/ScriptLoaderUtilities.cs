@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Executioner {
 	namespace Contracts {
@@ -15,23 +15,18 @@ namespace Executioner {
 
 				using (StreamReader reader = new StreamReader(stream)) {
 					string xmlStr = reader.ReadToEnd();
-					XmlDocument xmlDoc = new XmlDocument();
-
-					using (StringReader sr = new StringReader(xmlStr))
-					using (XmlTextReader xtr = new XmlTextReader(sr) { Namespaces = false }) {
-						xmlDoc.Load(xtr);
-					}
+					XDocument xmlDoc = XDocument.Parse(xmlStr);
 
 					Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
-						xmlDoc.SelectSingleNode(
-							$"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ORDER_NODE}"
-						).InnerText
+						xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ORDER_NODE)
+							.Single()
+							.Value
 					);
 
 					Guid docId = Guid.Parse(
-						xmlDoc.SelectSingleNode(
-							$"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}"
-						).InnerText
+						xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ID_NODE)
+							.Single()
+							.Value
 					);
 
 					doc = new ScriptDocument() {
@@ -39,7 +34,7 @@ namespace Executioner {
 						DateCreatedUtc = orderValues.Item1,
 						Order = orderValues.Item2,
 						ResourceName = resourceName,
-						Scripts = GetScriptsFrom(xmlDoc)
+						Scripts = GetScriptsFrom(xmlDoc, docId)
 					};
 				}
 
@@ -64,26 +59,22 @@ namespace Executioner {
 				return Tuple.Create<DateTime, int>(date, order);
 			}
 
-			internal static List<Script> GetScriptsFrom(XmlDocument xmlDoc) {
-				XmlNodeList scriptNodes = xmlDoc.GetElementsByTagName(ScriptLoaderConstants.SCRIPT_NODE);
+			internal static List<Script> GetScriptsFrom(XDocument xmlDoc, Guid docId) {
+				IList<XElement> scriptNodes = xmlDoc.Descendants(ScriptLoaderConstants.SCRIPT_NODE).ToList();
 				List<Script> scripts = new List<Script>();
-
-				Guid docId = Guid.Parse(xmlDoc.SelectSingleNode(
-					$"{ScriptLoaderConstants.ROOT_NODE}/{ScriptLoaderConstants.DOCUMENT_ID_NODE}").InnerText
-				);
 
 				for (short i = 0; i < scriptNodes.Count; ++i) {
 					Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
-						scriptNodes[i].Attributes[ScriptLoaderConstants.ORDER_ATTRIBUTE].Value
+						scriptNodes[i].Attributes(ScriptLoaderConstants.ORDER_ATTRIBUTE).Single().Value
 					);
 
-					string executor = (scriptNodes[i].Attributes[ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE] == null) ?
+					string executor = (scriptNodes[i].Attributes(ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE).Single().Value == null) ?
 						String.Empty :
-						scriptNodes[i].Attributes[ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE].Value;
+						scriptNodes[i].Attributes(ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE).Single().Value;
 
 					scripts.Add(new Script() {
-						SysId = Guid.Parse(scriptNodes[i].Attributes[ScriptLoaderConstants.SCRIPT_ID_ATTRIBUTE].Value),
-						ScriptText = scriptNodes[i].InnerText,
+						SysId = Guid.Parse(scriptNodes[i].Attributes(ScriptLoaderConstants.SCRIPT_ID_ATTRIBUTE).Single().Value),
+						ScriptText = scriptNodes[i].Value,
 						DateCreatedUtc = orderValues.Item1,
 						Order = orderValues.Item2,
 						ExecutorName = executor,
