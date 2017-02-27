@@ -9,7 +9,9 @@
     "MSTest.TestFramework": "1.0.8-rc2",
     "Executioner.Contracts": "1.0.0",
     "Executioner.ExtensionMethods": "1.0.0",
-    "Executioner": "1.0.0"
+    "Executioner": "1.0.0",
+    "ScriptLoader.Tests.FakeService": "1.0.0",
+    "ScriptLoader.Tests.AnotherFakeService": "1.0.0"
   },
   "frameworks": {
     "netcoreapp1.1": {
