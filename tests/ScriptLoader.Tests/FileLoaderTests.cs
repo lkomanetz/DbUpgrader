@@ -57,15 +57,16 @@ namespace ScriptLoader.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(FileNotFoundException), "Documents found when directory was empty.")]
 		public void FileLoader_MissingDocumentsThrowsException() {
-			IEnumerable<string> files = Directory.EnumerateFiles(rootDir);
-			foreach (string file in files) {
-				File.Delete(file);
-			}
+			Assert.ThrowsException<FileNotFoundException>(() => {
+				IEnumerable<string> files = Directory.EnumerateFiles(rootDir);
+				foreach (string file in files) {
+					File.Delete(file);
+				}
 
-			FileSystemLoader loader = new FileSystemLoader(rootDir);
-			loader.LoadDocuments();
+				FileSystemLoader loader = new FileSystemLoader(rootDir);
+				loader.LoadDocuments();
+			});
 		}
 
 		// This is only used in the Initialize() method.
