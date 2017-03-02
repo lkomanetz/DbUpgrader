@@ -28,8 +28,10 @@ namespace Executioner {
 		public IList<Assembly> ReferencedAssemblies { get; set; }
 
 		public bool Execute(string scriptText) {
+			/*
 			CSharpCodeProvider provider = new CSharpCodeProvider();
 			CompilerParameters parameters = CreateParameters();
+			 */
 
 			string csSource = GenerateSourceString(scriptText);
 			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(csSource);
@@ -46,7 +48,7 @@ namespace Executioner {
 			Type program = dynamicAssembly.GetType($"{NAMESPACE_NAME}.{CLASS_NAME}");
 			object obj = Activator.CreateInstance(program);
 			MethodInfo method = program.GetTypeInfo().GetDeclaredMethod(MAIN_METHOD_NAME);
-			method.Invoke()
+			// method.Invoke()
 			/*
 			CompilerResults results = provider.CompileAssemblyFromSource(parameters, csSource);
 			CheckForErrors(results);
@@ -63,6 +65,7 @@ namespace Executioner {
 			return true;
 		}
 
+		/*
 		private void CheckForErrors(CompilerResults results) {
 			if (results.Errors.HasErrors) {
 				StringBuilder sb = new StringBuilder();
@@ -74,6 +77,7 @@ namespace Executioner {
 				throw new InvalidOperationException(sb.ToString());
 			}	
 		}
+		 */
 
 		private MetadataReference[] GetReferences() {
 			return new MetadataReference[] {
@@ -120,6 +124,8 @@ namespace Executioner {
 			sb.AppendLine("}}}");
 			return sb.ToString();
 		}
+
+		/*
 		private CompilerParameters CreateParameters() {
 			CompilerParameters parameters = new CompilerParameters() {
 				GenerateInMemory = true,
@@ -130,6 +136,8 @@ namespace Executioner {
 			}
 			return parameters;
 		}
+		 */
+
 		private void SanitizeUsingStatements() {
 			for (short i = 0; i < this.UsingStatements.Count; ++i) {
 				this.UsingStatements[i] = this.UsingStatements[i].Replace(";", "");
@@ -140,5 +148,7 @@ namespace Executioner {
 				);
 			}
 		}
+
 	}
+
 }
