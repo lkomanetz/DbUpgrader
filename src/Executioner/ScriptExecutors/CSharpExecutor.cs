@@ -1,9 +1,7 @@
 using Executioner.Contracts;
-using Microsoft.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -44,6 +42,12 @@ namespace Executioner {
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
 			);
 			
+			Assembly dynamicAssembly = Compile(compilation);
+			Type program = dynamicAssembly.GetType($"{NAMESPACE_NAME}.{CLASS_NAME}");
+			object obj = Activator.CreateInstance(program);
+			MethodInfo method = program.GetTypeInfo().GetDeclaredMethod(MAIN_METHOD_NAME);
+			method.Invoke()
+			/*
 			CompilerResults results = provider.CompileAssemblyFromSource(parameters, csSource);
 			CheckForErrors(results);
 
@@ -55,6 +59,7 @@ namespace Executioner {
 
 			MethodInfo method = program.GetMethod(MAIN_METHOD_NAME);
 			method.Invoke(null, null);
+			*/
 			return true;
 		}
 
