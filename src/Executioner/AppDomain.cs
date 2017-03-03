@@ -24,7 +24,7 @@ namespace Executioner {
 					var assembly = Assembly.Load(new AssemblyName(library.Name));
 					assemblies.Add(assembly);
 				}
-				catch (FileNotFoundException err) {
+				catch (FileNotFoundException) {
 					// If an assembly isn't found it should be fine.
 				}
 			}
