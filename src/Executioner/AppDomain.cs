@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
@@ -16,11 +17,16 @@ namespace Executioner {
 
 		public Assembly[] GetAssemblies() {
 			IList<Assembly> assemblies = new List<Assembly>();
-			var dependencies = DependencyContext.Default.RuntimeLibraries;
+			var dependencies = DependencyContext.Default.CompileLibraries;
 
-			foreach (RuntimeLibrary library in dependencies) {
-				var assembly = Assembly.Load(new AssemblyName(library.Name));
-				assemblies.Add(assembly);
+			foreach (CompilationLibrary library in dependencies) {
+				try {
+					var assembly = Assembly.Load(new AssemblyName(library.Name));
+					assemblies.Add(assembly);
+				}
+				catch (FileNotFoundException err) {
+					// If an assembly isn't found it should be fine.
+				}
 			}
 
 			return assemblies.ToArray();

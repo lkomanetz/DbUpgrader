@@ -28,11 +28,6 @@ namespace Executioner {
 		public IList<Assembly> ReferencedAssemblies { get; set; }
 
 		public bool Execute(string scriptText) {
-			/*
-			CSharpCodeProvider provider = new CSharpCodeProvider();
-			CompilerParameters parameters = CreateParameters();
-			 */
-
 			string csSource = GenerateSourceString(scriptText);
 			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(csSource);
 
@@ -48,36 +43,9 @@ namespace Executioner {
 			Type program = dynamicAssembly.GetType($"{NAMESPACE_NAME}.{CLASS_NAME}");
 			object obj = Activator.CreateInstance(program);
 			MethodInfo method = program.GetTypeInfo().GetDeclaredMethod(MAIN_METHOD_NAME);
-			// method.Invoke()
-			/*
-			CompilerResults results = provider.CompileAssemblyFromSource(parameters, csSource);
-			CheckForErrors(results);
-
-			Assembly assembly = results.CompiledAssembly;
-			TypeInfo program = assembly.GetType(
-				$"{NAMESPACE_NAME}.{CLASS_NAME}"
-			)
-			.GetTypeInfo();
-
-			MethodInfo method = program.GetMethod(MAIN_METHOD_NAME);
 			method.Invoke(null, null);
-			*/
 			return true;
 		}
-
-		/*
-		private void CheckForErrors(CompilerResults results) {
-			if (results.Errors.HasErrors) {
-				StringBuilder sb = new StringBuilder();
-				
-				foreach (CompilerError error in results.Errors) {
-					sb.AppendLine($"Error ({error.ErrorNumber}): {error.ErrorText}");
-				}
-
-				throw new InvalidOperationException(sb.ToString());
-			}	
-		}
-		 */
 
 		private MetadataReference[] GetReferences() {
 			return new MetadataReference[] {
@@ -99,7 +67,7 @@ namespace Executioner {
 						errorMsg += $"{failure.Id}: {failure.GetMessage()}\n";
 					}
 
-					throw new Exception(errorMsg);
+					throw new InvalidOperationException(errorMsg);
 				}
 
 				ms.Seek(0, SeekOrigin.Begin);
@@ -124,19 +92,6 @@ namespace Executioner {
 			sb.AppendLine("}}}");
 			return sb.ToString();
 		}
-
-		/*
-		private CompilerParameters CreateParameters() {
-			CompilerParameters parameters = new CompilerParameters() {
-				GenerateInMemory = true,
-				GenerateExecutable = false
-			};
-			foreach (Assembly assembly in this.ReferencedAssemblies) {
-				parameters.ReferencedAssemblies.Add(assembly.Location);
-			}
-			return parameters;
-		}
-		 */
 
 		private void SanitizeUsingStatements() {
 			for (short i = 0; i < this.UsingStatements.Count; ++i) {

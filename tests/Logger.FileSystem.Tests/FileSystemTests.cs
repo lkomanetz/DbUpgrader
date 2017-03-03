@@ -1,56 +1,60 @@
 using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Executioner.Contracts;
 using System.Collections.Generic;
 using Executioner;
 using System.Linq;
+using Xunit;
 
 namespace Logger.FileSystem.Tests {
 
-	[TestClass]
 	public class FileSystemTests {
 		private FileSystemLogger _backingStore;
 		private string _rootDir;
 
-		[TestInitialize]
 		public void Initialize() {
 			_rootDir = @"C:\TestDir";
 			_backingStore = new FileSystemLogger(_rootDir);
 		}
 
-		[TestCleanup]
 		public void Cleanup() {
 			_backingStore.Clean();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddDocument_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			_backingStore.Add(doc);
 
-			Assert.IsTrue(
+			Assert.True(
 				File.Exists($@"{_rootDir}\{doc.SysId}.json"),
 				$"Document Id '{doc.SysId}' file not created"
 			);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddSameDocumentMakesNoChanges() {
+			Initialize();
+
 			ScriptDocument doc = CreateDocument();
 			_backingStore.Add(doc);
 			doc.IsComplete = true;
 			_backingStore.Add(doc);
 
 			IList<Guid> completedDocIds = _backingStore.GetCompletedDocumentIds();
-			Assert.IsTrue(
+			Assert.True(
 				completedDocIds == null || completedDocIds.Count == 0,
 				"Script Document changed after second add."
 			);
+
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddScriptOnlyAddsIfNew() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			doc.Scripts[0].IsComplete = true;
 			_backingStore.Add(doc);
@@ -59,29 +63,33 @@ namespace Logger.FileSystem.Tests {
 			_backingStore.Add(existingScript);
 
 			int scriptCount = _backingStore.GetCompletedScriptIdsFor(doc.SysId).Count;
-			Assert.IsTrue(
+			Assert.True(
 				scriptCount == 1,
 				$"Expected completed scripts: {1}\nActual completed scripts: {scriptCount}"
 			);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void FileSystemStore_Clear_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			ScriptDocument anotherDoc = CreateDocument();
 			_backingStore.Add(doc);
 			_backingStore.Add(doc);
 
 			_backingStore.Clean();
-			Assert.IsTrue(
+			Assert.True(
 				!Directory.Exists(_rootDir),
 				$"Directory '{_rootDir}' still exists."
 			);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddScriptForInvalidDocId_Fails() {
-			Assert.ThrowsException<FileNotFoundException>(() => {
+			Initialize();
+			Exception ex = Record.Exception(() => {
 				Script fakeScript = new Script() {
 					DocumentId = Guid.NewGuid(),
 					SysId = Guid.NewGuid(),
@@ -90,10 +98,13 @@ namespace Logger.FileSystem.Tests {
 
 				_backingStore.Add(fakeScript);
 			});
+			Assert.NotNull(ex);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddScriptForValidDocId_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			_backingStore.Add(doc);
 
@@ -108,14 +119,16 @@ namespace Logger.FileSystem.Tests {
 			_backingStore.Add(newScript);
 			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
 
-			Assert.IsTrue(
+			Assert.True(
 				foundScripts.Where(x => x == newScriptId).SingleOrDefault() != null,
 				$"Script Id '{newScriptId}' not found after add."
 			);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddingMultipleScripts_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			_backingStore.Add(doc);
 
@@ -131,14 +144,16 @@ namespace Logger.FileSystem.Tests {
 			}
 
 			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
-			Assert.IsTrue(
+			Assert.True(
 				foundScripts.Where(x => !scriptIds.Contains(x)).Count() == 0,
 				"Scripts not added to log."
 			);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void UpdateDocument_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			bool previousState = doc.IsComplete;
 			_backingStore.Add(doc);
@@ -148,11 +163,13 @@ namespace Logger.FileSystem.Tests {
 				_backingStore.Update(script);
 			}
 			IList<Guid> docs = _backingStore.GetCompletedDocumentIds();
-			Assert.IsTrue(docs.Count == 1, "Incorrect number of documents returned.");
+			Assert.True(docs.Count == 1, "Incorrect number of documents returned.");
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void UpdateScript_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			_backingStore.Add(doc);
 
@@ -161,32 +178,36 @@ namespace Logger.FileSystem.Tests {
 			_backingStore.Update(doc.Scripts[0]);
 
 			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
-			Assert.IsTrue(foundScripts.Count == 1, "Incorrect number of scripts returned.");
+			Assert.True(foundScripts.Count == 1, "Incorrect number of scripts returned.");
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void GetCompletedDocumentIds_Succeeds() {
+			Initialize();
 			ScriptDocument doc = CreateDocument();
 			ScriptDocument anotherDoc = CreateDocument();
 			anotherDoc.Scripts[0].IsComplete = true;
 			anotherDoc.IsComplete = true;
 
 			IList<Guid> completedIds = _backingStore.GetCompletedDocumentIds();
-			Assert.IsTrue(completedIds.Count == 0, "List of completed Ids greater than zero.");
+			Assert.True(completedIds.Count == 0, "List of completed Ids greater than zero.");
 
 			_backingStore.Add(doc);
 			_backingStore.Add(anotherDoc);
 
 			completedIds = _backingStore.GetCompletedDocumentIds();
-			Assert.IsTrue(completedIds.Count == 1, "Incorrect completed Ids returned.");
-			Assert.IsTrue(
+			Assert.True(completedIds.Count == 1, "Incorrect completed Ids returned.");
+			Assert.True(
 				completedIds[0] == anotherDoc.SysId,
 				$"Expected completed Id {anotherDoc.SysId}\nActual completed Id {completedIds[0]}"
 			);
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void GetCompletedScriptIds_Succeeds() {
+			Initialize();
 			Guid completedScriptId = Guid.NewGuid();
 			ScriptDocument doc = CreateDocument();
 			doc.Scripts.Add(new Script() {
@@ -201,11 +222,12 @@ namespace Logger.FileSystem.Tests {
 
 			_backingStore.Add(doc);
 			IList<Guid> completedScriptIds = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
-			Assert.IsTrue(completedScriptIds.Count == 1, "Incorrect amount of script Ids returned.");
-			Assert.IsTrue(
+			Assert.True(completedScriptIds.Count == 1, "Incorrect amount of script Ids returned.");
+			Assert.True(
 				completedScriptIds[0] == completedScriptId,
 				$"Expected Id {completedScriptId}\nActual Id {completedScriptIds[0]}"
 			);
+			Cleanup();
 		}
 
 		private ScriptDocument CreateDocument() {

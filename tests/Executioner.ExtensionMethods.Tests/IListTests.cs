@@ -1,16 +1,14 @@
 ﻿using Executioner.ExtensionMethods;
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Executioner.ExtensionMethods.Tests {
 
-	[TestClass]
 	public class IListTests {
 
-		[TestMethod]
+		[Fact]
 		public void IList_FindIndexSucceeds() {
 			IList<TestClass> testList = CreateList();
 
@@ -18,32 +16,32 @@ namespace Executioner.ExtensionMethods.Tests {
 			testList[5].Id = testGuid;
 
 			int itemIndex = testList.FindIndex(x => x.Number == 5);
-			Assert.IsTrue(itemIndex == 5, $"Expected {5}\nActual {itemIndex}");
+			Assert.True(itemIndex == 5, $"Expected {5}\nActual {itemIndex}");
 
 			itemIndex = testList.FindIndex(x => x.Text.Equals("Text4"));
-			Assert.IsTrue(itemIndex == 4, $"Expected {4}\nActual {itemIndex}");
+			Assert.True(itemIndex == 4, $"Expected {4}\nActual {itemIndex}");
 
 			itemIndex = testList.FindIndex(x => x.FloatNumber == 6.0);
-			Assert.IsTrue(itemIndex == 6, $"Expected {6}\nActual {itemIndex}");
+			Assert.True(itemIndex == 6, $"Expected {6}\nActual {itemIndex}");
 
 			itemIndex = testList.FindIndex(x => x.Id == testGuid);
-			Assert.IsTrue(itemIndex == 5, $"Expected {5}\nActual {itemIndex}");
+			Assert.True(itemIndex == 5, $"Expected {5}\nActual {itemIndex}");
 		}
 
-		[TestMethod]
+		[Fact]
 		public void IList_ForEachMethodSucceeds() {
 			IList<TestClass> testList = CreateList();
 			testList.ForEach(x => {
 				x.Boolean = true;
 			});
 
-			Assert.IsFalse(testList.Any(x => !x.Boolean), "ForEach did not change all false booleans to true.");
+			Assert.False(testList.Any(x => !x.Boolean), "ForEach did not change all false booleans to true.");
 
 			testList.ForEach(x => x.Boolean = false);
-			Assert.IsFalse(testList.Any(x => x.Boolean), "ForEach did not change all true booleans to false.");
+			Assert.False(testList.Any(x => x.Boolean), "ForEach did not change all true booleans to false.");
 		}
 
-		[TestMethod]
+		[Fact]
 		public void IList_SortOnOrderSucceeds() {
 			DateTime now = DateTime.UtcNow;
 
@@ -61,7 +59,7 @@ namespace Executioner.ExtensionMethods.Tests {
 			);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void IList_SortOnDateCreatedUtcSucceeds() {
 			DateTime now = DateTime.UtcNow;
 			IList<OrderedItem> items = new List<OrderedItem>() {
@@ -77,7 +75,7 @@ namespace Executioner.ExtensionMethods.Tests {
 			);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void IList_SortOnDateAndOrderSucceeds() {
 			DateTime now = DateTime.UtcNow;
 			IList<OrderedItem> items = new List<OrderedItem>() {
@@ -95,9 +93,9 @@ namespace Executioner.ExtensionMethods.Tests {
 			);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void IList_SortFailsWithDuplicateOrder() {
-			Assert.ThrowsException<Exception>(() => {
+			Exception ex = Record.Exception(() => {
 				DateTime now = DateTime.UtcNow;
 				IList<OrderedItem> items = new List<OrderedItem>() {
 					new OrderedItem() { Id = 0, DateCreatedUtc = now, Order = 0 },
@@ -107,16 +105,17 @@ namespace Executioner.ExtensionMethods.Tests {
 
 				IList<OrderedItem> sortedList = items.SortOrderedItems();
 			});
+			Assert.NotNull(ex);
 		}
 
 		private void AssertOrder(int[] expectedOrder, int[] actualOrder) {
-			Assert.IsTrue(
+			Assert.True(
 				expectedOrder.Length == actualOrder.Length,
 				$"Actual order length {actualOrder.Length} != Expected order lenght {expectedOrder.Length}."
 			);
 
 			for (int i = 0; i < expectedOrder.Length; ++i) {
-				Assert.IsTrue(actualOrder[i] == expectedOrder[i], $"{actualOrder[i]} != {expectedOrder[i]}.");
+				Assert.True(actualOrder[i] == expectedOrder[i], $"{actualOrder[i]} != {expectedOrder[i]}.");
 			}
 		}
 

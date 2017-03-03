@@ -2,40 +2,25 @@
 using Executioner.Contracts;
 using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace ScriptLoader.Tests {
 
-	[TestClass]
 	public class FileLoaderTests {
 		private string rootDir;
 		private int documentCount;
 		private IList<Guid> documentIds;
 
-		[TestInitialize]
-		public void Initialize() {
-			rootDir = "C:\\FileLoaderTests";
-			documentCount = 5;
-			documentIds = new List<Guid>();
 
-			GenerateDocuments(GetScripts());
-		}
-
-		[TestCleanup]
-		public void Cleanup() {
-			if (Directory.Exists(rootDir)) {
-				Directory.Delete(rootDir, true);	
-			}
-		}
-
-		[TestMethod]
+		[Fact]
 		public void FileLoader_LoadDocumentsSucceeds() {
+			Initialize();
 			FileSystemLoader loader = new FileSystemLoader(rootDir);
 			loader.LoadDocuments();
 
-			Assert.IsTrue(
+			Assert.True(
 				loader.Documents.Count == documentCount,
 				$"Expected {documentCount} documents\nActual: {loader.Documents.Count}"
 			);
@@ -45,20 +30,24 @@ namespace ScriptLoader.Tests {
 					.Where(x => x.SysId == id)
 					.SingleOrDefault();
 
-				Assert.IsTrue(doc != null, $"Unable to find doc id '{id}'");
+				Assert.True(doc != null, $"Unable to find doc id '{id}'");
 			}
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void FileLoader_MissingRootDirectoryCreatesNew() {
+			Initialize();
 			Directory.Delete(rootDir, true);
 			FileSystemLoader loader = new FileSystemLoader(rootDir);
-			Assert.IsTrue(Directory.Exists(rootDir), "Root directory not found.");
+			Assert.True(Directory.Exists(rootDir), "Root directory not found.");
+			Cleanup();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void FileLoader_MissingDocumentsThrowsException() {
-			Assert.ThrowsException<FileNotFoundException>(() => {
+			Initialize();
+			Exception ex = Record.Exception(() => {
 				IEnumerable<string> files = Directory.EnumerateFiles(rootDir);
 				foreach (string file in files) {
 					File.Delete(file);
@@ -67,6 +56,8 @@ namespace ScriptLoader.Tests {
 				FileSystemLoader loader = new FileSystemLoader(rootDir);
 				loader.LoadDocuments();
 			});
+			Assert.NotNull(ex);
+			Cleanup();
 		}
 
 		// This is only used in the Initialize() method.
@@ -87,6 +78,20 @@ namespace ScriptLoader.Tests {
 				string doc = $"<ScriptDocument><Id>{sysId}</Id><Order>2017-01-09:{i}</Order>{scripts}</ScriptDocument>";
 				File.WriteAllText($"{rootDir}\\Doc_{i}.sdoc", doc);
 				documentIds.Add(sysId);
+			}
+		}
+
+		private void Initialize() {
+			rootDir = "C:\\FileLoaderTests";
+			documentCount = 5;
+			documentIds = new List<Guid>();
+
+			GenerateDocuments(GetScripts());
+		}
+
+		private void Cleanup() {
+			if (Directory.Exists(rootDir)) {
+				Directory.Delete(rootDir, true);	
 			}
 		}
 

@@ -1,37 +1,39 @@
 using Executioner;
 using Executioner.Tests.Classes;
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ScriptExecutor.CSharp.Tests.Classes;
 using ScriptExecutor.CSharp.Tests.TestClasses;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace ScriptExecutor.CSharp.Tests {
 
-	[TestClass]
 	public class CSharpExecutorTests {
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_NoExceptionsThrown() {
-			string code = @"Console.WriteLine(""Hello world!"");";
+			Exception ex = Record.Exception(() => {
+				string code = @"Console.WriteLine(""Hello world!"");";
 
-			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-28'>{code}</Script>"
-			};
+				string[] scripts = new string[] {
+					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-28'>{code}</Script>"
+				};
 
-			ScriptExecutioner executioner = CreateExecutioner(
-				scripts: scripts,
-				usingStatements: null,
-				referencedAssemblies: null
-			);
-			executioner.Run();
+				ScriptExecutioner executioner = CreateExecutioner(
+					scripts: scripts,
+					usingStatements: null,
+					referencedAssemblies: null
+				);
+				executioner.Run();
+			});
+			Assert.Null(ex);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_CompilerErrorsFound() {
-			Assert.ThrowsException<InvalidOperationException>(() => {
+			Exception ex = Record.Exception(() => {
 				// This is missing the semi-colon
 				string code = @"Console.WriteLine(""Hello world!"")";
 
@@ -46,10 +48,12 @@ namespace ScriptExecutor.CSharp.Tests {
 				);
 
 				executioner.Run();
-			}, "Compile time error not found.");
+			});
+			Assert.NotNull(ex);
+			Assert.True(ex is InvalidOperationException, $"Exception is {ex.GetType().Name}");
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_CallToStaticMethodInSameAssembly_Succeeds() {
 			string code = @"SameAssemblyClass.StaticMethod();";
 			string[] scripts = new string[] {
@@ -68,7 +72,7 @@ namespace ScriptExecutor.CSharp.Tests {
 			executioner.Run();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_CallToStaticMethodInDifferentAssembly_Succeeds() {
 			string code = @"TestClass.StaticMethod();";
 			string[] scripts = new string[] {
@@ -87,7 +91,7 @@ namespace ScriptExecutor.CSharp.Tests {
 			executioner.Run();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_CallToStaticMethodsInMultipleAssemblies_Succeeds() {
 			string code = @"TestClass.StaticMethod(); SameAssemblyClass.StaticMethod();";
 			string[] scripts = new string[] {
@@ -108,9 +112,9 @@ namespace ScriptExecutor.CSharp.Tests {
 			executioner.Run();
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_CallToStaticMethodWithoutUsingStatements_Fails() {
-			Assert.ThrowsException<InvalidOperationException>(() => {
+			Exception ex = Record.Exception(() => {
 				string code = @"TestClass.StaticMethod();";
 				string[] scripts = new string[] {
 					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
@@ -122,12 +126,14 @@ namespace ScriptExecutor.CSharp.Tests {
 
 				var executioner = CreateExecutioner(scripts, null, referencedAssemblies);
 				executioner.Run();
-			}, "No compile time error with missing using statements.");
+			});
+			Assert.NotNull(ex);
+			Assert.True(ex is InvalidOperationException, $"Exception is {ex.GetType().Name}.");
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_CallToStaticMethodWithoutAssemblies_Fails() {
-			Assert.ThrowsException<InvalidOperationException>(() => {
+			Exception ex = Record.Exception(() => {
 				string code = @"TestClass.StaticMethod();";
 				string[] scripts = new string[] {
 					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
@@ -138,12 +144,14 @@ namespace ScriptExecutor.CSharp.Tests {
 
 				var executioner = CreateExecutioner(scripts, usingStatements, null);
 				executioner.Run();
-			}, "No compile time error with missing referenced assemblies.");
+			});
+			Assert.NotNull(ex);
+			Assert.True(ex is InvalidOperationException, $"Exception is {ex.GetType().Name}.");
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CSharp_MissingUsingAndReferencedAssemblies_Fails() {
-			Assert.ThrowsException<InvalidOperationException>(() => {
+			Exception ex = Record.Exception(() => {
 				string code = @"TestClass.StaticMethod();";
 				string[] scripts = new string[] {
 					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
@@ -151,8 +159,9 @@ namespace ScriptExecutor.CSharp.Tests {
 
 				var executioner = CreateExecutioner(scripts, null, null);
 				executioner.Run();
-			}, "No compile time error with missing using and referenced assemblies.");
-
+			});
+			Assert.NotNull(ex);
+			Assert.True(ex is InvalidOperationException, $"Exception is {ex.GetType().Name}.");
 		}
 
 		private ScriptExecutioner CreateExecutioner(
