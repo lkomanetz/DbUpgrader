@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceRoot}/tests/Executioner.ExtensionMethods/bin/Debug/netcoreapp1.1/Executioner.ExtensionMethods.dll",
+            "program": "${workspaceRoot}/tests/Executioner.Tests/bin/Debug/netcoreapp1.0/Executioner.Tests.dll",
             "args": [],
             "cwd": "${workspaceRoot}",
             "externalConsole": false,

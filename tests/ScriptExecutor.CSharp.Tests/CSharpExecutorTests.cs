@@ -30,22 +30,23 @@ namespace ScriptExecutor.CSharp.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException), "Compile time error not found.")]
 		public void CSharp_CompilerErrorsFound() {
-			// This is missing the semi-colon
-			string code = @"Console.WriteLine(""Hello world!"")";
+			Assert.ThrowsException<InvalidOperationException>(() => {
+				// This is missing the semi-colon
+				string code = @"Console.WriteLine(""Hello world!"")";
 
-			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-28'>{code}</Script>"
-			};
+				string[] scripts = new string[] {
+					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-28'>{code}</Script>"
+				};
 
-			ScriptExecutioner executioner = CreateExecutioner(
-				scripts: scripts,
-				usingStatements: null,
-				referencedAssemblies: null
-			);
+				ScriptExecutioner executioner = CreateExecutioner(
+					scripts: scripts,
+					usingStatements: null,
+					referencedAssemblies: null
+				);
 
-			executioner.Run();
+				executioner.Run();
+			}, "Compile time error not found.");
 		}
 
 		[TestMethod]
@@ -108,46 +109,49 @@ namespace ScriptExecutor.CSharp.Tests {
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException), "No compile time error with missing using statements.")]
 		public void CSharp_CallToStaticMethodWithoutUsingStatements_Fails() {
-			string code = @"TestClass.StaticMethod();";
-			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
-			};
+			Assert.ThrowsException<InvalidOperationException>(() => {
+				string code = @"TestClass.StaticMethod();";
+				string[] scripts = new string[] {
+					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
+				};
 
-			var referencedAssemblies = new List<Assembly>() {
-				typeof(TestClass).GetTypeInfo().Assembly
-			};
+				var referencedAssemblies = new List<Assembly>() {
+					typeof(TestClass).GetTypeInfo().Assembly
+				};
 
-			var executioner = CreateExecutioner(scripts, null, referencedAssemblies);
-			executioner.Run();
+				var executioner = CreateExecutioner(scripts, null, referencedAssemblies);
+				executioner.Run();
+			}, "No compile time error with missing using statements.");
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException), "No compile time error with missing referenced assemblies.")]
 		public void CSharp_CallToStaticMethodWithoutAssemblies_Fails() {
-			string code = @"TestClass.StaticMethod();";
-			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
-			};
-			string[] usingStatements = new string[] {
-				"ScriptExecutor.CSharp.Tests.TestClasses"
-			};
+			Assert.ThrowsException<InvalidOperationException>(() => {
+				string code = @"TestClass.StaticMethod();";
+				string[] scripts = new string[] {
+					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
+				};
+				string[] usingStatements = new string[] {
+					"ScriptExecutor.CSharp.Tests.TestClasses"
+				};
 
-			var executioner = CreateExecutioner(scripts, usingStatements, null);
-			executioner.Run();
+				var executioner = CreateExecutioner(scripts, usingStatements, null);
+				executioner.Run();
+			}, "No compile time error with missing referenced assemblies.");
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException), "No compile time error with missing using and referenced assemblies")]
 		public void CSharp_MissingUsingAndReferencedAssemblies_Fails() {
-			string code = @"TestClass.StaticMethod();";
-			string[] scripts = new string[] {
-				$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
-			};
+			Assert.ThrowsException<InvalidOperationException>(() => {
+				string code = @"TestClass.StaticMethod();";
+				string[] scripts = new string[] {
+					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-29'>{code}</Script>"
+				};
 
-			var executioner = CreateExecutioner(scripts, null, null);
-			executioner.Run();
+				var executioner = CreateExecutioner(scripts, null, null);
+				executioner.Run();
+			}, "No compile time error with missing using and referenced assemblies.");
 
 		}
 

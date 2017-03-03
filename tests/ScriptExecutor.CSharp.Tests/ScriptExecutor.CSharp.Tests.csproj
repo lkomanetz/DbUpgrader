@@ -15,6 +15,7 @@
     <ProjectReference Include="../../src/Executioner.ExtensionMethods/Executioner.ExtensionMethods.csproj" />
     <ProjectReference Include="../../src/Executioner.Contracts/Executioner.Contracts.csproj" />
     <ProjectReference Include="../ScriptExecutor.CSharp.Tests.TestClasses/ScriptExecutor.CSharp.Tests.TestClasses.csproj" />
+    <ProjectReference Include="../Executioner.Tests/Executioner.Tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
