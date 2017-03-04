@@ -1,6 +1,7 @@
 using Executioner.Contracts;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,14 +32,7 @@ namespace Executioner {
 			string csSource = GenerateSourceString(scriptText);
 			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(csSource);
 
-			MetadataReference[] references = GetReferences();
-			CSharpCompilation compilation = CSharpCompilation.Create(
-				typeof(CSharpExecutor).GetTypeInfo().Assembly.FullName,
-				new[] { syntaxTree },
-				references,
-				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-			);
-			
+			CSharpCompilation compilation = CreateCompiler(syntaxTree);
 			Assembly dynamicAssembly = Compile(compilation);
 			Type program = dynamicAssembly.GetType($"{NAMESPACE_NAME}.{CLASS_NAME}");
 			object obj = Activator.CreateInstance(program);
@@ -48,10 +42,42 @@ namespace Executioner {
 		}
 
 		private MetadataReference[] GetReferences() {
-			return new MetadataReference[] {
-				MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
-				MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location)
-			};
+			string enumerableAssemblyLoc = typeof(Enumerable).GetTypeInfo().Assembly.Location;
+			DirectoryInfo coreDir = Directory.GetParent(enumerableAssemblyLoc);
+			string coreLoc = coreDir.FullName + Path.DirectorySeparatorChar + "mscorlib.dll";
+
+			IList<MetadataReference> references = new List<MetadataReference>();
+
+			var currentExecutingAssemblies = Assembly.GetEntryAssembly().GetReferencedAssemblies();
+			foreach (var currentExecutingAssembly in currentExecutingAssemblies) {
+				// An assembly could already be loaded.  Instead of going bang I want to just keep going.
+				try {
+					Assembly loadedAssembly = Assembly.Load(currentExecutingAssembly);
+					references.Add(MetadataReference.CreateFromFile(loadedAssembly.Location));
+				}
+				catch (FileLoadException) {}
+			}
+
+			for (short i = 0; i < this.ReferencedAssemblies.Count; ++i) {
+				var reference = MetadataReference.CreateFromFile(this.ReferencedAssemblies[i].Location);
+				references.Add(reference);
+			}
+			references.Add(MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location));
+			references.Add(MetadataReference.CreateFromFile(coreLoc));
+
+			return references.ToArray();
+		}
+
+		private CSharpCompilation CreateCompiler(SyntaxTree syntaxTree) {
+			MetadataReference[] references = GetReferences();
+			CSharpCompilation compiler = CSharpCompilation.Create(
+				typeof(CSharpExecutor).GetTypeInfo().Assembly.FullName,
+				new[] { syntaxTree },
+				references,
+				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+			);
+
+			return compiler;
 		}
 
 		private Assembly Compile(CSharpCompilation compilation) {
