@@ -34,8 +34,8 @@ namespace ScriptExecutor.CSharp.Tests {
 		[Fact]
 		public void CSharp_CompilerErrorsFound() {
 			Exception ex = Record.Exception(() => {
-				// This is missing the semi-colon
-				string code = @"Console.WriteLine(""Hello world!"")";
+				//Console is spelled wrong.
+				string code = @"Consoe.WriteLine(""Hello world!"")";
 
 				string[] scripts = new string[] {
 					$"<Script Id='{Guid.NewGuid()}' Executor='CSharpExecutor' Order='2016-12-28'>{code}</Script>"

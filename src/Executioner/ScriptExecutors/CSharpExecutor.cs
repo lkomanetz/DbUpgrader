@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using Microsoft.CodeAnalysis.Emit;
-using System.Runtime.Loader;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Executioner {
 
@@ -29,61 +29,24 @@ namespace Executioner {
 		public IList<Assembly> ReferencedAssemblies { get; set; }
 
 		public bool Execute(string scriptText) {
-			string csSource = GenerateSourceString(scriptText);
-			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(csSource);
+			this.UsingStatements.Add("using System;");
+			SanitizeUsingStatements();
+			MetadataReference[] references = GetReferences();
+			var csScript = CSharpScript.Create(
+				scriptText,
+				ScriptOptions.Default.AddReferences(references).AddImports(this.UsingStatements)
+			);
+			Compile(csScript);
+			csScript.RunAsync().Wait();
 
-			CSharpCompilation compilation = CreateCompiler(syntaxTree);
-			Assembly dynamicAssembly = Compile(compilation);
-			Type program = dynamicAssembly.GetType($"{NAMESPACE_NAME}.{CLASS_NAME}");
-			object obj = Activator.CreateInstance(program);
-			MethodInfo method = program.GetTypeInfo().GetDeclaredMethod(MAIN_METHOD_NAME);
-			method.Invoke(null, null);
 			return true;
 		}
 
-		private MetadataReference[] GetReferences() {
-			string enumerableAssemblyLoc = typeof(Enumerable).GetTypeInfo().Assembly.Location;
-			DirectoryInfo coreDir = Directory.GetParent(enumerableAssemblyLoc);
-			string coreLoc = coreDir.FullName + Path.DirectorySeparatorChar + "mscorlib.dll";
-
-			IList<MetadataReference> references = new List<MetadataReference>();
-
-			var currentExecutingAssemblies = Assembly.GetEntryAssembly().GetReferencedAssemblies();
-			foreach (var currentExecutingAssembly in currentExecutingAssemblies) {
-				// An assembly could already be loaded.  Instead of going bang I want to just keep going.
-				try {
-					Assembly loadedAssembly = Assembly.Load(currentExecutingAssembly);
-					references.Add(MetadataReference.CreateFromFile(loadedAssembly.Location));
-				}
-				catch (FileLoadException) {}
-			}
-
-			for (short i = 0; i < this.ReferencedAssemblies.Count; ++i) {
-				var reference = MetadataReference.CreateFromFile(this.ReferencedAssemblies[i].Location);
-				references.Add(reference);
-			}
-			references.Add(MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location));
-			references.Add(MetadataReference.CreateFromFile(coreLoc));
-
-			return references.ToArray();
-		}
-
-		private CSharpCompilation CreateCompiler(SyntaxTree syntaxTree) {
-			MetadataReference[] references = GetReferences();
-			CSharpCompilation compiler = CSharpCompilation.Create(
-				typeof(CSharpExecutor).GetTypeInfo().Assembly.FullName,
-				new[] { syntaxTree },
-				references,
-				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-			);
-
-			return compiler;
-		}
-
-		private Assembly Compile(CSharpCompilation compilation) {
-			using (MemoryStream ms = new MemoryStream()) {
-				EmitResult result = compilation.Emit(ms);
-
+		private void Compile(Script<object> csScript) {
+			Compilation compilation = csScript.GetCompilation();
+			EmitResult result = null;
+			using (var ms = new MemoryStream()) {
+				result = compilation.Emit(ms);
 				if (!result.Success) {
 					IEnumerable<Diagnostic> failures = result.Diagnostics
 						.Where(x => x.IsWarningAsError || x.Severity == DiagnosticSeverity.Error);
@@ -95,28 +58,27 @@ namespace Executioner {
 
 					throw new InvalidOperationException(errorMsg);
 				}
-
-				ms.Seek(0, SeekOrigin.Begin);
-				return AssemblyLoadContext.Default.LoadFromStream(ms);
 			}
 		}
 
-		private string GenerateSourceString(string scriptText) {
-			SanitizeUsingStatements();
+		private MetadataReference[] GetReferences() {
+			var dd = typeof(Enumerable).GetTypeInfo().Assembly.Location;
+			var coreDir = Directory.GetParent(dd);
 
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("using System;");
-
-			foreach (string statement in this.UsingStatements) {
-				sb.AppendLine($"using {statement};");
+			IList<MetadataReference> references = new List<MetadataReference>();
+			for (short i = 0; i < this.ReferencedAssemblies.Count; ++i) {
+				var reference = MetadataReference.CreateFromFile(this.ReferencedAssemblies[i].Location);
+				references.Add(reference);
 			}
 
-			sb.AppendLine($"namespace {NAMESPACE_NAME} {{");
-			sb.AppendLine($"public class {CLASS_NAME} {{");
-			sb.AppendLine($"public static void {MAIN_METHOD_NAME}(){{");
-			sb.AppendLine(scriptText);
-			sb.AppendLine("}}}");
-			return sb.ToString();
+			string mscorLibLoc = coreDir.FullName + Path.DirectorySeparatorChar + "mscorlib.dll";
+			string sysRuntimeLoc = coreDir.FullName + Path.DirectorySeparatorChar + "System.Runtime.dll";
+
+			references.Add(MetadataReference.CreateFromFile(mscorLibLoc));
+			references.Add(MetadataReference.CreateFromFile(sysRuntimeLoc));
+			references.Add(MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location));
+
+			return references.ToArray();
 		}
 
 		private void SanitizeUsingStatements() {
