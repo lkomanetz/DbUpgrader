@@ -1,4 +1,5 @@
 {
+	"name": "Fmp.Executioner",
 	"version": "1.0.0-*",
 	"buildOptions": {
 		"debugType": "portable"
