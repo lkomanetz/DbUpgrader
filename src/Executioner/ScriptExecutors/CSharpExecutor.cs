@@ -16,10 +16,6 @@ namespace Executioner {
 
 	public class CSharpExecutor : IScriptExecutor {
 
-		private static string NAMESPACE_NAME = "CsExecutor";
-		private static string CLASS_NAME = "ExecutorProgram";
-		private static string MAIN_METHOD_NAME = "Execute";
-
 		public CSharpExecutor() {
 			this.UsingStatements = new List<string>();
 			this.ReferencedAssemblies = new List<Assembly>();
@@ -29,7 +25,6 @@ namespace Executioner {
 		public IList<Assembly> ReferencedAssemblies { get; set; }
 
 		public bool Execute(string scriptText) {
-			this.UsingStatements.Add("using System;");
 			SanitizeUsingStatements();
 			MetadataReference[] references = GetReferences();
 			var csScript = CSharpScript.Create(
@@ -82,6 +77,8 @@ namespace Executioner {
 		}
 
 		private void SanitizeUsingStatements() {
+			this.UsingStatements.Add("using System;");
+
 			for (short i = 0; i < this.UsingStatements.Count; ++i) {
 				this.UsingStatements[i] = this.UsingStatements[i].Replace(";", "");
 				this.UsingStatements[i] = Regex.Replace(

@@ -11,6 +11,7 @@
 		"netstandard1.6": {
 			"dependencies": {
 				"NETStandard.Library": "1.6.1",
+				"System.Data.SqlClient": "4.3.0",
 				"System.Runtime.Loader": "4.3.0",
 				"System.Runtime.Serialization.Json": "4.3.0",
 				"System.Runtime.Serialization.Primitives": "4.3.0",
