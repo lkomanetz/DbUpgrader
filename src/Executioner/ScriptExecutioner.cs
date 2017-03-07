@@ -126,8 +126,9 @@ namespace Executioner {
 			Type objectType = null;
 
 			foreach (Assembly assembly in assemblies) {
-				objectType = assembly.GetTypes()
-					.Where(x => x.GetTypeInfo().IsClass && x.Name == executorName)
+				Type[] executorTypes = FindExecutorsIn(assembly);
+				objectType = executorTypes
+					.Where(x => x.Name.Equals(executorName))
 					.SingleOrDefault();
 				
 				if (objectType != null) {
@@ -136,6 +137,13 @@ namespace Executioner {
 			}
 
 			return objectType;
+		}
+
+		private Type[] FindExecutorsIn(Assembly assembly) {
+			string interfaceName = typeof(IScriptExecutor).Name;
+			return assembly.GetTypes()
+				.Where(x => x.GetInterfaces().Any(y => y.Name.Equals(interfaceName)))
+				.ToArray<Type>();
 		}
 
 		private void CreateExecutors() {
