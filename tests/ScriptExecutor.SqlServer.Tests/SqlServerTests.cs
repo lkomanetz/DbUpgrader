@@ -2,7 +2,9 @@ using Executioner;
 using Executioner.Tests.Classes;
 using System;
 using System.Linq;
+using System.Reflection;
 using Xunit;
+using System.Collections.Generic;
 
 namespace ScriptExecutor.SqlServer.Tests {
 
@@ -50,6 +52,27 @@ namespace ScriptExecutor.SqlServer.Tests {
 			});
 			Assert.NotNull(ex);
 			Assert.True(ex is InvalidOperationException, "Empty SQL script attempted to run.");
+		}
+
+		// XML is handled by wrapping it around <![[CDATA]]>
+		[Fact]
+		public void ScriptExecutor_SqlServer_XmlHandledInSqlScript() {
+			Exception ex = Record.Exception(() => {
+				IList<Assembly> assemblies = new List<Assembly>() { this.GetType().GetTypeInfo().Assembly };
+				ScriptExecutioner executioner = new ScriptExecutioner(
+					new AssemblyLoader(assemblies),
+					new MockLogger()
+				);
+
+				var executor = (SqlServerExecutor)executioner.ScriptExecutors
+					.Where(x => x.GetType() == typeof(SqlServerExecutor))
+					.Single();
+				executor.ConnectionString = connectionString;
+
+				executioner.Run();
+			});
+
+			Assert.Null(ex);
 		}
 
 	}

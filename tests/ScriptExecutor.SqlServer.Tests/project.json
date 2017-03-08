@@ -1,7 +1,10 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
-    "debugType": "portable"
+    "debugType": "portable",
+		"embed": [
+			"Database/scripts.sdoc"
+		]
   },
   "dependencies": {
     "System.Runtime.Serialization.Primitives": "4.3.0",

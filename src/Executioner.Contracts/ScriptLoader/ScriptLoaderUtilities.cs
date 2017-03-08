@@ -68,6 +68,7 @@ namespace Executioner {
 						scriptNodes[i].Attributes(ScriptLoaderConstants.ORDER_ATTRIBUTE).Single().Value
 					);
 
+					string test = new XText(scriptNodes[i].Value).ToString();
 					var executorAttribute = scriptNodes[i]
 						.Attributes(ScriptLoaderConstants.EXECUTOR_NAME_ATTRIBUTE)
 						.Single();
