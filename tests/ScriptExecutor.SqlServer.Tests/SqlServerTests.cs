@@ -56,7 +56,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 
 		// XML is handled by wrapping it around <![[CDATA]]>
 		[Fact]
-		public void ScriptExecutor_SqlServer_XmlHandledInSqlScript() {
+		public void ScriptExecutor_SqlServer_CDataHandledInSqlScript() {
 			Exception ex = Record.Exception(() => {
 				IList<Assembly> assemblies = new List<Assembly>() { this.GetType().GetTypeInfo().Assembly };
 				ScriptExecutioner executioner = new ScriptExecutioner(
