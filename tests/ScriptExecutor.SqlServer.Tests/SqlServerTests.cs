@@ -17,15 +17,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 				string[] scripts = new string[] {
 					$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2016-06-22:1'>print 'Hello'</Script>"
 				};
-				ScriptExecutioner executioner = new ScriptExecutioner(
-					new BaseMockLoader(scripts),
-					new MockLogger()
-				);
-				var executor = (SqlServerExecutor)executioner.ScriptExecutors
-					.Where(x => x.GetType() == typeof(SqlServerExecutor))
-					.Single();
-				executor.ConnectionString = connectionString;
-
+				ScriptExecutioner executioner = CreateExecutioner(scripts);
 				executioner.Run();
 			});
 			Assert.Null(ex);
@@ -38,16 +30,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 					$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2016-06-22'></Script>"
 				};
 
-				ScriptExecutioner executioner = new ScriptExecutioner(
-					new BaseMockLoader(scripts),
-					new MockLogger()
-				);
-
-				var executor = (SqlServerExecutor)executioner.ScriptExecutors
-					.Where(x => x.GetType() == typeof(SqlServerExecutor))
-					.Single();
-				executor.ConnectionString = connectionString;
-
+				ScriptExecutioner executioner = CreateExecutioner(scripts);
 				executioner.Run();
 			});
 			Assert.NotNull(ex);
@@ -76,16 +59,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='SqlServerExecutor' Order='2017-03-08:2'>{dropTableScript}</Script>"
 			};
 			Exception ex = Record.Exception(() => {
-				ScriptExecutioner executioner = new ScriptExecutioner(
-					new BaseMockLoader(scripts),
-					new MockLogger()
-				);
-
-				var executor = (SqlServerExecutor)executioner.ScriptExecutors
-					.Where(x => x.GetType() == typeof(SqlServerExecutor))
-					.Single();
-				executor.ConnectionString = connectionString;
-
+				ScriptExecutioner executioner = CreateExecutioner(scripts);
 				executioner.Run();
 			});
 
@@ -112,17 +86,23 @@ namespace ScriptExecutor.SqlServer.Tests {
 			};
 
 			Exception ex = Record.Exception(() => {
-				ScriptExecutioner executioner = new ScriptExecutioner(
-					new BaseMockLoader(scripts),
-					new MockLogger()
-				);
-				var executor = (SqlServerExecutor)executioner.ScriptExecutors
-					.Where(x => x.GetType() == typeof(SqlServerExecutor))
-					.Single();
-				executor.ConnectionString = connectionString;
+				ScriptExecutioner executioner = CreateExecutioner(scripts);
 				executioner.Run();
 			});
 			Assert.Null(ex);
+		}
+
+		private ScriptExecutioner CreateExecutioner(string[] scripts) {
+			ScriptExecutioner executioner = new ScriptExecutioner(
+				new BaseMockLoader(scripts),
+				new MockLogger()
+			);
+			var executor = (SqlServerExecutor)executioner.ScriptExecutors
+				.Where(x => x.GetType() == typeof(SqlServerExecutor))
+				.Single();
+			executor.ConnectionString = connectionString;
+
+			return executioner;
 		}
 
 	}
