@@ -1,5 +1,4 @@
 using Executioner.Contracts;
-using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +20,14 @@ namespace Executioner {
 			CreateExecutors();
 		}
 
-		public IList<ScriptDocument> ScriptDocuments { get { return _scriptLoader.Documents; } }
+		public IList<ScriptDocument> ScriptDocuments => _scriptLoader.Documents;
 		public IList<IScriptExecutor> ScriptExecutors { get; private set; }
 		public EventHandler<ScriptExecutedEventArgs> OnScriptExecuted;
 		public EventHandler<ScriptExecutingEventArgs> OnScriptExecuting;
 
 		protected virtual void Dispose(bool disposing) { }
 
-		public void Dispose() {
-			Dispose(true);
-		}
+		public void Dispose() => Dispose(true);
 
 		public ExecutionResult Run(ExecutionRequest request = null) {
 			if (ScriptExecutors == null || ScriptExecutors.Count == 0) {

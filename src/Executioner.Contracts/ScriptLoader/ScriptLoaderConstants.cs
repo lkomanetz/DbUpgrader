@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Executioner {
+﻿namespace Executioner {
 	namespace Contracts {
 
 		public class ScriptLoaderConstants {
