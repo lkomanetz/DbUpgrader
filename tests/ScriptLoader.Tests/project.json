@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0",
   "buildOptions": {
     "debugType": "portable"
   },
@@ -7,11 +7,11 @@
     "System.Runtime.Serialization.Primitives": "4.3.0",
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc2-192208-24",
-    "Executioner.Contracts": "1.0.0",
-    "Executioner.ExtensionMethods": "1.0.0",
-    "Executioner": "1.0.0",
-    "ScriptLoader.Tests.FakeService": "1.0.0",
-    "ScriptLoader.Tests.AnotherFakeService": "1.0.0",
+    "Executioner.Contracts": "1.0.*",
+    "Executioner.ExtensionMethods": "1.0.*",
+    "Executioner": "1.0.*",
+    "ScriptLoader.Tests.FakeService": "1.0.*",
+    "ScriptLoader.Tests.AnotherFakeService": "1.0.*",
     "Microsoft.DotNet.InternalAbstractions": "1.0.0"
   },
   "testRunner": "xunit",

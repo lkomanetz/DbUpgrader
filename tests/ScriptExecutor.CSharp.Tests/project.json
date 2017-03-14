@@ -7,12 +7,12 @@
     "System.Runtime.Serialization.Primitives": "4.3.0",
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc2-192208-24",
-    "Executioner": "1.0.0",
-    "Executioner.Contracts": "1.0.0",
-    "Executioner.ExtensionMethods": "1.0.0",
-    "Executioner.Tests": "1.0.0",
-    "ScriptExecutor.CSharp.Tests.TestClasses": "1.0.0",
-    "Microsoft.DotNet.InternalAbstractions": "1.0.0"
+    "Executioner": "1.0.*",
+    "Executioner.Contracts": "1.0.*",
+    "Executioner.ExtensionMethods": "1.0.*",
+    "Executioner.Tests": "1.0.*",
+    "ScriptExecutor.CSharp.Tests.TestClasses": "1.0.*",
+    "Microsoft.DotNet.InternalAbstractions": "1.0.*"
   },
   "testRunner": "xunit",
   "frameworks": {
