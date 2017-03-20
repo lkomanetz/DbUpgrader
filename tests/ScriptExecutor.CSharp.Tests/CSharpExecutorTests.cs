@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using System.Threading;
 
 namespace ScriptExecutor.CSharp.Tests {
 

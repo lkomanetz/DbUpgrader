@@ -124,6 +124,7 @@ namespace Executioner {
 
 			foreach (Assembly assembly in assemblies) {
 				Type[] executorTypes = FindExecutorsIn(assembly);
+
 				objectType = executorTypes
 					.Where(x => x.Name.Equals(executorName))
 					.SingleOrDefault();
