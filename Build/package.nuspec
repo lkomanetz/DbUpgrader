@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
 		<id>Fmp.Executioner</id>
-		<version>1.0.0</version>
+		<version>1.0</version>
 		<authors>FullMetalPacket</authors>
 		<licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
 		<projectUrl>http://github.com/lkomanetz/Executioner</projectUrl>
