@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Executioner.Contracts\Executioner.Contracts.csproj" />
     <ProjectReference Include="..\..\src\Executioner\Executioner.csproj" />
     <ProjectReference Include="..\Executioner.Tests\Executioner.Tests.csproj" />
   </ItemGroup>

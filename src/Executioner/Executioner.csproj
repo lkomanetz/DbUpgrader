@@ -17,11 +17,6 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Executioner.Contracts\Executioner.Contracts.csproj" />
-    <ProjectReference Include="..\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="System.Data.SqlClient" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />

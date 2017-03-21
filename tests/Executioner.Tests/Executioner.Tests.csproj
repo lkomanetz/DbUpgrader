@@ -13,8 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Executioner\Executioner.csproj" />
-    <ProjectReference Include="..\..\src\Executioner.Contracts\Executioner.Contracts.csproj" />
-    <ProjectReference Include="..\..\src\Executioner.ExtensionMethods\Executioner.ExtensionMethods.csproj" />
   </ItemGroup>
 
   <ItemGroup>
