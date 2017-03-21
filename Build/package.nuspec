@@ -12,8 +12,8 @@
 	</metadata>
 
 	<files>
-		<file src="\src\Executioner\bin\Release\netstandard1.6\Executioner.dll" target="lib\net45" />
-		<file src="\src\Executioner\bin\Release\netstandard1.6\Executioner.Contracts.dll" target="lib\net45" />
-		<file src="\src\Executioner\bin\Release\netstandard1.6\Executioner.ExtensionMethods.dll" target="lib\net45" />
+		<file src="C:\TeamCity\buildAgent\work\560b679566c0d076\src\Executioner\bin\Release\netstandard1.6\Executioner.dll" target="lib\net45" />
+		<file src="C:\TeamCity\buildAgent\work\560b679566c0d076\src\Executioner\bin\Release\netstandard1.6\Executioner.Contracts.dll" target="lib\net45" />
+		<file src="C:\TeamCity\buildAgent\work\560b679566c0d076\src\Executioner\bin\Release\netstandard1.6\Executioner.ExtensionMethods.dll" target="lib\net45" />
 	</files>
 </package>
