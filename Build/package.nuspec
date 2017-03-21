@@ -13,7 +13,5 @@
 
 	<files>
 		<file src="C:\TeamCity\buildAgent\work\560b679566c0d076\src\Executioner\bin\Release\netstandard1.6\Fmp.Executioner.dll" />
-		<file src="C:\TeamCity\buildAgent\work\560b679566c0d076\src\Executioner\bin\Release\netstandard1.6\Executioner.Contracts.dll" />
-		<file src="C:\TeamCity\buildAgent\work\560b679566c0d076\src\Executioner\bin\Release\netstandard1.6\Executioner.ExtensionMethods.dll" />
 	</files>
 </package>
