@@ -11,34 +11,26 @@ namespace Executioner {
 		public class ScriptLoaderUtilities {
 
 			public static ScriptDocument CreateScriptDocument(Stream stream, string resourceName) {
-				ScriptDocument doc = null;
+				XDocument xmlDoc = XDocument.Load(stream);
+				Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
+					xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ORDER_NODE)
+						.Single()
+						.Value
+				);
 
-				using (StreamReader reader = new StreamReader(stream)) {
-					string xmlStr = reader.ReadToEnd();
-					XDocument xmlDoc = XDocument.Parse(xmlStr);
+				Guid docId = Guid.Parse(
+					xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ID_NODE)
+						.Single()
+						.Value
+				);
 
-					Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
-						xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ORDER_NODE)
-							.Single()
-							.Value
-					);
-
-					Guid docId = Guid.Parse(
-						xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ID_NODE)
-							.Single()
-							.Value
-					);
-
-					doc = new ScriptDocument() {
-						SysId = docId,
-						DateCreatedUtc = orderValues.Item1,
-						Order = orderValues.Item2,
-						ResourceName = resourceName,
-						Scripts = GetScriptsFrom(xmlDoc, docId)
-					};
-				}
-
-				return doc;
+				return new ScriptDocument() {
+					SysId = docId,
+					DateCreatedUtc = orderValues.Item1,
+					Order = orderValues.Item2,
+					ResourceName = resourceName,
+					Scripts = GetScriptsFrom(xmlDoc, docId)
+				};
 			}
 
 			internal static Tuple<DateTime, int> ParseOrderXmlAttribute(string value) {
@@ -87,6 +79,7 @@ namespace Executioner {
 
 				return scripts;
 			}
+
 		}
 
 	}
