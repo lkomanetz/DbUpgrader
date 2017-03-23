@@ -17,9 +17,9 @@ namespace Executioner {
 
 		public Assembly[] GetAssemblies() {
 			IList<Assembly> assemblies = new List<Assembly>();
-			var dependencies = DependencyContext.Default.CompileLibraries;
+			var dependencies = DependencyContext.Default.RuntimeLibraries;
 
-			foreach (CompilationLibrary library in dependencies) {
+			foreach (RuntimeLibrary library in dependencies) {
 				try {
 					var assembly = Assembly.Load(new AssemblyName(library.Name));
 					assemblies.Add(assembly);
