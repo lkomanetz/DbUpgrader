@@ -7,7 +7,6 @@ namespace Executioner {
 		[XmlRoot]
 		public class Script : IOrderedItem {
 			private string _orderString;
-			private object[] _scriptElementText;
 
 			[XmlAttribute("Id")] public Guid SysId { get; set; }
 			[XmlAttribute("Executor")] public string ExecutorName { get; set; }
@@ -15,23 +14,7 @@ namespace Executioner {
 			[XmlIgnore] public DateTime DateCreatedUtc { get; set; }
 			[XmlIgnore] public int Order { get; set; }
 			[XmlIgnore] public bool IsComplete { get; set; }
-			[XmlIgnore] public string ScriptText { get; set; }
-
-			[XmlText(typeof(string))]
-			[XmlAnyElement]
-			public object[] ScriptElementText {
-				get { return _scriptElementText; }
-				set {
-					_scriptElementText = value;
-					if (_scriptElementText == null) {
-						return;
-					}
-					for (short i = 0; i < _scriptElementText.Length; ++i) {
-						this.ScriptText += _scriptElementText[i].ToString();
-					}
-				}
-			}
-
+			[XmlText] public string ScriptText { get; set; }
 
 			[XmlAttribute("Order")]
 			public string OrderString {
