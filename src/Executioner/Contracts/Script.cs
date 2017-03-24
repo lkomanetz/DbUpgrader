@@ -1,11 +1,10 @@
 using System;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace Executioner {
 	namespace Contracts {
 
-		[DataContract]
+		[XmlRoot]
 		public class Script : IOrderedItem {
 			private string _orderString;
 			private object[] _scriptElementText;
