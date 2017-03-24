@@ -115,7 +115,6 @@ namespace Executioner {
 
 			LogEntry entry = null;
 			string jsonData = File.ReadAllText(fileLoc);
-			Console.WriteLine($"JSON Data: {jsonData}");
 			entry = _serializer.Deserialize<LogEntry>(jsonData);
 
 			return entry;
