@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Executioner.Serializers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,26 +12,16 @@ namespace Executioner {
 		public class ScriptLoaderUtilities {
 
 			public static ScriptDocument CreateScriptDocument(Stream stream, string resourceName) {
-				XDocument xmlDoc = XDocument.Load(stream);
-				Tuple<DateTime, int> orderValues = ParseOrderXmlAttribute(
-					xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ORDER_NODE)
-						.Single()
-						.Value
-				);
+				DocumentSerializer serializer = new DocumentSerializer();
+				string content = String.Empty;
+				using (StreamReader sr = new StreamReader(stream)) {
+					content = sr.ReadToEnd();
+				}
 
-				Guid docId = Guid.Parse(
-					xmlDoc.Descendants(ScriptLoaderConstants.DOCUMENT_ID_NODE)
-						.Single()
-						.Value
-				);
+				ScriptDocument doc = serializer.Deserialize<ScriptDocument>(content);
+				doc.Scripts = doc.Scripts.Select(x => { x.DocumentId = doc.SysId; return x; }).ToList();
 
-				return new ScriptDocument() {
-					SysId = docId,
-					DateCreatedUtc = orderValues.Item1,
-					Order = orderValues.Item2,
-					ResourceName = resourceName,
-					Scripts = GetScriptsFrom(xmlDoc, docId)
-				};
+				return doc;
 			}
 
 			internal static Tuple<DateTime, int> ParseOrderXmlAttribute(string value) {

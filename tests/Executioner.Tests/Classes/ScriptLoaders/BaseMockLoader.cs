@@ -1,58 +1,40 @@
 using Executioner.Contracts;
-using Executioner.ExtensionMethods;
+using Executioner.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace Executioner.Tests.Classes {
 
 	public class BaseMockLoader : IScriptLoader {
 		private string[] _scriptElements;
+		private DocumentSerializer _serializer;
 
 		public BaseMockLoader() {
 			_scriptElements = new string[0];
 			this.Documents = new List<ScriptDocument>();
+			_serializer = new DocumentSerializer();
 		}
 
 		public BaseMockLoader(string[] scriptElements) {
 			_scriptElements = scriptElements;
 			this.Documents = new List<ScriptDocument>();
+			_serializer = new DocumentSerializer();
 		}
 
 		public IList<ScriptDocument> Documents { get; set; }
 
 		public void LoadDocuments() {
-			XDocument doc = GetXmlDoc();
+			string doc = GetXmlDoc();
 			if (doc == null) {
 				return;
 			}
 
-			string orderNodeName = String.Format(
-				"{0}/{1}",
-				ScriptLoaderConstants.ROOT_NODE,
-				ScriptLoaderConstants.DOCUMENT_ORDER_NODE
-			);
-			Tuple<DateTime, int> orderValues = ScriptLoaderUtilities.ParseOrderXmlAttribute(
-				doc.Descendants(ScriptLoaderConstants.DOCUMENT_ORDER_NODE).Single().Value
-			);
-
-			string docIdNodeName = String.Format(
-				"{0}/{1}",
-				ScriptLoaderConstants.ROOT_NODE,
-				ScriptLoaderConstants.DOCUMENT_ID_NODE
-			);
-			Guid docId = Guid.Parse(doc.Descendants(ScriptLoaderConstants.DOCUMENT_ID_NODE).Single().Value);
-			ScriptDocument sDoc = new ScriptDocument() {
-				SysId = docId,
-				DateCreatedUtc = orderValues.Item1,
-				Order = orderValues.Item2,
-				ResourceName = "System.String",
-				Scripts = ScriptLoaderUtilities.GetScriptsFrom(doc, docId)
-			};
+			ScriptDocument sDoc = _serializer.Deserialize<ScriptDocument>(doc);
+			Guid docId = sDoc.SysId;
+			sDoc.Scripts = sDoc.Scripts.Select(x => { x.DocumentId = docId; return x; }).ToList();
 
 			this.Documents.Add(sDoc);
 		}
@@ -74,7 +56,7 @@ namespace Executioner.Tests.Classes {
 			}
 		}
 
-		private XDocument GetXmlDoc() {
+		private string GetXmlDoc() {
 			string scriptStr = String.Empty;
 			foreach (string item in _scriptElements) {
 				scriptStr += $"{item}\n";
@@ -88,11 +70,12 @@ namespace Executioner.Tests.Classes {
 				<ScriptDocument>
 					<Id>ac04f1b3-219a-4a40-8d7d-869dac218cca</Id>
 					<Order>2016-06-21</Order>
-					{scriptStr}	
+					<Scripts>
+						{scriptStr}	
+					</Scripts>
 				</ScriptDocument>";
 
-			XDocument xmlDoc = XDocument.Parse(xmlStr);
-			return xmlDoc;
+			return xmlStr;
 		}
 
 	}

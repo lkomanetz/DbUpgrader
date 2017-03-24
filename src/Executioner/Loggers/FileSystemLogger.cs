@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Executioner.Contracts;
+using Executioner.Serializers;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace Executioner {
 
@@ -12,12 +14,12 @@ namespace Executioner {
 
 		private string _fileExt;
 		private string _rootDir;
-		private DataContractJsonSerializer _serializer;
+		private JsonSerializer _serializer;
 
 		public FileSystemLogger(string rootDirectory) {
 			_fileExt = ".json";
 			_rootDir = rootDirectory;
-			_serializer = new DataContractJsonSerializer(typeof(LogEntry));
+			_serializer = new JsonSerializer(typeof(LogEntry));
 
 			if (!Directory.Exists(_rootDir)) {
 				Directory.CreateDirectory(_rootDir);
@@ -112,9 +114,9 @@ namespace Executioner {
 			}
 
 			LogEntry entry = null;
-			using (FileStream reader = new FileStream(fileLoc, FileMode.Open)) {
-				entry = (LogEntry)_serializer.ReadObject(reader);
-			}
+			string jsonData = File.ReadAllText(fileLoc);
+			Console.WriteLine($"JSON Data: {jsonData}");
+			entry = _serializer.Deserialize<LogEntry>(jsonData);
 
 			return entry;
 		}
@@ -130,7 +132,9 @@ namespace Executioner {
 			fs.Dispose();
 
 			using (FileStream writer = new FileStream(fileLoc, FileMode.Create, FileAccess.Write)) {
-				_serializer.WriteObject(writer, entry);	
+				string jsonData = _serializer.Serialize(entry);
+				byte[] dataAsBytes = Encoding.UTF8.GetBytes(jsonData);
+				writer.Write(dataAsBytes, 0, dataAsBytes.Length);
 			}
 		}
 
