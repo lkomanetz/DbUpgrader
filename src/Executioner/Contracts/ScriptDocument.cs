@@ -14,9 +14,6 @@ namespace Executioner {
 				this.Scripts = new List<Script>();
 			}
 
-			[XmlElement("Id", Order = 0)]
-			public Guid SysId { get; set; }
-
 			[XmlElement("Order", Order = 1)]
 			public string OrderString
 			{
@@ -26,12 +23,10 @@ namespace Executioner {
 					this.DateCreatedUtc = ScriptLoaderUtilities.ParseOrderXmlAttribute(_orderString).Item1;
 					this.Order = ScriptLoaderUtilities.ParseOrderXmlAttribute(_orderString).Item2;
 				}
-
 			}
 
-			[XmlArray("Scripts", Order = 2)]
-			public List<Script> Scripts { get; set; }
-
+			[XmlElement("Id", Order = 0)] public Guid SysId { get; set; }
+			[XmlArray("Scripts", Order = 2)] public List<Script> Scripts { get; set; }
 			[XmlIgnore] public DateTime DateCreatedUtc { get; set; }
 			[XmlIgnore] public int Order { get; set; }
 			[XmlIgnore] public string ResourceName { get; set; }
