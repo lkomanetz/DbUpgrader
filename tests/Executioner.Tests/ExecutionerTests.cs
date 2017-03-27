@@ -119,6 +119,10 @@ namespace Executioner.Tests {
 			var secondResult = executioner.Run();
 
 			Assert.True(result != secondResult, "Multiple executes should not produce same result.");
+			Assert.True(
+				secondResult.ScriptDocumentsCompleted == 0,
+				$"No documents should have completed on second run. {secondResult.ScriptDocumentsCompleted} have completed."
+			);
 			_logger.Clean();
 		}
 

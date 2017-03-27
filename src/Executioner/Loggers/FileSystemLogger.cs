@@ -11,9 +11,9 @@ namespace Executioner {
 
 	public class FileSystemLogger : ILogger {
 
-		private string _fileExt;
-		private string _rootDir;
-		private JsonSerializer _serializer;
+		private readonly string _fileExt;
+		private readonly string _rootDir;
+		private readonly JsonSerializer _serializer;
 
 		public FileSystemLogger(string rootDirectory) {
 			_fileExt = ".json";
