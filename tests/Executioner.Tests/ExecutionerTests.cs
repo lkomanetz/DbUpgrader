@@ -8,10 +8,10 @@ using Xunit;
 namespace Executioner.Tests {
 
 	public class ExecutionerTests {
-		private static ILogger _logger;
+		private static IDataStore _logger;
 
 		public ExecutionerTests() {
-			_logger = new MockLogger();
+			_logger = new MockDataStore();
 		}
 
 		[Fact]

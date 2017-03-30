@@ -95,7 +95,7 @@ namespace ScriptExecutor.SqlServer.Tests {
 		private ScriptExecutioner CreateExecutioner(string[] scripts) {
 			ScriptExecutioner executioner = new ScriptExecutioner(
 				new BaseMockLoader(scripts),
-				new MockLogger()
+				new MockDataStore()
 			);
 			var executor = (SqlServerExecutor)executioner.ScriptExecutors
 				.Where(x => x.GetType() == typeof(SqlServerExecutor))

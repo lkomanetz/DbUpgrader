@@ -175,7 +175,7 @@ namespace ScriptExecutor.CSharp.Tests {
 
 			ScriptExecutioner executioner = new ScriptExecutioner(
 				new BaseMockLoader(scripts),
-				new MockLogger()
+				new MockDataStore()
 			);
 
 			var executor = (CSharpExecutor)executioner.ScriptExecutors
