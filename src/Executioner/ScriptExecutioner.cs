@@ -60,7 +60,7 @@ namespace Executioner {
 				return new List<ScriptDocument>(docs);
 			}
 
-			AddNewScriptsToLog(request, docs);
+			AddNewScriptsToStorage(request, docs);
 			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
 			return docs.Where(x => !completedDocIds.Contains(x.SysId))
 				.ToList();
@@ -99,7 +99,7 @@ namespace Executioner {
 			return foundExecutor;
 		}
 
-		private void AddNewScriptsToLog(ExecutionRequest request, IList<ScriptDocument> docs) {
+		private void AddNewScriptsToStorage(ExecutionRequest request, IList<ScriptDocument> docs) {
 			foreach (ScriptDocument doc in docs) {
 				IList<Script> scriptsToRun = GetScriptsToRun(request, doc);
 				if (scriptsToRun == null) {
