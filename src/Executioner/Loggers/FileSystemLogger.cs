@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Executioner {
 
-	public class FileSystemLogger : ILogger {
+	public class FileSystemLogger : IDataStore {
 
 		private readonly string _fileExt;
 		private readonly string _rootDir;

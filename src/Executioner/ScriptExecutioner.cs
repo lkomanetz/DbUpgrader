@@ -8,11 +8,11 @@ namespace Executioner {
 
 	public class ScriptExecutioner : IExecutioner, IDisposable {
 		private IScriptLoader _scriptLoader;
-		private ILogger _logger;
+		private IDataStore _storage;
 
-		public ScriptExecutioner(IScriptLoader loader, ILogger logger) {
+		public ScriptExecutioner(IScriptLoader loader, IDataStore storage) {
 			_scriptLoader = loader;
-			_logger = logger;
+			_storage = storage;
 
 			_scriptLoader.LoadDocuments();
 
@@ -39,7 +39,7 @@ namespace Executioner {
 
 			IList<ScriptDocument> docsToExecute = GetDocumentsToRun(request, _scriptLoader.Documents);
 			for (short i = 0; i < docsToExecute.Count; ++i) {
-				_logger.Add(docsToExecute[i]);
+				_storage.Add(docsToExecute[i]);
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
 				for (short j = 0; j < scriptsToRun.Count; ++j) {
 					IScriptExecutor executor = FindExecutorFor(scriptsToRun[j].ExecutorName);
@@ -61,7 +61,7 @@ namespace Executioner {
 			}
 
 			AddNewScriptsToLog(request, docs);
-			IList<Guid> completedDocIds = _logger.GetCompletedDocumentIds();
+			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
 			return docs.Where(x => !completedDocIds.Contains(x.SysId))
 				.ToList();
 		}
@@ -71,7 +71,7 @@ namespace Executioner {
 				return new List<Script>(doc.Scripts);
 			}
 
-			IList<Guid> completedScriptIds = _logger.GetCompletedScriptIdsFor(doc.SysId);
+			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
 			if (completedScriptIds == null) {
 				return null;
 			}
@@ -107,7 +107,7 @@ namespace Executioner {
 				}
 
 				foreach (Script script in scriptsToRun) {
-					_logger.Add(script);
+					_storage.Add(script);
 				}
 			}
 		}
@@ -176,7 +176,7 @@ namespace Executioner {
 			}
 
 			script.IsComplete = true;
-			_logger.Update(script);
+			_storage.Update(script);
 			OnScriptExecuted?.Invoke(this, new ScriptExecutedEventArgs(script));
 		}
 

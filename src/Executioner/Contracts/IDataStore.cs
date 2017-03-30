@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Executioner {
 	namespace Contracts {
 
-		public interface ILogger {
+		public interface IDataStore {
 
 			IList<Guid> GetCompletedDocumentIds();
 			IList<Guid> GetCompletedScriptIdsFor(Guid documentId);
