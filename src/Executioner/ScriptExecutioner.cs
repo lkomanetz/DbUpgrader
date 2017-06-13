@@ -145,26 +145,25 @@ namespace Executioner {
 		}
 
 		private void CreateExecutors() {
-			foreach (ScriptDocument doc in this.ScriptDocuments) {
-				foreach (Script script in doc.Scripts) {
-					string className = script.ExecutorName;
-					if (String.IsNullOrEmpty(className)) {
-						throw new ScriptExecutorNotFoundException(className);
-					}
-
-					bool typeExists = this.ScriptExecutors.Any(x => x.GetType().Name == script.ExecutorName);
-					if (typeExists) {
-						continue;
-					}
-
-					Type objectType = GetClassType(script.ExecutorName);
-					if (objectType == null) {
-						throw new Exception($"Unable to find C# type for executor '{script.ExecutorName}'.");
-					}
-
-					IScriptExecutor executor = (IScriptExecutor)Activator.CreateInstance(objectType);
-					this.ScriptExecutors.Add(executor);
+			IEnumerable<Script> scripts = this.ScriptDocuments.SelectMany(x => x.Scripts);
+			foreach (Script script in scripts) {
+				string className = script.ExecutorName;
+				if (String.IsNullOrEmpty(className)) {
+					throw new ScriptExecutorNotFoundException(className);
 				}
+
+				bool typeExists = this.ScriptExecutors.Any(x => x.GetType().Name == script.ExecutorName);
+				if (typeExists) {
+					continue;
+				}
+
+				Type objectType = GetClassType(script.ExecutorName);
+				if (objectType == null) {
+					throw new Exception($"Unable to find C# type for executor '{script.ExecutorName}'.");
+				}
+
+				IScriptExecutor executor = (IScriptExecutor)Activator.CreateInstance(objectType);
+				this.ScriptExecutors.Add(executor);
 			}
 		}
 

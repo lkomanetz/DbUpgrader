@@ -7,17 +7,13 @@ namespace Executioner {
 	public class SqlServerExecutor : IScriptExecutor {
 		private string _connectionString;
 
-		public SqlServerExecutor() {
-			_connectionString = String.Empty;
-		}
+		public SqlServerExecutor() => _connectionString = String.Empty;
 
-		public SqlServerExecutor(string connectionString) {
-			_connectionString = connectionString;
-		}
+		public SqlServerExecutor(string connectionString) => _connectionString = connectionString;
 
 		public string ConnectionString {
-			get { return _connectionString; }
-			set { _connectionString = value; }
+			get => _connectionString; 
+			set => _connectionString = value; 
 		}
 
 		public bool Execute(string scriptText) {
