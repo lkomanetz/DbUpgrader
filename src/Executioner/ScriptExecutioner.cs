@@ -98,19 +98,6 @@ namespace Executioner {
 			return foundExecutor;
 		}
 
-		private void AddNewScriptsToStorage(ExecutionRequest request, IList<ScriptDocument> docs) {
-			foreach (ScriptDocument doc in docs) {
-				IList<Script> scriptsToRun = GetScriptsToRun(request, doc);
-				if (scriptsToRun == null) {
-					continue;
-				}
-
-				foreach (Script script in scriptsToRun) {
-					_storage.Add(script);
-				}
-			}
-		}
-
 		/*
 		 * In order to get the type of the executor name passed in, I ended up having to go through all assemblies
 		 * in the current application domain.  I wanted to keep the ScriptDocument simple without having to add more
