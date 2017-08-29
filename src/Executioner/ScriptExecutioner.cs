@@ -1,4 +1,5 @@
 using Executioner.Contracts;
+using Executioner.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,12 +41,16 @@ namespace Executioner {
 			IList<ScriptDocument> docsToExecute = GetDocumentsToRun(request, _scriptLoader.Documents);
 			for (short i = 0; i < docsToExecute.Count; ++i) {
 				_storage.Add(docsToExecute[i]);
+
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
+				scriptsToRun.ForEach(script => _storage.Add(script));
+
 				for (short j = 0; j < scriptsToRun.Count; ++j) {
 					IScriptExecutor executor = FindExecutorFor(scriptsToRun[j].ExecutorName);
 					Execute(executor, scriptsToRun[j]);
 					++scriptsCompleted;
 				}
+
 				++docsCompleted;
 			}
 
@@ -60,9 +65,8 @@ namespace Executioner {
 				return new List<ScriptDocument>(docs);
 			}
 
-			AddNewScriptsToStorage(request, docs);
-			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
-			return docs.Where(x => !completedDocIds.Contains(x.SysId))
+			return docs
+				.Where(doc => doc.Scripts.Any(script => !script.IsComplete))
 				.ToList();
 		}
 
@@ -71,13 +75,8 @@ namespace Executioner {
 				return new List<Script>(doc.Scripts);
 			}
 
-			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
-			if (completedScriptIds == null) {
-				return null;
-			}
-
 			return doc.Scripts
-				.Where(x => !completedScriptIds.Contains(x.SysId))
+				.Where(x => !x.IsComplete)
 				.ToList();
 		}
 

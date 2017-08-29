@@ -9,12 +9,12 @@ using Xunit;
 namespace Logger.FileSystem.Tests {
 
 	public class FileSystemTests {
-		private FileSystemLogger _backingStore;
+		private FileSystemStore _backingStore;
 		private string _rootDir;
 
 		public void Initialize() {
 			_rootDir = @"C:\TestDir";
-			_backingStore = new FileSystemLogger(_rootDir);
+			_backingStore = new FileSystemStore(_rootDir);
 		}
 
 		public void Cleanup() {

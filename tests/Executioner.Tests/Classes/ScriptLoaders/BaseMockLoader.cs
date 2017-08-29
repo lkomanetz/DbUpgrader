@@ -27,6 +27,9 @@ namespace Executioner.Tests.Classes {
 		public IList<ScriptDocument> Documents { get; set; }
 
 		public void LoadDocuments() {
+			if (this.Documents.Count > 0) {
+				return;
+			}
 			string doc = GetXmlDoc();
 			if (doc == null) {
 				return;
@@ -36,7 +39,7 @@ namespace Executioner.Tests.Classes {
 			Guid docId = sDoc.SysId;
 			sDoc.Scripts = sDoc.Scripts.Select(x => { x.DocumentId = docId; return x; }).ToList();
 
-			this.Documents.Add(sDoc);
+			this.Documents = new List<ScriptDocument>() { sDoc };
 		}
 
 		public void Add(Script script) {

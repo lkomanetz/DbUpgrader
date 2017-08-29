@@ -9,13 +9,13 @@ using System.Text;
 
 namespace Executioner {
 
-	public class FileSystemLogger : IDataStore {
+	public class FileSystemStore : IDataStore {
 
 		private readonly string _fileExt;
 		private readonly string _rootDir;
 		private readonly JsonSerializer _serializer;
 
-		public FileSystemLogger(string rootDirectory) {
+		public FileSystemStore(string rootDirectory) {
 			_fileExt = ".json";
 			_rootDir = rootDirectory;
 			_serializer = new JsonSerializer(typeof(LogEntry));
@@ -139,7 +139,8 @@ namespace Executioner {
 		/*
 		 * This class exists to reduce log size.  The reason it's private is because it is not meant to be known
 		 * in any other part of the solution except for in the FileSystemLogger class. This keeps the interface the
-		 * same but allowed me to change implementation detail without the rest of the solution having to change anything.
+		 * same but allowed me to change implementation detail without the rest of the solution having to change
+		 * anything.
 		 */
 		[DataContract]
 		private class LogEntry {

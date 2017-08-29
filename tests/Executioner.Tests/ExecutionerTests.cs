@@ -156,10 +156,11 @@ namespace Executioner.Tests {
 					ScriptText = String.Empty
 				};
 
-				loader.Add(newScript);	
+				loader.Add(newScript);
 			}
 
 			executioner = new ScriptExecutioner(loader, _logger);
+			Assert.True(loader.Documents.Count == 1, $"Expecting 1 document.  Actual: {loader.Documents.Count}");
 			SetExecutionStatus(executioner, true);
 			var secondResult = executioner.Run();
 			Assert.True(
@@ -295,11 +296,12 @@ namespace Executioner.Tests {
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
 				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
 			};
-			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
+			var loader = new BaseMockLoader(scripts);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
 			SetExecutionStatus(executioner, true);
 			var firstResult = executioner.Run();
 
-			executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
+			executioner = new ScriptExecutioner(loader, _logger);
 			SetExecutionStatus(executioner, true);
 			var secondResult = executioner.Run();
 
