@@ -43,13 +43,12 @@ namespace Executioner {
 				_storage.Add(docsToExecute[i]);
 
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
-				scriptsToRun.ForEach(script => _storage.Add(script));
-
-				for (short j = 0; j < scriptsToRun.Count; ++j) {
-					IScriptExecutor executor = FindExecutorFor(scriptsToRun[j].ExecutorName);
-					Execute(executor, scriptsToRun[j]);
+				scriptsToRun.ForEach(script => {
+					_storage.Add(script);
+					IScriptExecutor executor = FindExecutorFor(script.ExecutorName);
+					Execute(executor, script);
 					++scriptsCompleted;
-				}
+				});
 
 				++docsCompleted;
 			}
@@ -98,38 +97,6 @@ namespace Executioner {
 			return foundExecutor;
 		}
 
-		/*
-		 * In order to get the type of the executor name passed in, I ended up having to go through all assemblies
-		 * in the current application domain.  I wanted to keep the ScriptDocument simple without having to add more
-		 * things to it in order to load the type through reflection.  This is more of a brute force method to find
-		 * the type with just a name.
-		 */
-		private Type GetClassType(string executorName) {
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			Type objectType = null;
-
-			foreach (Assembly assembly in assemblies) {
-				Type[] executorTypes = FindExecutorsIn(assembly);
-
-				objectType = executorTypes
-					.Where(x => x.Name.Equals(executorName))
-					.SingleOrDefault();
-				
-				if (objectType != null) {
-					break;
-				}	
-			}
-
-			return objectType;
-		}
-
-		private Type[] FindExecutorsIn(Assembly assembly) {
-			string interfaceName = typeof(IScriptExecutor).Name;
-			return assembly.GetTypes()
-				.Where(x => x.GetInterfaces().Any(y => y.Name.Equals(interfaceName)))
-				.ToArray<Type>();
-		}
-
 		private void CreateExecutors() {
 			IEnumerable<Script> scripts = this.ScriptDocuments.SelectMany(x => x.Scripts);
 			foreach (Script script in scripts) {
@@ -143,12 +110,7 @@ namespace Executioner {
 					continue;
 				}
 
-				Type objectType = GetClassType(script.ExecutorName);
-				if (objectType == null) {
-					throw new Exception($"Unable to find C# type for executor '{script.ExecutorName}'.");
-				}
-
-				IScriptExecutor executor = (IScriptExecutor)Activator.CreateInstance(objectType);
+				IScriptExecutor executor = ExecutorCreator.Create(script.ExecutorName);
 				this.ScriptExecutors.Add(executor);
 			}
 		}

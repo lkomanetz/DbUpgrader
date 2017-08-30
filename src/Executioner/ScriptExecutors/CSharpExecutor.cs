@@ -21,7 +21,7 @@ namespace Executioner {
 			this.ReferencedAssemblies = new List<Assembly>();
 		}
 
-		public IList<string> UsingStatements { get; set; }
+		public IList<string> UsingStatements { get; set; } // The problem is adding too many things to UsingStatements
 		public IList<Assembly> ReferencedAssemblies { get; set; }
 
 		public bool Execute(string scriptText) {
