@@ -17,8 +17,7 @@ namespace Executioner {
 
 			_scriptLoader.LoadDocuments();
 
-			this.ScriptExecutors = new List<IScriptExecutor>();
-			CreateExecutors();
+			this.ScriptExecutors = CreateExecutors();
 		}
 
 		public IList<ScriptDocument> ScriptDocuments => _scriptLoader.Documents;
@@ -45,7 +44,7 @@ namespace Executioner {
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
 				scriptsToRun.ForEach(script => {
 					_storage.Add(script);
-					IScriptExecutor executor = FindExecutorFor(script.ExecutorName);
+					IScriptExecutor executor = FindExecutorFor(script);
 					Execute(executor, script);
 					++scriptsCompleted;
 				});
@@ -81,7 +80,7 @@ namespace Executioner {
 				.ToList();
 		}
 
-		private IScriptExecutor FindExecutorFor(string executorName) {
+		private IScriptExecutor FindExecutorFor(Script script) {
 			if (this.ScriptExecutors == null) {
 				string msg = "ScriptExecutioner.FindExecutorFor(string) failed.\n";
 				msg += "ScriptExecutioner.ScriptExecutors is null.";
@@ -89,18 +88,20 @@ namespace Executioner {
 			}
 
 			IScriptExecutor foundExecutor = this.ScriptExecutors
-				.Where(x => x.GetType().Name.Equals(executorName))
+				.Where(x => x.GetType().Name.Equals(script.ExecutorName))
 				.SingleOrDefault();
 
 			if (foundExecutor == null) {
-				throw new ScriptExecutorNotFoundException(executorName);
+				throw new ScriptExecutorNotFoundException(script.ExecutorName);
 			}
 
 			return foundExecutor;
 		}
 
-		private void CreateExecutors() {
+		private IList<IScriptExecutor> CreateExecutors() {
+			IList<IScriptExecutor> executors = new List<IScriptExecutor>();
 			IEnumerable<Script> scripts = this.ScriptDocuments.SelectMany(x => x.Scripts);
+
 			foreach (Script script in scripts) {
 				string className = script.ExecutorName;
 				if (String.IsNullOrEmpty(className)) {
@@ -113,8 +114,10 @@ namespace Executioner {
 				}
 
 				IScriptExecutor executor = ExecutorCreator.Create(script.ExecutorName);
-				this.ScriptExecutors.Add(executor);
+				executors.Add(executor);
 			}
+
+			return executors;
 		}
 
 		private void Execute(IScriptExecutor executor, Script script) {
