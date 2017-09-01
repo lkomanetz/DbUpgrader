@@ -64,6 +64,7 @@ namespace Executioner {
 				return new List<ScriptDocument>(docs);
 			}
 
+			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
 			return docs
 				.Where(doc => doc.Scripts.Any(script => !script.IsComplete))
 				.ToList();
@@ -74,8 +75,9 @@ namespace Executioner {
 				return new List<Script>(doc.Scripts);
 			}
 
+			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
 			return doc.Scripts
-				.Where(x => !x.IsComplete)
+				.Where(x => !completedScriptIds.Contains(x.SysId))
 				.ToList();
 		}
 
