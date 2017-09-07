@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Logger.FileSystem.Tests {
 
+	//TODO(Logan) -> Rewrite the tests for GetCompletedDocIds() and GetCompletedScriptIdsFor(Guid) since I don't need those functions.
 	public class FileSystemTests {
 		private FileSystemStore _backingStore;
 		private string _rootDir;
@@ -62,6 +63,7 @@ namespace Logger.FileSystem.Tests {
 			Script existingScript = doc.Scripts[0];
 			_backingStore.Add(existingScript);
 
+			IDataStore storage = new FileSystemStore(_rootDir);
 			int scriptCount = _backingStore.GetCompletedScriptIdsFor(doc.SysId).Count;
 			Assert.True(
 				scriptCount == 1,

@@ -30,9 +30,9 @@ namespace Executioner {
 		public void Dispose() => Dispose(true);
 
 		public ExecutionResult Run(ExecutionRequest request = null) {
-			if (ScriptExecutors == null || ScriptExecutors.Count == 0) {
+			if (ScriptExecutors == null || ScriptExecutors.Count == 0) 
 				throw new InvalidOperationException("Unable to run ScriptExecutioner without any script executors.");
-			}
+
 			request = request ?? new ExecutionRequest();
 			int docsCompleted = 0;
 			int scriptsCompleted = 0;
@@ -59,24 +59,20 @@ namespace Executioner {
 		}
 
 		private IList<ScriptDocument> GetDocumentsToRun(ExecutionRequest request, IList<ScriptDocument> docs) {
-			if (request.ExecuteAllScripts) {
+			if (request.ExecuteAllScripts)
 				return new List<ScriptDocument>(docs);
-			}
 
-			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
 			return docs
 				.Where(doc => doc.Scripts.Any(script => !script.IsComplete))
 				.ToList();
 		}
 
 		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
-			if (request.ExecuteAllScripts) {
+			if (request.ExecuteAllScripts)
 				return new List<Script>(doc.Scripts);
-			}
 
-			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
 			return doc.Scripts
-				.Where(x => !completedScriptIds.Contains(x.SysId))
+				.Where(s => !s.IsComplete)
 				.ToList();
 		}
 
@@ -91,9 +87,8 @@ namespace Executioner {
 				.Where(x => x.GetType().Name.Equals(script.ExecutorName))
 				.SingleOrDefault();
 
-			if (foundExecutor == null) {
+			if (foundExecutor == null)
 				throw new ScriptExecutorNotFoundException(script.ExecutorName);
-			}
 
 			return foundExecutor;
 		}
@@ -104,14 +99,12 @@ namespace Executioner {
 
 			foreach (Script script in scripts) {
 				string className = script.ExecutorName;
-				if (String.IsNullOrEmpty(className)) {
+				if (String.IsNullOrEmpty(className))
 					throw new ScriptExecutorNotFoundException(className);
-				}
 
-				bool typeExists = this.ScriptExecutors.Any(x => x.GetType().Name == script.ExecutorName);
-				if (typeExists) {
+				bool typeExists = executors.Any(x => x.GetType().Name == script.ExecutorName);
+				if (typeExists)
 					continue;
-				}
 
 				IScriptExecutor executor = ExecutorCreator.Create(script.ExecutorName);
 				executors.Add(executor);
@@ -123,9 +116,8 @@ namespace Executioner {
 		private void Execute(IScriptExecutor executor, Script script) {
 			OnScriptExecuting?.Invoke(this, new ScriptExecutingEventArgs(script));
 			bool executed = executor.Execute(script.ScriptText);
-			if (!executed) {
+			if (!executed)
 				throw new Exception($"Script id '{script.SysId}' failed to execute.");
-			}
 
 			script.IsComplete = true;
 			_storage.Update(script);
