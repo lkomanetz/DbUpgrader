@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Executioner.Contracts;
 using Executioner.Serializers;
+using Executioner.Converters;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
@@ -45,7 +46,7 @@ namespace Executioner {
 		public void Add(ScriptDocument document) {
 			LogEntry entry = Deserialize(document.SysId);
 			if (entry == null)
-				Serialize(LogEntry.ToLogEntry(document));
+				Serialize(LogEntryConverters.FromScriptDocument(document));
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
@@ -86,9 +87,9 @@ namespace Executioner {
 				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
 
 			int index = entry.Scripts.FindIndex(x => x.SysId == script.SysId);
-
-			entry.Scripts[index] = new LogEntry() { SysId = script.SysId, IsComplete = script.IsComplete };
+			entry.Scripts[index] = LogEntryConverters.FromScript(script);
 			entry.IsComplete = entry.Scripts.All(x => x.IsComplete);
+
 			Serialize(entry);
 		}
 
@@ -118,53 +119,11 @@ namespace Executioner {
 			FileStream fs = File.Create(fileLoc);
 			fs.Dispose();
 
-			using (FileStream writer = new FileStream(fileLoc, FileMode.Create, FileAccess.Write))
-			{
+			using (FileStream writer = new FileStream(fileLoc, FileMode.Create, FileAccess.Write)) {
 				string jsonData = _serializer.Serialize(entry);
 				byte[] dataAsBytes = Encoding.UTF8.GetBytes(jsonData);
 				writer.Write(dataAsBytes, 0, dataAsBytes.Length);
 			}
-		}
-
-		/*
-		 * This class exists to reduce log size.  The reason it's private is because it is not meant to be known
-		 * in any other part of the solution except for in the FileSystemLogger class. This keeps the interface the
-		 * same but allowed me to change implementation detail without the rest of the solution having to change
-		 * anything.
-		 */
-		[DataContract]
-		private class LogEntry {
-
-			[DataMember] public Guid SysId { get; set; }
-			[DataMember] public bool IsComplete { get; set; }
-			[DataMember] public List<LogEntry> Scripts { get; set; }
-
-			public static LogEntry ToLogEntry(ScriptDocument doc) {
-				LogEntry entry = new LogEntry() {
-					SysId = doc.SysId,
-					IsComplete = doc.IsComplete
-				};
-
-				entry.Scripts = new List<LogEntry>();
-				for (short i = 0; i < doc.Scripts.Count; ++i) {
-					entry.Scripts.Add(
-						new LogEntry() {
-							SysId = doc.Scripts[i].SysId,
-							IsComplete = doc.Scripts[i].IsComplete
-						}
-					);
-				}
-
-				return entry;
-			}
-
-			public static LogEntry ToLogEntry(Script script) {
-				return new LogEntry() {
-					SysId = script.SysId,
-					IsComplete = script.IsComplete
-				};
-			}
-
 		}
 
 	}
