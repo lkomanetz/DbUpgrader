@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptLoader.Tests.FakeServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptLoader.Tests", "tests\ScriptLoader.Tests\ScriptLoader.Tests.csproj", "{14C6D2D7-264E-4930-A5D3-59F0F8539BA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converters.Tests", "tests\Converters.Tests\Converters.Tests.csproj", "{1ED7BAB0-8814-4515-A085-BC90664C7D86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,6 +158,18 @@ Global
 		{14C6D2D7-264E-4930-A5D3-59F0F8539BA9}.Release|x64.Build.0 = Release|Any CPU
 		{14C6D2D7-264E-4930-A5D3-59F0F8539BA9}.Release|x86.ActiveCfg = Release|Any CPU
 		{14C6D2D7-264E-4930-A5D3-59F0F8539BA9}.Release|x86.Build.0 = Release|Any CPU
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Debug|x64.ActiveCfg = Debug|x64
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Debug|x64.Build.0 = Debug|x64
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Debug|x86.ActiveCfg = Debug|x86
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Debug|x86.Build.0 = Debug|x86
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Release|x64.ActiveCfg = Release|x64
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Release|x64.Build.0 = Release|x64
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Release|x86.ActiveCfg = Release|x86
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,5 +185,6 @@ Global
 		{2CF15AC4-DF49-474B-8E8F-6C96AF6849AE} = {3E9ECDE4-3003-441C-9061-94FF8F38F174}
 		{9D3F14E1-23E9-462C-B607-8F0E0BCC8348} = {3E9ECDE4-3003-441C-9061-94FF8F38F174}
 		{14C6D2D7-264E-4930-A5D3-59F0F8539BA9} = {3E9ECDE4-3003-441C-9061-94FF8F38F174}
+		{1ED7BAB0-8814-4515-A085-BC90664C7D86} = {3E9ECDE4-3003-441C-9061-94FF8F38F174}
 	EndGlobalSection
 EndGlobal

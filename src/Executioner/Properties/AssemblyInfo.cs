@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 // tests.
 [assembly: InternalsVisibleTo("ScriptLoader.Tests")]
 [assembly: InternalsVisibleTo("Executioner.Tests")]
+[assembly: InternalsVisibleTo("Converters.Tests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("04b05264-b56c-4274-aeea-08bd938ae168")]

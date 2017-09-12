@@ -16,14 +16,8 @@ namespace Executioner {
 				};
 
 				entry.Scripts = new List<LogEntry>();
-				for (short i = 0; i < doc.Scripts.Count; ++i) {
-					entry.Scripts.Add(
-						new LogEntry() {
-							SysId = doc.Scripts[i].SysId,
-							IsComplete = doc.Scripts[i].IsComplete
-						}
-					);
-				}
+				for (short i = 0; i < doc.Scripts.Count; ++i) 
+					entry.Scripts.Add(LogEntryConverters.FromScript(doc.Scripts[i]));
 
 				return entry;
 			};
