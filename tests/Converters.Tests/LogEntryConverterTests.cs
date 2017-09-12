@@ -36,9 +36,7 @@ namespace Converters.Tests {
             };
 
             LogEntry entry = LogEntryConverters.FromScript(script);
-            Assert.True(
-                script.SysId == entry.SysId && script.IsComplete == entry.IsComplete && entry.Scripts == null
-            );
+            Assert.True(AreEqual(entry, script));
         }
 
         private bool AreEqual<T>(LogEntry entry, T item) {
