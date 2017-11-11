@@ -3,7 +3,7 @@ using System;
 
 namespace Executioner.Tests.Classes {
 
-	public class MockScriptExecutor : IScriptExecutor {
+	public class MockScriptExecutor : IScriptExecutor, IMockScriptExecutor {
 
 		public bool ScriptExecuted { get; set; }
 

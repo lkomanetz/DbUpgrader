@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Executioner.Contracts;
 using System.Linq;
+using System.Reflection;
 using Executioner.Tests.Classes;
 using Xunit;
 
@@ -356,20 +357,12 @@ namespace Executioner.Tests {
 		}
 
 		private void SetExecutionStatus(ScriptExecutioner executioner, bool executed) {
-			MockScriptExecutor mockExecutor = (MockScriptExecutor)executioner.ScriptExecutors
-				.Where(x => x.GetType() == typeof(MockScriptExecutor))
-				.SingleOrDefault();
+			IEnumerable<IMockScriptExecutor> executors = executioner.ScriptExecutors
+				.Where(x => typeof(IMockScriptExecutor).IsAssignableFrom(x.GetType()))
+				.Select(x => (IMockScriptExecutor)x);
 
-			if (mockExecutor != null) {
-				mockExecutor.ScriptExecuted = executed;
-			}
-
-			SecondScriptExecutor secondExecutor = (SecondScriptExecutor)executioner.ScriptExecutors
-				.Where(x => x.GetType() == typeof(SecondScriptExecutor))
-				.SingleOrDefault();
-
-			if (secondExecutor != null) {
-				secondExecutor.ScriptExecuted = executed;
+			foreach (var executor in executors) {
+				executor.ScriptExecuted = executed;
 			}
 		}
 
