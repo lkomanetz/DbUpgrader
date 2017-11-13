@@ -4,6 +4,7 @@ using ScriptLoader.Tests.FakeService;
 using ScriptLoader.Tests.AnotherFakeService;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Xunit;
 
@@ -16,7 +17,10 @@ namespace ScriptLoader.Tests {
 
 		public AssemblyLoaderTests() {
 			_fakeServiceAssembly = typeof(MyFakeService).GetTypeInfo().Assembly;
-			_loader = new AssemblyLoader(new List<Assembly>() { _fakeServiceAssembly });
+			_loader = new AssemblyLoader(
+				new List<Assembly>() { _fakeServiceAssembly },
+				(collection) => collection.OrderBy(x => x.Order)
+			);
 		}
 
 		[Fact]
@@ -50,7 +54,7 @@ namespace ScriptLoader.Tests {
 				typeof(Service).GetTypeInfo().Assembly
 			};
 
-			AssemblyLoader loader = new AssemblyLoader(assemblies);
+			AssemblyLoader loader = new AssemblyLoader(assemblies, (collection) => collection.OrderBy(x => x.Order));
 			loader.LoadDocuments();
 
 			Assert.True(
@@ -66,7 +70,7 @@ namespace ScriptLoader.Tests {
 		[Fact]
 		public void AssemblyLoader_DocumentsAreOnlyLoadedOnce() {
 			IList<Assembly> assemblies = new List<Assembly>() { typeof(MyFakeService).GetTypeInfo().Assembly };
-			AssemblyLoader loader = new AssemblyLoader(assemblies);
+			AssemblyLoader loader = new AssemblyLoader(assemblies, (collection) => collection.OrderBy(x => x.Order));
 			loader.LoadDocuments();
 			loader.LoadDocuments();
 

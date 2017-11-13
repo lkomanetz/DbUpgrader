@@ -11,9 +11,9 @@ namespace Executioner {
 	public class FileSystemLoader : IScriptLoader {
 
 		private string _rootDir;
-		private Sorter<ScriptDocument> _sorter;
+		private Sorter<IOrderedItem> _sorter;
 
-		public FileSystemLoader(Sorter<ScriptDocument> sorter) {
+		public FileSystemLoader(Sorter<IOrderedItem> sorter) {
 			_rootDir = String.Empty;
 			_sorter = sorter;
 			this.Documents = new List<ScriptDocument>();
@@ -21,7 +21,7 @@ namespace Executioner {
 
 		public FileSystemLoader(
 			string rootDirectory,
-			Sorter<ScriptDocument> sorter
+			Sorter<IOrderedItem> sorter
 		) : this(sorter) {
 			_rootDir = rootDirectory;
 			CreateRootDirectory();
@@ -38,9 +38,10 @@ namespace Executioner {
 			CreateRootDirectory();
 
 			IEnumerable<string> files = Directory.EnumerateFiles(_rootDir);
+			IList<IOrderedItem> docs = new List<IOrderedItem>();
 			foreach (string file in files) {
 				using (Stream stream = new FileStream(file, FileMode.Open)) {
-					this.Documents.Add(ScriptLoaderUtilities.CreateScriptDocument(stream, file));
+					docs.Add(ScriptLoaderUtilities.CreateScriptDocument(stream, file));
 				}
 			}
 
@@ -48,7 +49,7 @@ namespace Executioner {
 				throw new FileNotFoundException($"Script Documents not found in '{_rootDir}'.");
 			}
 
-			this.Documents = _sorter.Invoke(this.Documents).ToList();
+			this.Documents = _sorter.Invoke(docs).Select(x => (ScriptDocument)x).ToList();
 			// this.Documents = this.Documents.SortOrderedItems();
 		}
 

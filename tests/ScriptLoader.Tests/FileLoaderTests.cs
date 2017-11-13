@@ -1,5 +1,6 @@
 ﻿using Executioner;
 using Executioner.Contracts;
+using Executioner.Sorters;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -12,12 +13,16 @@ namespace ScriptLoader.Tests {
 		private string rootDir;
 		private int documentCount;
 		private IList<Guid> documentIds;
+		private Sorter<IOrderedItem> sorter;
 
+		public FileLoaderTests() {
+			sorter = (collection) => collection.OrderBy(x => x.Order);
+		}
 
 		[Fact]
 		public void FileLoader_LoadDocumentsSucceeds() {
 			Initialize();
-			FileSystemLoader loader = new FileSystemLoader(rootDir);
+			FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
 			loader.LoadDocuments();
 
 			Assert.True(
@@ -39,7 +44,7 @@ namespace ScriptLoader.Tests {
 		public void FileLoader_MissingRootDirectoryCreatesNew() {
 			Initialize();
 			Directory.Delete(rootDir, true);
-			FileSystemLoader loader = new FileSystemLoader(rootDir);
+			FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
 			Assert.True(Directory.Exists(rootDir), "Root directory not found.");
 			Cleanup();
 		}
@@ -53,7 +58,7 @@ namespace ScriptLoader.Tests {
 					File.Delete(file);
 				}
 
-				FileSystemLoader loader = new FileSystemLoader(rootDir);
+				FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
 				loader.LoadDocuments();
 			});
 			Assert.NotNull(ex);

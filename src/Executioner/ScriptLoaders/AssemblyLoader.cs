@@ -1,4 +1,5 @@
 ﻿using Executioner.Contracts;
+using Executioner.Sorters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,9 +10,11 @@ namespace Executioner {
 
 	public class AssemblyLoader : IScriptLoader {
 		private IList<Assembly> _assemblies;
+		private Sorter<IOrderedItem> _sorter;
 
-		public AssemblyLoader(IList<Assembly> assemblies) {
+		public AssemblyLoader(IList<Assembly> assemblies, Sorter<IOrderedItem> sorter) {
 			_assemblies = assemblies;
+			_sorter = sorter;
 		}
 
 		public IList<ScriptDocument> Documents { get; internal set; }
@@ -21,7 +24,7 @@ namespace Executioner {
 		}
 
 		internal ScriptDocument[] GetDocumentsToRun(IList<Assembly> assemblies) {
-			IList<ScriptDocument> documents = new List<ScriptDocument>();
+			IList<IOrderedItem> documents = new List<IOrderedItem>();
 			foreach (Assembly assembly in assemblies) {
 				string[] resources = assembly.GetManifestResourceNames()
 					.Where(x => x.Contains(ScriptLoaderConstants.FILE_EXTENSION))
@@ -34,7 +37,9 @@ namespace Executioner {
 				}
 			}
 
-			return documents.SortOrderedItems().ToArray();
+			return _sorter(documents)
+				.Select(x => (ScriptDocument)x)
+				.ToArray();
 		}
 
 	}
