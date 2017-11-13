@@ -1,21 +1,28 @@
 ﻿using Executioner.Contracts;
 using Executioner.ExtensionMethods;
+using Executioner.Sorters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 namespace Executioner {
 
 	public class FileSystemLoader : IScriptLoader {
-		private string _rootDir;
 
-		public FileSystemLoader() {
+		private string _rootDir;
+		private Sorter<ScriptDocument> _sorter;
+
+		public FileSystemLoader(Sorter<ScriptDocument> sorter) {
 			_rootDir = String.Empty;
+			_sorter = sorter;
 			this.Documents = new List<ScriptDocument>();
 		}
 
-		public FileSystemLoader(string rootDirectory) :
-			this() {
+		public FileSystemLoader(
+			string rootDirectory,
+			Sorter<ScriptDocument> sorter
+		) : this(sorter) {
 			_rootDir = rootDirectory;
 			CreateRootDirectory();
 		}
@@ -41,7 +48,8 @@ namespace Executioner {
 				throw new FileNotFoundException($"Script Documents not found in '{_rootDir}'.");
 			}
 
-			this.Documents = this.Documents.SortOrderedItems();
+			this.Documents = _sorter.Invoke(this.Documents).ToList();
+			// this.Documents = this.Documents.SortOrderedItems();
 		}
 
 		private void CreateRootDirectory() {

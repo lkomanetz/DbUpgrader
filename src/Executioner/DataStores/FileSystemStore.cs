@@ -46,7 +46,7 @@ namespace Executioner {
 		public void Add(ScriptDocument document) {
 			LogEntry entry = Deserialize(document.SysId);
 			if (entry == null)
-				Serialize(LogEntryConverters.FromScriptDocument(document));
+				Serialize(ScriptDocumentConverter.ToLogEntry(document));
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
@@ -87,7 +87,7 @@ namespace Executioner {
 				throw new FileNotFoundException($"Document Id '{script.DocumentId}' not found.");
 
 			int index = entry.Scripts.FindIndex(x => x.SysId == script.SysId);
-			entry.Scripts[index] = LogEntryConverters.FromScript(script);
+			entry.Scripts[index] = ScriptConverter.ToLogEntry(script);
 			entry.IsComplete = entry.Scripts.All(x => x.IsComplete);
 
 			Serialize(entry);

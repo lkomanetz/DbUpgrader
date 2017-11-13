@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Converters.Tests {
 
-    public class LogEntryConverterTests {
+    public class ConverterTests {
 
         [Fact]
         public void ConvertsScriptDocumentToLogEntry() {
@@ -22,7 +22,7 @@ namespace Converters.Tests {
                 }
             };
 
-            LogEntry entry = LogEntryConverters.FromScriptDocument(doc);
+            LogEntry entry = ScriptDocumentConverter.ToLogEntry(doc);
             Assert.True(AreEqual(entry, doc));
         }
 
@@ -35,7 +35,7 @@ namespace Converters.Tests {
                 ExecutorName = String.Empty,
             };
 
-            LogEntry entry = LogEntryConverters.FromScript(script);
+            LogEntry entry = ScriptConverter.ToLogEntry(script);
             Assert.True(AreEqual(entry, script));
         }
 
