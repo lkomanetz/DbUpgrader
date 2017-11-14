@@ -13,7 +13,7 @@ namespace ScriptLoader.Tests {
 		private string _rootDir;
 		private int _documentCount;
 		private IList<Guid> _docIds;
-		private Sorter<IOrderedItem> _sorter;
+		private Sorter<ScriptDocument> _sorter;
 
 		public FileLoaderTests() {
 			_sorter = (collection) => collection.OrderBy(x => x.Order);

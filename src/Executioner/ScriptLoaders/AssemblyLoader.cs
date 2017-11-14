@@ -10,9 +10,9 @@ namespace Executioner {
 
 	public class AssemblyLoader : IScriptLoader {
 		private IList<Assembly> _assemblies;
-		private Sorter<IOrderedItem> _sorter;
+		private Sorter<ScriptDocument> _sorter;
 
-		public AssemblyLoader(IList<Assembly> assemblies, Sorter<IOrderedItem> sorter) {
+		public AssemblyLoader(IList<Assembly> assemblies, Sorter<ScriptDocument> sorter) {
 			_assemblies = assemblies;
 			_sorter = sorter;
 		}
@@ -24,7 +24,7 @@ namespace Executioner {
 		}
 
 		internal ScriptDocument[] GetDocumentsToRun(IList<Assembly> assemblies) {
-			IList<IOrderedItem> documents = new List<IOrderedItem>();
+			IList<ScriptDocument> documents = new List<ScriptDocument>();
 			foreach (Assembly assembly in assemblies) {
 				string[] resources = assembly.GetManifestResourceNames()
 					.Where(x => x.Contains(ScriptLoaderConstants.FILE_EXTENSION))
@@ -37,9 +37,7 @@ namespace Executioner {
 				}
 			}
 
-			return _sorter(documents)
-				.Select(x => (ScriptDocument)x)
-				.ToArray();
+			return _sorter(documents).ToArray();
 		}
 
 	}
