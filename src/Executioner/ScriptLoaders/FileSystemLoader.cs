@@ -45,7 +45,7 @@ namespace Executioner {
 				}
 			}
 
-			if (this.Documents.Count == 0) {
+			if (docs.Count == 0) {
 				throw new FileNotFoundException($"Script Documents not found in '{_rootDir}'.");
 			}
 
