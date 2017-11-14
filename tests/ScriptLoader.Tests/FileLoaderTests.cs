@@ -22,22 +22,26 @@ namespace ScriptLoader.Tests {
 		[Fact]
 		public void FileLoader_LoadDocumentsSucceeds() {
 			Initialize();
-			FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
-			loader.LoadDocuments();
+			Exception ex = Record.Exception(() => {
+				FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
+				loader.LoadDocuments();
 
-			Assert.True(
-				loader.Documents.Count == documentCount,
-				$"Expected {documentCount} documents\nActual: {loader.Documents.Count}"
-			);
+				Assert.True(
+					loader.Documents.Count == documentCount,
+					$"Expected {documentCount} documents\nActual: {loader.Documents.Count}"
+				);
 
-			foreach (Guid id in documentIds) {
-				ScriptDocument doc = loader.Documents
-					.Where(x => x.SysId == id)
-					.SingleOrDefault();
+				foreach (Guid id in documentIds) {
+					ScriptDocument doc = loader.Documents
+						.Where(x => x.SysId == id)
+						.SingleOrDefault();
 
-				Assert.True(doc != null, $"Unable to find doc id '{id}'");
-			}
-			Cleanup();
+					Assert.True(doc != null, $"Unable to find doc id '{id}'");
+				}
+				Cleanup();
+			});
+
+			Assert.True(ex == null, ex.Message);
 		}
 
 		[Fact]
