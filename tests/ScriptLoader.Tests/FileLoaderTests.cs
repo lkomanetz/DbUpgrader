@@ -9,91 +9,80 @@ using Xunit;
 
 namespace ScriptLoader.Tests {
 
-	public class FileLoaderTests {
-		private string rootDir;
-		private int documentCount;
-		private IList<Guid> documentIds;
-		private Sorter<IOrderedItem> sorter;
+	public class FileLoaderTests : IDisposable {
+		private string _rootDir;
+		private int _documentCount;
+		private IList<Guid> _docIds;
+		private Sorter<IOrderedItem> _sorter;
+
+		public FileLoaderTests() {
+			_sorter = (collection) => collection.OrderBy(x => x.Order);
+			_rootDir = "C:\\FileLoaderTests";
+			_documentCount = 5;
+			_docIds = new List<Guid>();
+
+			GenerateDocuments();
+		}
+
+		public void Dispose() {
+			if (Directory.Exists(_rootDir)) Directory.Delete(_rootDir, true);	
+		}
 
 		[Fact]
 		public void FileLoader_LoadDocumentsSucceeds() {
-			Initialize();
-			FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
+			FileSystemLoader loader = new FileSystemLoader(_rootDir, _sorter);
 			loader.LoadDocuments();
 
 			Assert.True(
-				loader.Documents.Count == documentCount,
-				$"Expected {documentCount} documents\nActual: {loader.Documents.Count}"
+				loader.Documents.Count == _documentCount,
+				$"Expected {_documentCount} documents\nActual: {loader.Documents.Count}"
 			);
 
-			foreach (Guid id in documentIds) {
-				ScriptDocument doc = loader.Documents
-					.Where(x => x.SysId == id)
-					.SingleOrDefault();
+			int unmatchedDocsCount = loader.Documents
+				.Where(x => !_docIds.Contains(x.SysId))
+				.Count();
 
-				Assert.True(doc != null, $"Unable to find doc id '{id}'");
-			}
-			Cleanup();
+			Assert.True(unmatchedDocsCount == 0, "Not all documents were created.");
 		}
 
 		[Fact]
 		public void FileLoader_MissingRootDirectoryCreatesNew() {
-			Initialize();
-			Directory.Delete(rootDir, true);
-			FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
-			Assert.True(Directory.Exists(rootDir), "Root directory not found.");
-			Cleanup();
+			Directory.Delete(_rootDir, true);
+			FileSystemLoader loader = new FileSystemLoader(_rootDir, _sorter);
+			Assert.True(Directory.Exists(_rootDir), "Root directory not found.");
 		}
 
 		[Fact]
 		public void FileLoader_MissingDocumentsThrowsException() {
-			Initialize();
 			Exception ex = Record.Exception(() => {
-				IEnumerable<string> files = Directory.EnumerateFiles(rootDir);
+				IEnumerable<string> files = Directory.EnumerateFiles(_rootDir);
 				foreach (string file in files) {
 					File.Delete(file);
 				}
 
-				FileSystemLoader loader = new FileSystemLoader(rootDir, sorter);
+				FileSystemLoader loader = new FileSystemLoader(_rootDir, _sorter);
 				loader.LoadDocuments();
 			});
 			Assert.NotNull(ex);
-			Cleanup();
 		}
 
-		// This is only used in the Initialize() method.
-		private string GetScripts() {
-			return $@"
-				<Scripts>
-					<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09'>PRINT 'Hello'</Script>
-					<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09:1'>PRINT 'Hello'</Script>
-				</Scripts>";
-		}
+		private void GenerateDocuments() {
+			_docIds.Clear();
 
-		private void GenerateDocuments(string scripts) {
-			documentIds.Clear();
-
-			Directory.CreateDirectory(rootDir);
-			for (short i = 0; i < documentCount; ++i) {
+			Directory.CreateDirectory(_rootDir);
+			for (short i = 0; i < _documentCount; ++i) {
 				Guid sysId = Guid.NewGuid();
-				string doc = $"<ScriptDocument><Id>{sysId}</Id><Order>2017-01-09:{i}</Order>{scripts}</ScriptDocument>";
-				File.WriteAllText($"{rootDir}\\Doc_{i}.sdoc", doc);
-				documentIds.Add(sysId);
+				string doc = $"<ScriptDocument><Id>{sysId}</Id><Order>2017-01-09:{i}</Order>{GetScripts()}</ScriptDocument>";
+				File.WriteAllText($"{_rootDir}\\Doc_{i}.sdoc", doc);
+				_docIds.Add(sysId);
 			}
-		}
 
-		private void Initialize() {
-			sorter = (collection) => collection.OrderBy(x => x.Order);
-			rootDir = "C:\\FileLoaderTests";
-			documentCount = 5;
-			documentIds = new List<Guid>();
-
-			GenerateDocuments(GetScripts());
-		}
-
-		private void Cleanup() {
-			if (Directory.Exists(rootDir)) {
-				Directory.Delete(rootDir, true);	
+			string GetScripts() {
+				return $@"
+					<Scripts>
+						<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09'>PRINT 'Hello'</Script>
+						<Script Id='{Guid.NewGuid()}' Executor='FakeExecutor' Order='2017-01-09:1'>PRINT 'Hello'</Script>
+					</Scripts>";
 			}
 		}
 
