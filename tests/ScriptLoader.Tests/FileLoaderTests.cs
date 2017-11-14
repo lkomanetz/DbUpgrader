@@ -15,10 +15,6 @@ namespace ScriptLoader.Tests {
 		private IList<Guid> documentIds;
 		private Sorter<IOrderedItem> sorter;
 
-		public FileLoaderTests() {
-			sorter = (collection) => collection.OrderBy(x => x.Order);
-		}
-
 		[Fact]
 		public void FileLoader_LoadDocumentsSucceeds() {
 			Initialize();
@@ -91,6 +87,7 @@ namespace ScriptLoader.Tests {
 		}
 
 		private void Initialize() {
+			sorter = (collection) => collection.OrderBy(x => x.Order);
 			rootDir = "C:\\FileLoaderTests";
 			documentCount = 5;
 			documentIds = new List<Guid>();
