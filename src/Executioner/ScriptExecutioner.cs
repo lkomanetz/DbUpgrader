@@ -62,8 +62,9 @@ namespace Executioner {
 			if (request.ExecuteAllScripts)
 				return new List<ScriptDocument>(docs);
 
+			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
 			return docs
-				.Where(doc => doc.Scripts.Any(script => !script.IsComplete))
+				.Where(doc => !completedDocIds.Contains(doc.SysId))
 				.ToList();
 		}
 
@@ -71,8 +72,9 @@ namespace Executioner {
 			if (request.ExecuteAllScripts)
 				return new List<Script>(doc.Scripts);
 
+			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
 			return doc.Scripts
-				.Where(s => !s.IsComplete)
+				.Where(s => !completedScriptIds.Contains(s.SysId))
 				.ToList();
 		}
 

@@ -158,6 +158,7 @@ namespace Executioner.Tests {
 				};
 
 				loader.Add(newScript);
+				_logger.Add(newScript);
 			}
 
 			executioner = new ScriptExecutioner(loader, _logger);

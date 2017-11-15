@@ -8,7 +8,6 @@ using Xunit;
 
 namespace Logger.FileSystem.Tests {
 
-	//TODO(Logan) -> Rewrite the tests for GetCompletedDocIds() and GetCompletedScriptIdsFor(Guid) since I don't need those functions.
 	public class FileSystemTests {
 		private FileSystemStore _backingStore;
 		private string _rootDir;
@@ -180,7 +179,9 @@ namespace Logger.FileSystem.Tests {
 			_backingStore.Update(doc.Scripts[0]);
 
 			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
+			int completedDocCount = _backingStore.GetCompletedDocumentIds().Count;
 			Assert.True(foundScripts.Count == 1, "Incorrect number of scripts returned.");
+			Assert.True(completedDocCount == 1, $"Expected '{1}' completed documents.  Was '{completedDocCount}'");
 			Cleanup();
 		}
 
