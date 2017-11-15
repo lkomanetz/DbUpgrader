@@ -357,6 +357,41 @@ namespace Executioner.Tests {
 			_logger.Clean();
 		}
 
+		[Theory]
+		[InlineData("", "", 6)]
+		[InlineData("2016-06-21", "2016-06-22", 3)]
+		[InlineData("2016-06-22", "2016-06-24", 4)]
+		public void ExecutesCorrectSubsetOfScripts(string from = "", string to = "", int scriptsExecuted = 0) {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-22'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-22:1'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-23'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-24'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-25'></Script>"
+			};
+			
+			bool fromSucceeded = DateTime.TryParse(from, out DateTime fromDt);
+			bool toSucceeded = DateTime.TryParse(to, out DateTime toDt);
+
+			Func<Script, bool> predicate = null;
+			if (fromSucceeded && toSucceeded) {
+				predicate = (s) =>
+					s.DateCreatedUtc >= fromDt && s.DateCreatedUtc <= toDt;
+			}
+			else if (fromSucceeded && !toSucceeded) {
+				predicate = (s) => s.DateCreatedUtc >= fromDt;
+			}
+
+			ScriptExecutioner executioner = new ScriptExecutioner(new BaseMockLoader(scripts), _logger);
+			SetExecutionStatus(executioner, true);
+			var result = executioner.Run(new ExecutionRequest() {
+				ExecuteScriptsBetween = predicate
+			});
+
+			Assert.True(result.ScriptsCompleted == scriptsExecuted);
+		}
+
 		private void SetExecutionStatus(ScriptExecutioner executioner, bool executed) {
 			IEnumerable<IMockScriptExecutor> executors = executioner.ScriptExecutors
 				.Where(x => typeof(IMockScriptExecutor).IsAssignableFrom(x.GetType()))

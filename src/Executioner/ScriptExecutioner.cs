@@ -69,13 +69,19 @@ namespace Executioner {
 		}
 
 		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
-			if (request.ExecuteAllScripts)
-				return new List<Script>(doc.Scripts);
+			IList<Script> scriptsToRun = doc.Scripts;
+			if (request.ExecuteScriptsBetween != null) {
+				scriptsToRun = doc.Scripts.Where(request.ExecuteScriptsBetween).ToList();
+			}
 
-			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
-			return doc.Scripts
-				.Where(s => !completedScriptIds.Contains(s.SysId))
-				.ToList();
+			if (!request.ExecuteAllScripts) {
+				IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
+				scriptsToRun = scriptsToRun
+					.Where(s => !completedScriptIds.Contains(s.SysId))
+					.ToList();
+			}
+
+			return scriptsToRun;
 		}
 
 		private IScriptExecutor FindExecutorFor(Script script) {
