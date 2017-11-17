@@ -40,17 +40,18 @@ namespace Executioner.Tests.Classes
 		}
 
 		public IList<Guid> GetCompletedDocumentIds() {
-			return _log.Where(x => x.Value.IsComplete)
+			IList<Guid> completedIds = _log
+				.Where(x => x.Value.IsComplete)
 				.Select(x => x.Key)
 				.ToList();
+
+			return completedIds ?? new List<Guid>();
 		}
 
 		public IList<Guid> GetCompletedScriptIdsFor(Guid documentId) {
 			ScriptDocument doc = GetDocument(documentId);
-			if (doc == null) {
-				return null;
-			}
-
+			if (doc == null) return new List<Guid>();
+			
 			return doc.Scripts
 				.Where(x => x.IsComplete)
 				.Select(x => x.SysId)

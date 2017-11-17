@@ -62,10 +62,23 @@ namespace Executioner {
 			if (request.ExecuteAllScripts)
 				return new List<ScriptDocument>(docs);
 
+			foreach (var doc in docs) AddNewScriptsToDocumentLog(doc);
 			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
 			return docs
 				.Where(doc => !completedDocIds.Contains(doc.SysId))
 				.ToList();
+		}
+
+		private void AddNewScriptsToDocumentLog(ScriptDocument document) {
+			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
+			if (!completedDocIds.Contains(document.SysId)) return;
+
+			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(document.SysId);
+			IList<Script> incompleteScripts = document.Scripts
+				.Where(s => !completedScriptIds.Contains(s.SysId))
+				.ToList();
+
+			foreach (var script in incompleteScripts) _storage.Add(script);
 		}
 
 		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
