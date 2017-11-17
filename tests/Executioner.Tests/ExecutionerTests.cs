@@ -315,6 +315,24 @@ namespace Executioner.Tests {
 		}
 
 		[Fact]
+		public void MultipleRunsWithSameExecutionerProduceCorrectResults() {
+			string[] scripts = new string[] {
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
+				$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
+			};
+			var loader = new BaseMockLoader(scripts);
+			ScriptExecutioner executioner = new ScriptExecutioner(loader, _logger);
+			SetExecutionStatus(executioner, true);
+			executioner.Run();
+			var secondResult = executioner.Run();
+
+			Assert.True(
+				secondResult.ScriptDocumentsCompleted == 0 &&
+				secondResult.ScriptsCompleted == 0
+			);
+		}
+
+		[Fact]
 		public void FailedScriptThrowsException() {
 			Exception ex = Record.Exception(() => {
 				string[] scripts = new string[] {

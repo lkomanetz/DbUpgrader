@@ -49,7 +49,7 @@ namespace Executioner {
 					++scriptsCompleted;
 				});
 
-				++docsCompleted;
+				if (scriptsCompleted > 0) ++docsCompleted;
 			}
 
 			return new ExecutionResult() {
