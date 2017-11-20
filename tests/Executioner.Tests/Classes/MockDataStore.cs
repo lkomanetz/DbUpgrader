@@ -17,6 +17,8 @@ namespace Executioner.Tests.Classes
 
 		public void Add(Script script) {
 			ScriptDocument doc = GetDocument(script.DocumentId);
+			bool addNewDoc = (doc == null);
+			if (addNewDoc) doc = new ScriptDocument();
 
 			int index = doc.Scripts.FindIndex(x => x.SysId == script.SysId);
 			if (index > -1) {
@@ -27,6 +29,8 @@ namespace Executioner.Tests.Classes
 			}
 			doc.Scripts = (List<Script>)doc.Scripts.SortOrderedItems();
 			doc.IsComplete = doc.Scripts.All(x => x.IsComplete);
+
+			if (addNewDoc) Add(doc);
 		}
 
 		public void Add(ScriptDocument document) {
@@ -74,6 +78,7 @@ namespace Executioner.Tests.Classes
 				return null;
 			}
 			else {
+				if (kvp.Value.Scripts == null) kvp.Value.Scripts = new List<Script>();
 				return kvp.Value;
 			}
 		}

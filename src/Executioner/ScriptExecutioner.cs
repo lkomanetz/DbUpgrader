@@ -70,9 +70,6 @@ namespace Executioner {
 		}
 
 		private void AddNewScriptsToDocumentLog(ScriptDocument document) {
-			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
-			if (!completedDocIds.Contains(document.SysId)) return;
-
 			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(document.SysId);
 			IList<Script> incompleteScripts = document.Scripts
 				.Where(s => !completedScriptIds.Contains(s.SysId))
