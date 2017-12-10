@@ -10,6 +10,8 @@ namespace ScriptExecutor.SqlServer.Tests {
 
 	public class MockDataStore : IDataStore {
 
+		public void CreateLogFile(Guid docId) { }
+
 		public void Add(Script script) { }
 
 		public void Add(ScriptDocument document) { }

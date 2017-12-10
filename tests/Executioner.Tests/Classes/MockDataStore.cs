@@ -15,6 +15,8 @@ namespace Executioner.Tests.Classes
 			_log = new Dictionary<Guid, ScriptDocument>();
 		}
 
+		public void CreateLogFile(Guid docId) {}
+
 		public void Add(Script script) {
 			ScriptDocument doc = GetDocument(script.DocumentId);
 			bool addNewDoc = (doc == null);

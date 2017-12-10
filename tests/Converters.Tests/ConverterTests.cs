@@ -10,23 +10,6 @@ namespace Converters.Tests {
     public class ConverterTests {
 
         [Fact]
-        public void ConvertsScriptDocumentToLogEntry() {
-            ScriptDocument doc = new ScriptDocument() {
-                SysId = Guid.NewGuid(),
-                IsComplete = true,
-                Scripts = new List<Script>() {
-                    new Script() {
-                        IsComplete = true,
-                        SysId = Guid.NewGuid()
-                    }
-                }
-            };
-
-            LogEntry entry = ScriptDocumentConverter.ToLogEntry(doc);
-            Assert.True(AreEqual(entry, doc));
-        }
-
-        [Fact]
         public void ConvertsScriptToLogEntry() {
             Script script = new Script() {
                 SysId = Guid.NewGuid(),
@@ -42,38 +25,10 @@ namespace Converters.Tests {
         private bool AreEqual<T>(LogEntry entry, T item) {
             if (item is Script) {
                 var s = item as Script;
-                return (entry.SysId == s.SysId && entry.IsComplete == s.IsComplete && entry.Scripts == null);
-            }
-            else if (item is ScriptDocument) {
-                var d = item as ScriptDocument;
-                return AreEqual(entry, d);
+                return (entry.SysId == s.SysId);
             }
             else
                 return false;
-
-            bool AreEqual(LogEntry logEntry, ScriptDocument doc) {
-                bool isEqual = (
-                    logEntry.SysId == doc.SysId &&
-                    logEntry.IsComplete == doc.IsComplete &&
-                    (logEntry.Scripts != null && logEntry.Scripts.Count == doc.Scripts.Count)
-                );
-
-                if (!isEqual)
-                    return false;
-
-                for (short i = 0; i < logEntry.Scripts.Count; ++i) {
-                    isEqual = (
-                        logEntry.Scripts != null &&
-                        logEntry.Scripts[i].SysId == doc.Scripts[i].SysId &&
-                        logEntry.Scripts[i].IsComplete == doc.Scripts[i].IsComplete
-                    );
-
-                    if (!isEqual)
-                        return false;
-                }
-
-                return isEqual;
-            }
         }
 
     }

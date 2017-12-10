@@ -6,11 +6,9 @@ namespace Executioner {
 
 		public interface IDataStore {
 
-			IList<Guid> GetCompletedDocumentIds();
+			void CreateLogFile(Guid documentId);
 			IList<Guid> GetCompletedScriptIdsFor(Guid documentId);
-			void Add(ScriptDocument document);
 			void Add(Script script);
-			void Update(Script script);
 			void Clean();
 
 		}

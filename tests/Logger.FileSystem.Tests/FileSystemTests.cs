@@ -22,38 +22,14 @@ namespace Logger.FileSystem.Tests {
 		}
 
 		[Fact]
-		public void AddDocument_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
-
-			Assert.True(
-				File.Exists($@"{_rootDir}\{doc.SysId}.json"),
-				$"Document Id '{doc.SysId}' file not created"
-			);
-		}
-
-		[Fact]
-		public void AddSameDocumentMakesNoChanges() {
-			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
-			doc.IsComplete = true;
-			_backingStore.Add(doc);
-
-			IList<Guid> completedDocIds = _backingStore.GetCompletedDocumentIds();
-			Assert.True(
-				completedDocIds == null || completedDocIds.Count == 0,
-				"Script Document changed after second add."
-			);
-
-		}
-
-		[Fact]
 		public void AddScriptOnlyAddsIfNew() {
 			ScriptDocument doc = CreateDocument();
-			doc.Scripts[0].IsComplete = true;
-			_backingStore.Add(doc);
+			_backingStore.CreateLogFile(doc.SysId);
 
 			Script existingScript = doc.Scripts[0];
+			existingScript.IsComplete = true;
+
+			_backingStore.Add(existingScript);
 			_backingStore.Add(existingScript);
 
 			IDataStore storage = new FileSystemStore(_rootDir);
@@ -68,8 +44,10 @@ namespace Logger.FileSystem.Tests {
 		public void FileSystemStore_Clear_Succeeds() {
 			ScriptDocument doc = CreateDocument();
 			ScriptDocument anotherDoc = CreateDocument();
-			_backingStore.Add(doc);
-			_backingStore.Add(doc);
+			_backingStore.CreateLogFile(doc.SysId);
+			_backingStore.CreateLogFile(anotherDoc.SysId);
+			_backingStore.Add(doc.Scripts[0]);
+			_backingStore.Add(doc.Scripts[0]);
 
 			_backingStore.Clean();
 			Assert.True(
@@ -95,7 +73,8 @@ namespace Logger.FileSystem.Tests {
 		[Fact]
 		public void AddScriptForValidDocId_Succeeds() {
 			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
+			_backingStore.CreateLogFile(doc.SysId);
+			_backingStore.Add(doc.Scripts[0]);
 
 			Guid newScriptId = Guid.NewGuid();
 			Script newScript = new Script() {
@@ -117,7 +96,8 @@ namespace Logger.FileSystem.Tests {
 		[Fact]
 		public void AddingMultipleScripts_Succeeds() {
 			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
+			_backingStore.CreateLogFile(doc.SysId);
+			_backingStore.Add(doc.Scripts[0]);
 
 			IList<Guid> scriptIds = new List<Guid>() { Guid.NewGuid(), Guid.NewGuid() };
 			foreach (Guid id in scriptIds) {
@@ -132,58 +112,8 @@ namespace Logger.FileSystem.Tests {
 
 			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
 			Assert.True(
-				foundScripts.Where(x => !scriptIds.Contains(x)).Count() == 0,
+				foundScripts.Count == (doc.Scripts.Count + scriptIds.Count),
 				"Scripts not added to log."
-			);
-		}
-
-		[Fact]
-		public void UpdateDocument_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			bool previousState = doc.IsComplete;
-			_backingStore.Add(doc);
-
-			foreach (Script script in doc.Scripts) {
-				script.IsComplete = true;
-				_backingStore.Update(script);
-			}
-			IList<Guid> docs = _backingStore.GetCompletedDocumentIds();
-			Assert.True(docs.Count == 1, "Incorrect number of documents returned.");
-		}
-
-		[Fact]
-		public void UpdateScript_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			_backingStore.Add(doc);
-
-			doc.Scripts[0].IsComplete = true;
-			doc.Scripts[0].ScriptText = "Test";
-			_backingStore.Update(doc.Scripts[0]);
-
-			IList<Guid> foundScripts = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
-			int completedDocCount = _backingStore.GetCompletedDocumentIds().Count;
-			Assert.True(foundScripts.Count == 1, "Incorrect number of scripts returned.");
-			Assert.True(completedDocCount == 1, $"Expected '{1}' completed documents.  Was '{completedDocCount}'");
-		}
-
-		[Fact]
-		public void GetCompletedDocumentIds_Succeeds() {
-			ScriptDocument doc = CreateDocument();
-			ScriptDocument anotherDoc = CreateDocument();
-			anotherDoc.Scripts[0].IsComplete = true;
-			anotherDoc.IsComplete = true;
-
-			IList<Guid> completedIds = _backingStore.GetCompletedDocumentIds();
-			Assert.True(completedIds.Count == 0, "List of completed Ids greater than zero.");
-
-			_backingStore.Add(doc);
-			_backingStore.Add(anotherDoc);
-
-			completedIds = _backingStore.GetCompletedDocumentIds();
-			Assert.True(completedIds.Count == 1, "Incorrect completed Ids returned.");
-			Assert.True(
-				completedIds[0] == anotherDoc.SysId,
-				$"Expected completed Id {anotherDoc.SysId}\nActual completed Id {completedIds[0]}"
 			);
 		}
 
@@ -191,6 +121,7 @@ namespace Logger.FileSystem.Tests {
 		public void GetCompletedScriptIds_Succeeds() {
 			Guid completedScriptId = Guid.NewGuid();
 			ScriptDocument doc = CreateDocument();
+			_backingStore.CreateLogFile(doc.SysId);
 			doc.Scripts.Add(new Script() {
 				SysId = completedScriptId,
 				DocumentId = doc.SysId,
@@ -201,7 +132,7 @@ namespace Logger.FileSystem.Tests {
 				ScriptText = String.Empty
 			});
 
-			_backingStore.Add(doc);
+			_backingStore.Add(doc.Scripts[1]);
 			IList<Guid> completedScriptIds = _backingStore.GetCompletedScriptIdsFor(doc.SysId);
 			Assert.True(completedScriptIds.Count == 1, "Incorrect amount of script Ids returned.");
 			Assert.True(

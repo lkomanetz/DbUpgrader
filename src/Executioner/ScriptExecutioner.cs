@@ -39,8 +39,6 @@ namespace Executioner {
 
 			IList<ScriptDocument> docsToExecute = GetDocumentsToRun(request, _scriptLoader.Documents);
 			for (short i = 0; i < docsToExecute.Count; ++i) {
-				_storage.Add(docsToExecute[i]);
-
 				IList<Script> scriptsToRun = GetScriptsToRun(request, docsToExecute[i]);
 				scriptsToRun.ForEach(script => {
 					_storage.Add(script);
@@ -59,23 +57,20 @@ namespace Executioner {
 		}
 
 		private IList<ScriptDocument> GetDocumentsToRun(ExecutionRequest request, IList<ScriptDocument> docs) {
+			IList<ScriptDocument> documentsToRun = new List<ScriptDocument>();
 			if (request.ExecuteAllScripts)
 				return new List<ScriptDocument>(docs);
 
-			foreach (var doc in docs) AddNewScriptsToDocumentLog(doc);
-			IList<Guid> completedDocIds = _storage.GetCompletedDocumentIds();
-			return docs
-				.Where(doc => !completedDocIds.Contains(doc.SysId))
-				.ToList();
-		}
+			foreach (var doc in docs) {
+				IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
+				int notCompletedCount = doc.Scripts
+					.Where(s => !completedScriptIds.Contains(s.SysId))
+					.Count();
 
-		private void AddNewScriptsToDocumentLog(ScriptDocument document) {
-			IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(document.SysId);
-			IList<Script> incompleteScripts = document.Scripts
-				.Where(s => !completedScriptIds.Contains(s.SysId))
-				.ToList();
+				if (notCompletedCount > 0) documentsToRun.Add(doc);
+			}
 
-			foreach (var script in incompleteScripts) _storage.Add(script);
+			return documentsToRun;
 		}
 
 		private IList<Script> GetScriptsToRun(ExecutionRequest request, ScriptDocument doc) {
@@ -138,7 +133,7 @@ namespace Executioner {
 				throw new Exception($"Script id '{script.SysId}' failed to execute.");
 
 			script.IsComplete = true;
-			_storage.Update(script);
+			_storage.Add(script);
 			OnScriptExecuted?.Invoke(this, new ScriptExecutedEventArgs(script));
 		}
 
