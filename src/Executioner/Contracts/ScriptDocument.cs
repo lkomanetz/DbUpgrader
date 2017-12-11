@@ -10,14 +10,12 @@ namespace Executioner {
 			
 			private string _orderString;
 
-			public ScriptDocument() {
-				this.Scripts = new List<Script>();
-			}
+			public ScriptDocument() => this.Scripts = new List<Script>();
 
 			[XmlElement("Order", Order = 1)]
 			public string OrderString
 			{
-				get { return _orderString; }
+				get => _orderString;
 				set {
 					_orderString = value;
 					this.DateCreatedUtc = ScriptLoaderUtilities.ParseOrderXmlAttribute(_orderString).Item1;

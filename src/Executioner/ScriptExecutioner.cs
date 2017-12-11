@@ -48,6 +48,7 @@ namespace Executioner {
 				});
 
 				if (scriptsCompleted > 0) ++docsCompleted;
+				docsToExecute[i].IsComplete = true;
 			}
 
 			return new ExecutionResult() {
