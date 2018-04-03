@@ -9,7 +9,7 @@ namespace Executioner.Converters {
 			new LogEntry(s.SysId, DateTime.UtcNow);
 
 		internal static Converter<string, LogEntry> FromEntryText => (entryText) => {
-			string[] vals = entryText.Split("->");
+			string[] vals = entryText.Split(new[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
 			return new LogEntry(
 				Guid.Parse(vals[0]),
 				DateTime.Parse(vals[1])
