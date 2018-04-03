@@ -35,7 +35,7 @@ namespace Executioner {
 		 * the type with just a name.
 		 */
 		private static Type GetClassType(string executorName) {
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 			Type objectType = null;
 
 			foreach (Assembly assembly in assemblies) {
