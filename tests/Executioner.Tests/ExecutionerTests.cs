@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Executioner.Tests.Classes;
 using Xunit;
+using System.IO;
 
 namespace Executioner.Tests {
 
@@ -174,6 +175,25 @@ namespace Executioner.Tests {
 				$"Expected {scriptsToAdd} scripts to run.\nActual scripts ran = {secondResult.ScriptsCompleted}."
 			);
 			_logger.Clean();
+		}
+
+		[Fact]
+		public void LogFileCreatedAutomatically() {
+			var err = Record.Exception(() => {
+				List<string> scripts = new List<string>() {
+					$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21'></Script>",
+					$"<Script Id='{Guid.NewGuid()}' Executor='MockScriptExecutor' Order='2016-06-21:1'></Script>"
+				};
+				IScriptLoader loader = new BaseMockLoader(scripts.ToArray());
+				IDataStore storage = new FileSystemStore(@"C:\Test");
+
+				var executioner = new ScriptExecutioner(loader, storage);
+				SetExecutionStatus(executioner, true);
+				executioner.Run();
+			});
+
+			Directory.Delete(@"C:\Test", true);
+			Assert.Null(err);
 		}
 
 		[Fact]

@@ -63,6 +63,7 @@ namespace Executioner {
 				return new List<ScriptDocument>(docs);
 
 			foreach (var doc in docs) {
+				_storage.CreateLogFile(doc.SysId);
 				IList<Guid> completedScriptIds = _storage.GetCompletedScriptIdsFor(doc.SysId);
 				int notCompletedCount = doc.Scripts
 					.Where(s => !completedScriptIds.Contains(s.SysId))
