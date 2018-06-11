@@ -114,12 +114,10 @@ namespace Executioner {
 
 			foreach (Script script in scripts) {
 				string className = script.ExecutorName;
-				if (String.IsNullOrEmpty(className))
-					throw new ScriptExecutorNotFoundException(className);
+				if (String.IsNullOrEmpty(className)) throw new ScriptExecutorNotFoundException(className);
 
 				bool typeExists = executors.Any(x => x.GetType().Name == script.ExecutorName);
-				if (typeExists)
-					continue;
+				if (typeExists) continue;
 
 				IScriptExecutor executor = ExecutorCreator.Create(script.ExecutorName);
 				executors.Add(executor);

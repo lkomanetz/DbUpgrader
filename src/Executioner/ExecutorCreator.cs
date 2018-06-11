@@ -9,9 +9,7 @@ namespace Executioner {
 	internal class ExecutorCreator {
 		private static IDictionary<string, Type> _executorsCreated;
 
-		static ExecutorCreator() {
-			_executorsCreated = new Dictionary<string, Type>();	
-		}
+		static ExecutorCreator() => _executorsCreated = new Dictionary<string, Type>();	
 
 		internal static IScriptExecutor Create(string executorName) {
 			if (_executorsCreated.TryGetValue(executorName, out Type foundType)) {
@@ -45,9 +43,7 @@ namespace Executioner {
 					.Where(x => x.Name.Equals(executorName))
 					.SingleOrDefault();
 				
-				if (objectType != null) {
-					break;
-				}	
+				if (objectType != null) break;
 			}
 
 			return objectType;
